@@ -1,0 +1,159 @@
+{
+  "project_info": {
+    "project_number": "1078552807062",
+    "firebase_url": "https://byebuyyy.firebaseio.com",
+    "project_id": "byebuyyy",
+    "storage_bucket": "byebuyyy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078552807062:android:c5386a4efd00d0620724b7",
+        "android_client_info": {
+          "package_name": "com.byebuyy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078552807062-qk1bldt8cb8lqgt766f9t6ueg540rqef.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byebuyy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDelB_ECNqHbjTNTDEntfbvgXDwDdj16zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1078552807062-es95lemvskvp6mh631fmpqbc18vfj58q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.byebuyyy"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078552807062:android:2f2f422f19dfe36e0724b7",
+        "android_client_info": {
+          "package_name": "com.byebuyyy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078552807062-75h5j9r2uj7lo394fvoc3816ecqpqvt5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byebuyyy",
+            "certificate_hash": "25cc0f79821169579e83ab94e3c92e5b9d232052"
+          }
+        },
+        {
+          "client_id": "1078552807062-mrialr1lb4qt55r5pqudp53dq11m719o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byebuyyy",
+            "certificate_hash": "23c83586e331a2e01e92b5a82dfe87f2be9e8d77"
+          }
+        },
+        {
+          "client_id": "1078552807062-gs8c37vqaerf9eosua5ljeid2guoarhl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.byebuyyy",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDelB_ECNqHbjTNTDEntfbvgXDwDdj16zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1078552807062-es95lemvskvp6mh631fmpqbc18vfj58q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.byebuyyy"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078552807062:android:c3107c09df11d6f90724b7",
+        "android_client_info": {
+          "package_name": "com.distance"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078552807062-r9qtbk1iikn42c9t51nahal42s6apb3a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.distance",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDelB_ECNqHbjTNTDEntfbvgXDwDdj16zk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078552807062-oknmc6j1kmuga88qa7psq8a5o238drbr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1078552807062-es95lemvskvp6mh631fmpqbc18vfj58q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.byebuyyy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
