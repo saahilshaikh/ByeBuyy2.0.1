@@ -41,6 +41,7 @@ const {width, height} = Dimensions.get('window');
 Geocoder.init('AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ');
 
 export default class HomeScreen extends React.Component {
+  inter = null;
   constructor() {
     super();
     this.state = {
@@ -76,6 +77,9 @@ export default class HomeScreen extends React.Component {
     AppState.addEventListener('change', this.handleAppStateChange);
     this.handlePermissionAndroid();
     this.handleNotiCount();
+    this.inter = setInterval(() => {
+      this.handleNotiCount();
+    }, 5000);
   }
 
   handleNotiCount = async () => {
@@ -85,10 +89,10 @@ export default class HomeScreen extends React.Component {
       };
       const res = await axios.post(link + '/api/user/singleNoti', data);
       if (res.data !== null) {
-        console.log(87, res.data.length);
-        res.data.map(async (n) => {
+        var count = 0;
+        for (var i = 0; i < res.data.length; i++) {
           var data2 = {
-            id: n,
+            id: res.data[i],
           };
           var res2 = await axios.post(link + '/api/notifications', data2);
           if (
@@ -97,11 +101,13 @@ export default class HomeScreen extends React.Component {
             res2.data.read !== true
           ) {
             console.log('96', res2.data);
+            count = count + 1;
+            console.log('count', count);
             this.setState({
-              tab3Count: this.state.tab3Count + 1,
+              tab3Count: count,
             });
           }
-        });
+        }
       }
     }
   };
@@ -320,10 +326,14 @@ export default class HomeScreen extends React.Component {
   };
 
   componentWillUnmount() {
+    clearInterval(this.inter);
     AppState.removeEventListener('change', this.handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
     fcmService.unRegister();
     localNotificationService.unregister();
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   storeData = async (label, value) => {

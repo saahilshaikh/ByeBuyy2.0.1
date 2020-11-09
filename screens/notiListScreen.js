@@ -35,28 +35,7 @@ export default class NotiListScreen extends React.Component {
       location: this.props.location,
     });
     if (auth().currentUser) {
-      const notisValue = await AsyncStorage.getItem(
-        auth().currentUser.email + 'notiList',
-      );
-      if (notisValue !== null) {
-        console.log('Found local noti list');
-        var notis = JSON.parse(notisValue);
-        var notiList = [];
-        notis.map((item) => {
-          if (notiList.length < 10) {
-            notiList.push(item);
-          }
-        });
-        this.setState({
-          notiList: notiList,
-          acnotiList: notis,
-          loading: false,
-        });
-        this.handleInit();
-      } else {
-        console.log('No local noti list found');
-        this.handleInit();
-      }
+      this.handleInit();
     } else {
       this.setState({
         loading: false,
@@ -211,7 +190,7 @@ export default class NotiListScreen extends React.Component {
               <View style={styles.list}>
                 <FlatList
                   ListEmptyComponent={this.renderListEmpty}
-                  style={{width: '100%'}}
+                  style={{width: '100%', paddingTop: 5}}
                   data={this.state.notiList}
                   onEndReached={this.handleReachedEnd}
                   keyExtractor={_renderMyKeyExtractor}

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import LottieView from 'lottie-react-native';
@@ -16,86 +17,101 @@ import colors from '../appTheme';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ChatListScreen extends React.Component {
-  inter=null;
+  inter = null;
   constructor() {
     super();
     this.state = {
       chats: [],
-      acchats:[],
+      acchats: [],
       loading: true,
       refreshing: false,
-      location:{
-        lat:'',
-        long:''
-      }
-    }
+      location: {
+        lat: '',
+        long: '',
+      },
+      refreshing: false,
+    };
   }
 
   async componentDidMount() {
     if (auth().currentUser) {
-      var chatListValue=await AsyncStorage.getItem(auth().currentUser.email+'chatList');
-      if(chatListValue!==null)
-      {
+      var chatListValue = await AsyncStorage.getItem(
+        auth().currentUser.email + 'chatList',
+      );
+      if (chatListValue !== null) {
         console.log('Found local chat list');
         this.setState({
           chats: JSON.parse(chatListValue),
-          loading: false
-        })
+          loading: false,
+        });
         this.handleInit();
         this.inter = setInterval(() => {
           this.handleInit();
         }, 2000);
-      }
-      else{
+      } else {
         console.log('No local chat list found');
         this.handleInit();
         this.inter = setInterval(() => {
           this.handleInit();
-        }, 2000);
+        }, 5000);
       }
-      
     }
   }
 
   componentWillUnmount() {
     clearInterval(this.inter);
-      this.setState = (state,callback)=>{
+    this.setState = (state, callback) => {
       return;
     };
   }
 
-  handleInit=async()=>{
-      if(auth().currentUser)
-      {
+  handleInit = async () => {
+    if (auth().currentUser) {
+      this.setState({
+        location: this.props.location,
+      });
+      var data = {
+        id: auth().currentUser.email,
+      };
+      var res = await axios.post(link + '/api/user/singleChat', data);
+      if (res.data !== null) {
+        this.storeData(auth().currentUser.email + 'chatList', res.data);
         this.setState({
-          location:this.props.location
-        })
-        var data = {
-          id: auth().currentUser.email
-        }
-        var res = await axios.post(link + '/api/user/singleChat', data);
-        if (res.data !== null) {
-          this.storeData(auth().currentUser.email+"chatList",res.data);
-          this.setState({
-            chats: res.data,
-            loading: false
-          })
-        }
+          chats: res.data,
+          loading: false,
+        });
       }
-      else{
-        clearInterval(this.inter);
-      }
-  }
+    } else {
+      clearInterval(this.inter);
+    }
+  };
+
+  handleRefresh = async () => {
+    this.setState({
+      refreshing: true,
+    });
+    var data = {
+      id: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/user/singleChat', data);
+    if (res.data !== null) {
+      this.storeData(auth().currentUser.email + 'chatList', res.data);
+      this.setState({
+        chats: res.data,
+        refreshing: false,
+      });
+    }
+  };
 
   storeData = async (label, value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem(label, jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(label, jsonValue);
     } catch (e) {
       // saving error
       console.log('Error Storing File');
     }
-  }
+  };
 
   renderListEmpty = () => {
     return (
@@ -114,7 +130,7 @@ export default class ChatListScreen extends React.Component {
           style={{
             width: 200,
             height: 200,
-            transform: [{ scale: 1.3 }]
+            transform: [{scale: 1.3}],
           }}
         />
         <Text
@@ -126,51 +142,64 @@ export default class ChatListScreen extends React.Component {
           Empty Inbox
         </Text>
       </View>
-    )
-  }
+    );
+  };
 
   render() {
     _renderMyKeyExtractor = (item, index) => item.id;
     return (
       <View style={styles.container}>
-        {
-          auth().currentUser
-            ?
-            <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
-              {
-                this.state.loading
-                  ?
-                  <ActivityIndicator size="large" color={colors.baseline} style={{marginTop:10}} />
-                  :
-                  <View style={styles.list}>
-                    <FlatList
-                      ListEmptyComponent={this.renderListEmpty}
-                      style={{ width: '100%', flex:1}}
-                      data={this.state.chats}
-                      keyExtractor={_renderMyKeyExtractor}
-                      renderItem={({ item }) => (
-                        <View style={{ width: '100%', alignItems: 'center' }}>
-                          <ChatCard navigation={this.props.navigation} item={item} key={item.id} location={this.state.location} />
-                        </View>
-                      )}
+        {auth().currentUser ? (
+          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+            {this.state.loading ? (
+              <ActivityIndicator
+                size="large"
+                color={colors.baseline}
+                style={{marginTop: 10}}
+              />
+            ) : (
+              <View style={styles.list}>
+                <FlatList
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.handleRefresh}
                     />
-                  </View>
-              }
-            </View>
-            :
-            <View style={{ width: '100%', alignItems: 'center' }}>
-              <View style={styles.imageBox}>
-                <LottieView
-                  source={require('../assets/login.json')}
-                  autoPlay
-                  loop
+                  }
+                  ListEmptyComponent={this.renderListEmpty}
+                  style={{width: '100%', flex: 1}}
+                  data={this.state.chats}
+                  keyExtractor={_renderMyKeyExtractor}
+                  renderItem={({item}) => (
+                    <View style={{width: '100%', alignItems: 'center'}}>
+                      <ChatCard
+                        navigation={this.props.navigation}
+                        item={item}
+                        key={item.id}
+                        location={this.state.location}
+                      />
+                    </View>
+                  )}
                 />
               </View>
-              <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={styles.loginButton}>
-                <Text style={styles.loginButtonText}>Login to continue</Text>
-              </TouchableOpacity>
+            )}
+          </View>
+        ) : (
+          <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={styles.imageBox}>
+              <LottieView
+                source={require('../assets/login.json')}
+                autoPlay
+                loop
+              />
             </View>
-        }
+            <TouchableOpacity
+              onPress={() => this.props.navigation.navigate('Login')}
+              style={styles.loginButton}>
+              <Text style={styles.loginButtonText}>Login to continue</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }
@@ -243,6 +272,6 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: colors.white,
     fontFamily: 'Muli-Bold',
-    fontSize: 14
-  }
+    fontSize: 14,
+  },
 });

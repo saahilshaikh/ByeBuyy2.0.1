@@ -553,7 +553,7 @@ export default class HomeCard2 extends React.Component {
                         ) : null}
                       </View>
                       <Text style={styles.title}>
-                        {this.state.product.description}
+                        I am looking for {this.state.product.description}
                       </Text>
                     </View>
                     <View style={styles.bottom}>
