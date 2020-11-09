@@ -35,7 +35,7 @@ export default class AddRequest extends React.Component {
     this.state = {
       category: '',
       type: 0,
-      desc: '',
+      desc: 'I am looking for, ',
       city: '',
       loading: false,
       modalVisible: false,
@@ -329,6 +329,7 @@ export default class AddRequest extends React.Component {
       }
       const res = await axios.post(link + '/api/postProduct', data);
       if (res.data.type === 'success') {
+        this.props.route.params.handleShowNew();
         this.setState(
           {
             loading: false,
@@ -346,6 +347,12 @@ export default class AddRequest extends React.Component {
           loading: false,
         });
       }
+    }
+  };
+
+  handleDesc = (desc) => {
+    if (desc.includes('I am looking for, ')) {
+      this.setState({desc});
     }
   };
 
@@ -464,14 +471,14 @@ export default class AddRequest extends React.Component {
                       </View>
                       <View style={styles.inputGroup}>
                         <Text style={styles.inputGroupText}>
-                          I am looking for
+                          What do you want to request ?
                         </Text>
                         <TextInput
                           style={styles.inputArea}
                           autoCapitalize="none"
                           multiline={true}
                           maxLength={300}
-                          onChangeText={(desc) => this.setState({desc})}
+                          onChangeText={(desc) => this.handleDesc(desc)}
                           value={this.state.desc}></TextInput>
                       </View>
                       <View style={styles.inputGroup}>

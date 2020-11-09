@@ -16,17 +16,17 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
-import { FloatingAction } from "react-native-floating-action";
+import {FloatingAction} from 'react-native-floating-action';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import link from '../fetchPath';
 import LottieView from 'lottie-react-native';
 import colors from '../appTheme';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class ProductListScreen extends React.Component {
-  inter=null;
+  inter = null;
   constructor() {
     super();
     this.state = {
@@ -53,230 +53,251 @@ export default class ProductListScreen extends React.Component {
       categoriesLoading: true,
       actions: [
         {
-          text: "Add Product",
-          icon: require("../assets/images/product.png"),
-          name: "add",
+          text: 'Add Product',
+          icon: require('../assets/images/product.png'),
+          name: 'add',
           position: 3,
           color: colors.baseline,
           buttonSize: 50,
         },
         {
-          text: "Request Product",
-          icon: require("../assets/images/requestIcon.png"),
-          name: "request",
+          text: 'Request Product',
+          icon: require('../assets/images/requestIcon.png'),
+          name: 'request',
           position: 4,
           color: colors.baseline,
           buttonSize: 50,
-        }
+        },
       ],
       showMode: 'A',
-      current:"All locations",
-      loadmore:true,
-      showNew:false
+      current: 'All locations',
+      loadmore: true,
+      showNew: false,
     };
   }
 
   async componentDidMount() {
     this.setState({
-      location: this.props.location
+      location: this.props.location,
     });
     const postsValue = await AsyncStorage.getItem('bbposts');
     const catValue = await AsyncStorage.getItem('bbcats');
-    if(postsValue!==null && catValue!==null)
-    {
+    if (postsValue !== null && catValue !== null) {
       console.log('Found local posts list');
       this.setState({
         initialLoading: false,
-        products:JSON.parse(postsValue),
+        products: JSON.parse(postsValue),
         showProducts: JSON.parse(postsValue),
-        categories:JSON.parse(catValue),
-        categoriesLoading: false
-      })
-    }
-    else{
+        categories: JSON.parse(catValue),
+        categoriesLoading: false,
+      });
+    } else {
       console.log('No local posts list found');
       this.handleInit();
     }
     this.handleNew();
-    this.inter=setInterval(() => {
+    this.inter = setInterval(() => {
       this.handleNew();
-    }, 20000);
+    }, 10000);
   }
 
   componentWillUnmount() {
     clearInterval(this.inter);
-      this.setState = (state,callback)=>{
+    this.setState = (state, callback) => {
       return;
     };
   }
 
-  handleNew=async ()=>{
-    if(this.state.mode==="A" && this.state.loc==='All locations' && this.state.category==='All')
-    {
+  handleShowNew = () => {
+    this.setState({
+      showNew: true,
+    });
+  };
+
+  handleNew = async () => {
+    if (
+      this.state.showMode === 'A' &&
+      this.state.current === 'All locations' &&
+      this.state.activeCat === 'All'
+    ) {
+      console.log('118,Checking New');
       var data = {
-        mode: "A",
-        category:"All",
-        loc:'World'
-      }
-      var res = await axios.post(link + '/api/showProducts10/filter',data);
-      if(res.data!==null)
-      {
-        if(this.state.products.length>0 && res.data.length>0 && res.data[0]._id!==this.state.products[0]._id)
-        {
+        mode: 'A',
+        category: 'All',
+        loc: 'World',
+      };
+      var res = await axios.post(link + '/api/showProducts10/filter', data);
+      if (res.data !== null) {
+        if (
+          this.state.products.length > 0 &&
+          res.data.length > 0 &&
+          res.data[0]._id !== this.state.products[0]._id
+        ) {
           this.setState({
-            showNew:true
-          })
+            showNew: true,
+          });
         }
       }
     }
-  }
+  };
 
   handleInit = async () => {
     var data = {
       mode: 'A',
       category: 'All',
-      loc:'World'
-    }
-    var res = await axios.post(link + '/api/showProducts10/filter',data);
+      loc: 'World',
+    };
+    var res = await axios.post(link + '/api/showProducts10/filter', data);
     var res2 = await axios.get(link + '/api/categories');
     if (res.data) {
-      this.storeData('bbposts',res.data);
+      this.storeData('bbposts', res.data);
       this.setState({
         initialLoading: false,
         products: res.data,
         showProducts: res.data,
-      })
+      });
     }
     if (res2.data) {
-      this.storeData('bbcats',res2.data);
+      this.storeData('bbcats', res2.data);
       this.setState({
         categories: res2.data,
-        categoriesLoading: false
-      })
+        categoriesLoading: false,
+      });
     }
-  }
+  };
 
   storeData = async (label, value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem(label, jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(label, jsonValue);
     } catch (e) {
       // saving error
       console.log('Error Storing File', label, e);
     }
-  }
+  };
 
   handleRefresh = async () => {
     this.setState({
       refreshing: true,
-      showNew:false,
-    })
+      showNew: false,
+    });
     var data = {
       mode: 'A',
       category: 'All',
-      loc:'World'
-    }
+      loc: 'World',
+    };
     var res = await axios.post(link + '/api/showProducts10/filter', data);
     if (res.data) {
-      this.storeData('bbposts',res.data);
+      this.storeData('bbposts', res.data);
       this.setState({
         products: res.data,
         showProducts: res.data,
-        loadmore:true,
-        activeCat:'All',
-        current:'All locations',
-        showMode:'A',
-        refreshing:false
-      })
+        loadmore: true,
+        activeCat: 'All',
+        current: 'All locations',
+        showMode: 'A',
+        refreshing: false,
+      });
     }
-  }
+  };
 
   handleShow = (e) => {
     this.setState({
-      isModalVisible: false
-    })
+      isModalVisible: false,
+    });
     if (e === 'Product') {
-      this.setState({
-        showMode: 'P'
-      }, () => {
-        this.handleCategory(this.state.activeCat);
-      })
+      this.setState(
+        {
+          showMode: 'P',
+        },
+        () => {
+          this.handleCategory(this.state.activeCat);
+        },
+      );
+    } else if (e === 'Request') {
+      this.setState(
+        {
+          showMode: 'R',
+        },
+        () => {
+          this.handleCategory(this.state.activeCat);
+        },
+      );
+    } else {
+      this.setState(
+        {
+          showMode: 'A',
+        },
+        () => {
+          this.handleCategory(this.state.activeCat);
+        },
+      );
     }
-    else if (e === 'Request') {
-      this.setState({
-        showMode: 'R'
-      }, () => {
-        this.handleCategory(this.state.activeCat);
-      })
-    }
-    else {
-      this.setState({
-        showMode: 'A'
-      }, () => {
-        this.handleCategory(this.state.activeCat);
-      })
-    }
-  }
+  };
 
-  handleLocation = async (city, country,lat,long) => {
-    console.log("PLS 97", city);
-    console.log("PLS 98", country);
-    if(city!=='' && country!=='')
-    {
-      var location={
-        lat:lat,
-        long:long
+  handleLocation = async (city, country, lat, long) => {
+    console.log('PLS 97', city);
+    console.log('PLS 98', country);
+    if (city !== '' && country !== '') {
+      var location = {
+        lat: lat,
+        long: long,
       };
-      this.setState({
-        current:city+','+country,
-        location:location
-      },()=>{
-        this.handleCategory(this.state.activeCat);
-      })
+      this.setState(
+        {
+          current: city + ',' + country,
+          location: location,
+        },
+        () => {
+          this.handleCategory(this.state.activeCat);
+        },
+      );
+    } else {
+      this.setState(
+        {
+          current: 'All locations',
+        },
+        () => {
+          console.log(this.state.current);
+          this.handleCategory(this.state.activeCat);
+        },
+      );
     }
-    else{
-      this.setState({
-        current:'All locations'
-      },()=>{
-        console.log(this.state.current)
-        this.handleCategory(this.state.activeCat);
-      })
-    }
-  }
+  };
 
   handleAdd = (name) => {
     if (auth().currentUser) {
       console.log(name);
       if (name === 'add') {
-        this.props.navigation.push('AddItem');
+        this.props.navigation.push('AddItem', {
+          handleShowNew: this.handleShowNew,
+        });
+      } else if (name === 'request') {
+        this.props.navigation.push('AddReq', {
+          handleShowNew: this.handleShowNew,
+        });
       }
-      else if (name === 'request') {
-        this.props.navigation.push('AddReq');
-      }
-    }
-    else {
-      console.log("USER DOESNT EXIST");
+    } else {
+      console.log('USER DOESNT EXIST');
       this.props.navigation.navigate('Login');
     }
-  }
+  };
 
   handleAfterAdding = () => {
     console.log('Done Adding');
     this.handleRefresh();
-  }
-
-
+  };
 
   toggleModal = () => {
-    this.setState({ isModalVisible: !this.state.isModalVisible });
+    this.setState({isModalVisible: !this.state.isModalVisible});
   };
 
   handleReachedEnd = () => {
-    console.log("reached End");
+    console.log('reached End');
     if (this.state.loadmore && !this.state.loadingMore) {
       this.handleViewMore();
     }
-  }
+  };
 
   handleCategory = async (e) => {
     this.moveToFront(e);
@@ -286,45 +307,46 @@ export default class ProductListScreen extends React.Component {
       products: [],
       showProducts: [],
       refreshing: false,
-      loadmore:true
-    })
-    if (e === "All") {
+      loadmore: true,
+    });
+    if (e === 'All') {
       var data = {
         mode: this.state.showMode,
         category: e,
-        loc:this.state.current==="All locations"?'World':this.state.current
-      }
+        loc:
+          this.state.current === 'All locations' ? 'World' : this.state.current,
+      };
       var res = await axios.post(link + '/api/showProducts10/filter', data);
-      res.data.map(item=>{
+      res.data.map((item) => {
         console.log(item.city);
-      })
+      });
       if (res.data) {
         this.setState({
           initialLoading: false,
           products: res.data,
           showProducts: res.data,
-        })
+        });
       }
-    }
-    else {
+    } else {
       var data = {
         category: e,
         mode: this.state.showMode,
-        loc:this.state.current==="All locations"?'World':this.state.current
-      }
+        loc:
+          this.state.current === 'All locations' ? 'World' : this.state.current,
+      };
       var res = await axios.post(link + '/api/showProducts10/filter', data);
       if (res.data) {
         this.setState({
           initialLoading: false,
           products: res.data,
           showProducts: res.data,
-        })
+        });
       }
     }
-  }
+  };
 
-  moveToFront=(x)=> {
-    var collection=this.state.categories;
+  moveToFront = (x) => {
+    var collection = this.state.categories;
     for (var i = 0; i < collection.length; i++) {
       if (collection[i].name === x) {
         collection = collection.splice(i, 1).concat(collection);
@@ -332,47 +354,54 @@ export default class ProductListScreen extends React.Component {
       }
     }
     this.setState({
-      categories:collection
-    })
-  }
+      categories: collection,
+    });
+  };
 
   handleViewMore = async () => {
     this.setState({
-      loadingMore: true
-    })
+      loadingMore: true,
+    });
     const data = {
       count: this.state.products.length,
       category: this.state.activeCat,
       mode: this.state.showMode,
-      loc:this.state.current==="All locations"?'World':this.state.current
-    }
+      loc:
+        this.state.current === 'All locations' ? 'World' : this.state.current,
+    };
     var res = await axios.post(link + '/api/showProductsNext10/filter', data);
     if (res.data) {
       this.setState({
-        loadingMore: false
-      })
+        loadingMore: false,
+      });
       if (res.data.length > 0) {
         var products = this.state.products;
-        res.data.map(item => {
+        res.data.map((item) => {
           products.push(item);
-        })
+        });
+        if (
+          this.state.showMode === 'A' &&
+          this.state.current === 'All locations' &&
+          this.state.activeCat === 'All'
+        ) {
+          this.storeData('bbposts', products);
+        }
         this.setState({
           products: products,
-          showProducts: products
-        })
-      }
-      else{
+          showProducts: products,
+        });
+      } else {
         console.log('LOAD MORE FLASE');
         this.setState({
-          loadmore:false
-        })
+          loadmore: false,
+        });
       }
     }
-  }
+  };
 
   renderHeader = () => {
     return (
-      <View style={{ width: '100%' }}>
+      <View style={{width: '100%'}}>
         <View
           style={{
             width: '100%',
@@ -384,11 +413,16 @@ export default class ProductListScreen extends React.Component {
             marginTop: 10,
           }}>
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Loc', { handleLocation: this.handleLocation,location:this.state.location })}
+            onPress={() =>
+              this.props.navigation.navigate('Loc', {
+                handleLocation: this.handleLocation,
+                location: this.state.location,
+              })
+            }
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor:'#1B1F22',
+              backgroundColor: '#1B1F22',
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 5,
@@ -407,63 +441,63 @@ export default class ProductListScreen extends React.Component {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor:'#1B1F22',
+              backgroundColor: '#1B1F22',
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 5,
-              }}
+            }}
             onPress={this.toggleModal}>
-            <MaterialCommunityIcons name='filter-menu' size={22} color={colors.white}/>
+            <MaterialCommunityIcons
+              name="filter-menu"
+              size={22}
+              color={colors.white}
+            />
           </TouchableOpacity>
         </View>
-        {
-          !this.state.categoriesLoading
-            ?
-            <View style={{ width: '100%', marginBottom: 15 }}>
-              <ScrollView
-                horizontal={true}
-                style={{ width: '100%', paddingLeft: 5 }}
-                showsHorizontalScrollIndicator={false}>
-                {this.state.activeCat === 'All' ? (
-                  <TouchableOpacity
-                    onPress={() => this.handleCategory('All')}
-                    style={styles.accategory}>
-                    <Text style={styles.accategoryText}>All</Text>
-                  </TouchableOpacity>
-                ) : (
-                    <TouchableOpacity
-                      onPress={() => this.handleCategory('All')}
-                      style={styles.category}>
-                      <Text style={styles.categoryText}>All</Text>
-                    </TouchableOpacity>
-                  )}
-                {this.state.categories.map((item) => {
-                  return (
-                    <View key={item._id}>
-                      {this.state.activeCat === item.name ? (
-                        <TouchableOpacity
-                          onPress={() => this.handleCategory(item.name)}
-                          style={styles.accategory}>
-                          <Text style={styles.accategoryText}>{item.name}</Text>
-                        </TouchableOpacity>
-                      ) : (
-                          <TouchableOpacity
-                            onPress={() => this.handleCategory(item.name)}
-                            style={styles.category}>
-                            <Text style={styles.categoryText}>{item.name}</Text>
-                          </TouchableOpacity>
-                        )}
-                    </View>
-                  );
-                })}
-              </ScrollView>
-            </View>
-            :
-            null
-        }
+        {!this.state.categoriesLoading ? (
+          <View style={{width: '100%', marginBottom: 15}}>
+            <ScrollView
+              horizontal={true}
+              style={{width: '100%', paddingLeft: 5}}
+              showsHorizontalScrollIndicator={false}>
+              {this.state.activeCat === 'All' ? (
+                <TouchableOpacity
+                  onPress={() => this.handleCategory('All')}
+                  style={styles.accategory}>
+                  <Text style={styles.accategoryText}>All</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => this.handleCategory('All')}
+                  style={styles.category}>
+                  <Text style={styles.categoryText}>All</Text>
+                </TouchableOpacity>
+              )}
+              {this.state.categories.map((item) => {
+                return (
+                  <View key={item._id}>
+                    {this.state.activeCat === item.name ? (
+                      <TouchableOpacity
+                        onPress={() => this.handleCategory(item.name)}
+                        style={styles.accategory}>
+                        <Text style={styles.accategoryText}>{item.name}</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() => this.handleCategory(item.name)}
+                        style={styles.category}>
+                        <Text style={styles.categoryText}>{item.name}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                );
+              })}
+            </ScrollView>
+          </View>
+        ) : null}
       </View>
-    )
-  }
+    );
+  };
 
   renderListEmpty = () => {
     return (
@@ -491,130 +525,141 @@ export default class ProductListScreen extends React.Component {
           Nothing Found
         </Text>
       </View>
-    )
-  }
+    );
+  };
 
   renderFooter = () => {
     return (
-      <View style={{ width: '100%', alignItems: 'center' }}>
-          {
-          this.state.loadingMore
-            ?
-            <View style={{ marginBottom: 10 }}>
-			            <View style={{ width: 60, height: 60 }}>
-                    <LottieView
-                      source={require('../assets/loading.json')}
-                      autoPlay={true}
-                      loop={true}
-                    />
-                  </View>
+      <View style={{width: '100%', alignItems: 'center'}}>
+        {this.state.loadingMore ? (
+          <View style={{marginBottom: 10}}>
+            <View style={{width: 60, height: 60}}>
+              <LottieView
+                source={require('../assets/loading.json')}
+                autoPlay={true}
+                loop={true}
+              />
             </View>
-            :
-            null
-        }
-        <Text style={{fontFamily:'Muli-Bold',color:colors.baseline,fontSize:14,marginBottom:10}}>{this.state.loadmore?null:"byebuyy"}</Text>
+          </View>
+        ) : null}
+        <Text
+          style={{
+            fontFamily: 'Muli-Bold',
+            color: colors.baseline,
+            fontSize: 14,
+            marginBottom: 10,
+          }}>
+          {this.state.loadmore ? null : 'byebuyy'}
+        </Text>
       </View>
-    )
-  }
+    );
+  };
 
   render() {
-    const keyExtractor=((item) => item._id);
+    const keyExtractor = (item, index) => index.toString();
     return (
       <View style={styles.container}>
         <View style={styles.list}>
-          {
-            this.state.initialLoading
-              ?
-              <View style={{ marginTop: 30, alignItems: 'center', width: '100%', flex: 1 }}>
-                <View style={{ marginTop: 20, alignItems: 'center', flex: 1, width: '100%', justifyContent: 'center', marginBottom: 60 }}>
-                  <View style={{ width: 120, height: 120 }}>
-                    <LottieView
-                      source={require('../assets/loading.json')}
-                      autoPlay={true}
-                      loop={true}
-                    />
-                  </View>
+          {this.state.initialLoading ? (
+            <View
+              style={{
+                marginTop: 30,
+                alignItems: 'center',
+                width: '100%',
+                flex: 1,
+              }}>
+              <View
+                style={{
+                  marginTop: 20,
+                  alignItems: 'center',
+                  flex: 1,
+                  width: '100%',
+                  justifyContent: 'center',
+                  marginBottom: 60,
+                }}>
+                <View style={{width: 120, height: 120}}>
+                  <LottieView
+                    source={require('../assets/loading.json')}
+                    autoPlay={true}
+                    loop={true}
+                  />
                 </View>
               </View>
-              :
-              <>
-                <FlatList
-                  keyboardShouldPersistTaps={'handled'}
-                  ListEmptyComponent={this.renderListEmpty}
-                  ListFooterComponent={this.renderFooter}
-                  ListHeaderComponent={this.renderHeader}
-                  style={{ width: '100%' }}
-                  windowSize={3}
-                  data={this.state.showProducts}
-                  onEndReached={this.handleReachedEnd}
-                  keyExtractor={keyExtractor}
-                  onEndReachedThreshold={30}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.handleRefresh}
-                    />
-                  }
-                  renderItem={({ item }) => (
-                    <>
-                      {
-                        item.varient === 'Product'
-                          ?
-                          <HomeCard
-                            handleCardClick={(e) => this.handleCardClick(e)}
-                            handleCardImageClick={(e, f) => this.handleCardImageClick(e, f)}
-                            item={item}
-                            location={this.state.location}
-                            navigation={this.props.navigation}
-                          />
-                          :
-                          null
-                      }
-                      {
-                        item.varient === 'Request'
-                          ?
-                        <HomeCard2
-                            handleCardClick={(e) => this.handleCardClick(e)}
-                            handleCardImageClick={(e, f) => this.handleCardImageClick(e, f)}
-                            item={item}
-                            location={this.state.location}
-                            navigation={this.props.navigation}
-                          />
-                          :null
-                      }
-                    </>
-                  )}
-                />
-              </>
-          }
-          {
-            this.state.loadingProducts
-              ?
-              <View style={{ marginTop: 10 }}>
-                <ActivityIndicator size="large" color={colors.baseline} />
-              </View>
-              :
-              null
-          }
+            </View>
+          ) : (
+            <>
+              <FlatList
+                keyboardShouldPersistTaps={'handled'}
+                ListEmptyComponent={this.renderListEmpty}
+                ListFooterComponent={this.renderFooter}
+                ListHeaderComponent={this.renderHeader}
+                style={{width: '100%'}}
+                windowSize={3}
+                data={this.state.showProducts}
+                onEndReached={this.handleReachedEnd}
+                keyExtractor={keyExtractor}
+                onEndReachedThreshold={30}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.handleRefresh}
+                  />
+                }
+                renderItem={({item}) => (
+                  <>
+                    {item.varient === 'Product' ? (
+                      <HomeCard
+                        handleCardClick={(e) => this.handleCardClick(e)}
+                        handleCardImageClick={(e, f) =>
+                          this.handleCardImageClick(e, f)
+                        }
+                        item={item}
+                        location={this.state.location}
+                        navigation={this.props.navigation}
+                      />
+                    ) : null}
+                    {item.varient === 'Request' ? (
+                      <HomeCard2
+                        handleCardClick={(e) => this.handleCardClick(e)}
+                        handleCardImageClick={(e, f) =>
+                          this.handleCardImageClick(e, f)
+                        }
+                        item={item}
+                        location={this.state.location}
+                        navigation={this.props.navigation}
+                      />
+                    ) : null}
+                  </>
+                )}
+              />
+            </>
+          )}
+          {this.state.loadingProducts ? (
+            <View style={{marginTop: 10}}>
+              <ActivityIndicator size="large" color={colors.baseline} />
+            </View>
+          ) : null}
         </View>
         <FloatingAction
-          overlayColor='rgba(0,0,0, 0.6)'
+          overlayColor="rgba(0,0,0, 0.6)"
           actionsPaddingTopBottom={5}
           actions={this.state.actions}
           color={colors.baseline}
           distanceToEdge={15}
-          onPressItem={name => this.handleAdd(name)}
+          onPressItem={(name) => this.handleAdd(name)}
         />
         <Modal isVisible={this.state.isModalVisible}>
           <TouchableOpacity
-            onPress={() => this.setState({
-                  isModalVisible: false
-                })}
+            onPress={() =>
+              this.setState({
+                isModalVisible: false,
+              })
+            }
             style={{
               alignItems: 'center',
-              width:'100%',
-              flex:1,
-              justifyContent:'center'
+              width: '100%',
+              flex: 1,
+              justifyContent: 'center',
             }}>
             <View
               style={{
@@ -623,14 +668,17 @@ export default class ProductListScreen extends React.Component {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{ width: '100%' }}>
+              <View style={{width: '100%'}}>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setState({
-                      showType: 'All'
-                    }, () => {
-                      this.handleShow('All')
-                    })
+                    this.setState(
+                      {
+                        showType: 'All',
+                      },
+                      () => {
+                        this.handleShow('All');
+                      },
+                    );
                   }}
                   style={{
                     width: '100%',
@@ -639,7 +687,7 @@ export default class ProductListScreen extends React.Component {
                     paddingVertical: 15,
                     justifyContent: 'center',
                     borderBottomColor: colors.grey,
-                    borderBottomWidth: StyleSheet.hairlineWidth
+                    borderBottomWidth: StyleSheet.hairlineWidth,
                   }}>
                   <Text
                     style={{
@@ -652,11 +700,14 @@ export default class ProductListScreen extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setState({
-                      showType: 'Product'
-                    }, () => {
-                      this.handleShow('Product')
-                    })
+                    this.setState(
+                      {
+                        showType: 'Product',
+                      },
+                      () => {
+                        this.handleShow('Product');
+                      },
+                    );
                   }}
                   style={{
                     width: '100%',
@@ -665,7 +716,7 @@ export default class ProductListScreen extends React.Component {
                     paddingVertical: 15,
                     justifyContent: 'center',
                     borderBottomColor: colors.grey,
-                    borderBottomWidth: StyleSheet.hairlineWidth
+                    borderBottomWidth: StyleSheet.hairlineWidth,
                   }}>
                   <Text
                     style={{
@@ -678,11 +729,14 @@ export default class ProductListScreen extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    this.setState({
-                      showType: 'Request'
-                    }, () => {
-                      this.handleShow('Request')
-                    })
+                    this.setState(
+                      {
+                        showType: 'Request',
+                      },
+                      () => {
+                        this.handleShow('Request');
+                      },
+                    );
                   }}
                   style={{
                     width: '100%',
@@ -704,15 +758,13 @@ export default class ProductListScreen extends React.Component {
             </View>
           </TouchableOpacity>
         </Modal>
-        {
-          this.state.showNew
-            ?
-            <TouchableOpacity onPress={this.handleRefresh} style={styles.floatingButton}>
-              <Text style={styles.floatingButtonText}>New Posts</Text>
-            </TouchableOpacity>
-            :
-            null
-        }
+        {this.state.showNew ? (
+          <TouchableOpacity
+            onPress={this.handleRefresh}
+            style={styles.floatingButton}>
+            <Text style={styles.floatingButtonText}>New Posts</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }
@@ -733,18 +785,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 7,
     paddingHorizontal: 15,
-    backgroundColor:'#1B1F22',
-    elevation:5,
-    marginBottom:2
+    backgroundColor: '#1B1F22',
+    elevation: 5,
+    marginBottom: 2,
   },
   accategory: {
     marginHorizontal: 5,
     borderRadius: 10,
     paddingVertical: 7,
     paddingHorizontal: 15,
-    backgroundColor:'#1B1F22',
-    elevation:5,
-    marginBottom:2
+    backgroundColor: '#1B1F22',
+    elevation: 5,
+    marginBottom: 2,
   },
   categoryText: {
     fontSize: 14,
@@ -774,12 +826,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
-    marginTop: 20
+    marginTop: 20,
   },
   rpt: {
     fontFamily: 'Muli-Bold',
     color: colors.white,
-    fontSize: 16
+    fontSize: 16,
   },
   vm: {
     width: 160,
@@ -788,12 +840,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
-    marginVertical: 20
+    marginVertical: 20,
   },
   vmt: {
     fontFamily: 'Muli-Bold',
     color: colors.white,
-    fontSize: 16
+    fontSize: 16,
   },
   floatingButton: {
     position: 'absolute',
@@ -810,6 +862,6 @@ const styles = StyleSheet.create({
   floatingButtonText: {
     fontSize: 14,
     fontFamily: 'Muli-Bold',
-    color: colors.white
-  }
+    color: colors.white,
+  },
 });

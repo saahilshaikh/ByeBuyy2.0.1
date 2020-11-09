@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import link from '../fetchPath';
 import axios from 'axios';
 import colors from '../appTheme';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default class NotiListScreen extends React.Component {
   constructor() {
@@ -23,6 +24,10 @@ export default class NotiListScreen extends React.Component {
       notiList: [],
       acnotiList: [],
       refreshing: false,
+      today: [],
+      weekly: [],
+      monthly: [],
+      earlier: [],
       location: {
         lat: '',
         long: '',
@@ -52,15 +57,29 @@ export default class NotiListScreen extends React.Component {
     if (res.data !== null) {
       this.storeData(auth().currentUser.email + 'notiList', res.data);
       console.log(res.data);
-      var notiList = [];
+      var todayList = [];
+      var weeklyList = [];
+      var monthlyList = [];
+      var earlierList = [];
       res.data.map((item) => {
-        if (notiList.length < 10) {
-          notiList.push(item);
+        const diffTime = Math.abs(new Date() - new Date(item.date));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log(diffDays);
+        if (diffDays <= 1) {
+          todayList.push(item);
+        } else if (diffDays > 1 && diffDays <= 7) {
+          weeklyList.push(item);
+        } else if (diffDays > 7 && diffDays <= 30) {
+          monthlyList.push(item);
+        } else {
+          earlierList.push(item);
         }
       });
       this.setState({
-        notiList: notiList,
-        acnotiList: res.data,
+        today: todayList,
+        weekly: weeklyList,
+        monthly: monthlyList,
+        earlier: earlierList,
         loading: false,
       });
     } else {
@@ -187,34 +206,76 @@ export default class NotiListScreen extends React.Component {
         ) : (
           <>
             {auth().currentUser ? (
-              <View style={styles.list}>
-                <FlatList
-                  ListEmptyComponent={this.renderListEmpty}
-                  style={{width: '100%', paddingTop: 5}}
-                  data={this.state.notiList}
-                  onEndReached={this.handleReachedEnd}
-                  keyExtractor={_renderMyKeyExtractor}
-                  initialNumToRender={10}
-                  onEndReachedThreshold={0.5}
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.handleRefresh}
-                    />
-                  }
-                  renderItem={({item}) => {
-                    return (
-                      <View style={{width: '100%', alignItems: 'center'}}>
-                        <NotiCard
-                          id={item}
-                          navigation={this.props.navigation}
-                          location={this.state.location}
-                        />
-                      </View>
-                    );
-                  }}
-                />
-              </View>
+              <ScrollView style={{width: '100%'}}>
+                <View style={styles.list}>
+                  {this.state.today.length > 0 ? (
+                    <View style={{width: '90%', marginTop: 10}}>
+                      <Text style={styles.header}>Today</Text>
+                      {this.state.today.map((item, index) => {
+                        return (
+                          <NotiCard
+                            key={index}
+                            id={item._id}
+                            navigation={this.props.navigation}
+                            location={this.state.location}
+                          />
+                        );
+                      })}
+                    </View>
+                  ) : null}
+                  {this.state.weekly.length > 0 ? (
+                    <View style={{width: '90%', marginTop: 10}}>
+                      <Text style={styles.header}>This Week</Text>
+                      {this.state.weekly.map((item, index) => {
+                        return (
+                          <NotiCard
+                            key={index}
+                            id={item._id}
+                            navigation={this.props.navigation}
+                            location={this.state.location}
+                          />
+                        );
+                      })}
+                    </View>
+                  ) : null}
+                  {this.state.monthly.length > 0 ? (
+                    <View style={{width: '90%', marginTop: 10}}>
+                      <Text style={styles.header}>This Month</Text>
+                      {this.state.monthly.map((item, index) => {
+                        return (
+                          <NotiCard
+                            key={index}
+                            id={item._id}
+                            navigation={this.props.navigation}
+                            location={this.state.location}
+                          />
+                        );
+                      })}
+                    </View>
+                  ) : null}
+                  {this.state.earlier.length > 0 ? (
+                    <View style={{width: '90%', marginTop: 10}}>
+                      <Text style={styles.header}>Earlier</Text>
+                      {this.state.earlier.map((item, index) => {
+                        return (
+                          <NotiCard
+                            key={index}
+                            id={item._id}
+                            navigation={this.props.navigation}
+                            location={this.state.location}
+                          />
+                        );
+                      })}
+                    </View>
+                  ) : null}
+                </View>
+                {this.state.today.length === 0 &&
+                this.state.weekly.length === 0 &&
+                this.state.monthly.length === 0 &&
+                this.state.earlier.length === 0 ? (
+                  <>{this.renderListEmpty()}</>
+                ) : null}
+              </ScrollView>
             ) : (
               <View style={{width: '100%', alignItems: 'center'}}>
                 <View style={styles.imageBox}>
@@ -247,6 +308,11 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     flex: 1,
+  },
+  header: {
+    color: colors.baseline,
+    fontFamily: 'Muli-Regular',
+    fontSize: 16,
   },
   imageBox: {
     width: 300,

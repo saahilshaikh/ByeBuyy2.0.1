@@ -15,9 +15,12 @@ class AppScreen extends React.Component {
       prefixes: ['https://www.byebuyy.com/', 'byebuyy://'],
     };
     return (
-      <NavigationContainer linking={linking}>
-        <HomeStack />
-      </NavigationContainer>
+      <>
+        <StatusBar backgroundColor="#1B1F22" />
+        <NavigationContainer linking={linking}>
+          <HomeStack />
+        </NavigationContainer>
+      </>
     );
   }
 }

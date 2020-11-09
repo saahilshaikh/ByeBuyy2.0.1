@@ -195,7 +195,7 @@ export default class MiniCard2 extends React.Component {
                           })
                         }
                         style={styles.title}>
-                        I am looking for {this.state.product.description}
+                        {this.state.product.description}
                       </Text>
                     </View>
                   </View>

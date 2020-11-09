@@ -196,7 +196,14 @@ export default class ChatCard extends React.Component {
               </View>
             </View>
             {this.state.unread > 0 ? (
-              <Text style={styles.unread}>{this.state.unread}</Text>
+              <View style={{position: 'relative'}}>
+                <Ionicons
+                  name="chatbox-ellipses-outline"
+                  size={30}
+                  color={colors.grey}
+                />
+                <Text style={styles.unread}>{this.state.unread}</Text>
+              </View>
             ) : (
               <Ionicons
                 name="chatbox-ellipses-outline"
@@ -252,6 +259,9 @@ const styles = StyleSheet.create({
     color: colors.grey,
   },
   unread: {
+    position: 'absolute',
+    right: 0,
+    top: -5,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
     color: colors.white,

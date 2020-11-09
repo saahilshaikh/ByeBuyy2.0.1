@@ -300,7 +300,7 @@ export default class NotiCard extends React.Component {
 
 const styles = StyleSheet.create({
   item: {
-    width: '95%',
+    width: '100%',
     flexDirection: 'row',
     paddingVertical: 10,
     backgroundColor: colors.secondary,

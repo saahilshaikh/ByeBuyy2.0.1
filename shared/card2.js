@@ -89,48 +89,110 @@ export default class Card2 extends React.Component {
       };
       var res = await axios.post(link + '/api/product/single', data);
       if (res.data !== null) {
-        if (res.data.varient) {
-          var data2 = {
-            id: res.data.owner,
-          };
-          var res2 = await axios.post(link + '/api/user/single', data2);
-          var owner = res2.data;
-          owner.id = owner._id;
-          var product = res.data;
-          product.id = product._id;
-          if (this.props.location && this.props.location.lat !== '') {
-            const d = this.handleDistance(
-              product.lat,
-              product.long,
-              this.props.location.lat,
-              this.props.location.long,
-            );
-            product.distance = d;
-          }
-          if (res2.data !== null) {
-            this.storeData(this.props.item._id + 'product', product);
-            this.storeData(this.props.item._id + 'owner', owner);
-            this.setState({
-              product: product,
-              owner: owner,
-              loadingProduct: false,
-              loadingOwner: false,
-              NF: false,
-            });
-          }
+        if (res.data.varient === 'Request') {
           if (auth().currentUser) {
-            var data3 = {
-              id: auth().currentUser.email,
-            };
-            var res3 = await axios.post(link + '/api/user/single', data3);
-            if (res3.data !== null) {
-              var currentUser = res3.data;
-              currentUser.id = currentUser._id;
+            var reportExists = false;
+            res.data.reports.map((r) => {
+              if (r.email === auth().currentUser.email) {
+                reportExists = true;
+              }
+            });
+            if (reportExists === false && res.data.reports.length < 10) {
+              var data2 = {
+                id: res.data.owner,
+              };
+              var res2 = await axios.post(link + '/api/user/single', data2);
+              var owner = res2.data;
+              owner.id = owner._id;
+              var product = res.data;
+              product.id = product._id;
+              if (this.props.location && this.props.location.lat !== '') {
+                const d = this.handleDistance(
+                  product.lat,
+                  product.long,
+                  this.props.location.lat,
+                  this.props.location.long,
+                );
+                product.distance = d;
+              }
+              if (res2.data !== null) {
+                this.storeData(this.props.item._id + 'product', product);
+                this.storeData(this.props.item._id + 'owner', owner);
+                this.setState({
+                  product: product,
+                  owner: owner,
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: false,
+                });
+              }
+              if (auth().currentUser) {
+                var data3 = {
+                  id: auth().currentUser.email,
+                };
+                var res3 = await axios.post(link + '/api/user/single', data3);
+                if (res3.data !== null) {
+                  var currentUser = res3.data;
+                  currentUser.id = currentUser._id;
+                  this.setState({
+                    currentUser: currentUser,
+                    like: product.likes.includes(auth().currentUser.email),
+                    save: product.saves.includes(auth().currentUser.email),
+                  });
+                }
+              }
+            } else {
               this.setState({
-                currentUser: currentUser,
-                like: product.likes.includes(auth().currentUser.email),
-                save: product.saves.includes(auth().currentUser.email),
+                product: [],
+                owner: [],
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: true,
               });
+            }
+          } else {
+            var data2 = {
+              id: res.data.owner,
+            };
+            var res2 = await axios.post(link + '/api/user/single', data2);
+            var owner = res2.data;
+            owner.id = owner._id;
+            var product = res.data;
+            product.id = product._id;
+            if (this.props.location && this.props.location.lat !== '') {
+              const d = this.handleDistance(
+                product.lat,
+                product.long,
+                this.props.location.lat,
+                this.props.location.long,
+              );
+              product.distance = d;
+            }
+            if (res2.data !== null) {
+              this.storeData(this.props.item._id + 'product', product);
+              this.storeData(this.props.item._id + 'owner', owner);
+              this.setState({
+                product: product,
+                owner: owner,
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: false,
+              });
+            }
+            if (auth().currentUser) {
+              var data3 = {
+                id: auth().currentUser.email,
+              };
+              var res3 = await axios.post(link + '/api/user/single', data3);
+              if (res3.data !== null) {
+                var currentUser = res3.data;
+                currentUser.id = currentUser._id;
+                this.setState({
+                  currentUser: currentUser,
+                  like: product.likes.includes(auth().currentUser.email),
+                  save: product.saves.includes(auth().currentUser.email),
+                });
+              }
             }
           }
         } else {
@@ -206,9 +268,11 @@ export default class Card2 extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
-          if (this.state.like) {
+          if (
+            this.state.like &&
+            auth().currentUser.email !== this.state.owner.email
+          ) {
             this.sendLikeActivity();
-            this.sendLikedPushNotification('Request', this.state.product.id);
           }
         }
       }
@@ -225,9 +289,13 @@ export default class Card2 extends React.Component {
       email1: this.state.owner.email,
       email2: this.state.currentUser.email,
     };
-    var res = await axios.post(link + '/api/notifications/add', data);
-    if (res.data !== null) {
-      console.log(res.data);
+    var res = await axios.post(link + '/api/notifications/check', data);
+    if (res.data.length === 0) {
+      this.sendLikedPushNotification('Request', this.state.product.id);
+      var res2 = await axios.post(link + '/api/notifications/add', data);
+      if (res2.data !== null) {
+        console.log(res.data);
+      }
     }
   };
 
@@ -587,7 +655,7 @@ export default class Card2 extends React.Component {
                         ) : null}
                       </View>
                       <Text style={styles.title}>
-                        I am looking for {this.state.product.description}
+                        {this.state.product.description}
                       </Text>
                     </View>
                     <View style={styles.bottom}>

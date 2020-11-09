@@ -83,47 +83,109 @@ export default class HomeCard2 extends React.Component {
   }
 
   handleInit = async () => {
-    var data2 = {
-      id: this.props.item.owner,
-    };
-    var res2 = await axios.post(link + '/api/user/single', data2);
-    var owner = res2.data;
-    owner.id = owner._id;
-    var product = this.props.item;
-    product.id = product._id;
-    if (this.props.location && this.props.location.lat !== '') {
-      const d = this.handleDistance(
-        product.lat,
-        product.long,
-        this.props.location.lat,
-        this.props.location.long,
-      );
-      product.distance = d;
-    }
-    if (res2.data !== null) {
-      this.storeData(this.props.item._id + 'product', product);
-      this.storeData(this.props.item._id + 'owner', owner);
-      this.setState({
-        product: product,
-        owner: owner,
-        loadingProduct: false,
-        loadingOwner: false,
-        NF: false,
-      });
-    }
     if (auth().currentUser) {
-      var data3 = {
-        id: auth().currentUser.email,
-      };
-      var res3 = await axios.post(link + '/api/user/single', data3);
-      if (res3.data !== null) {
-        var currentUser = res3.data;
-        currentUser.id = currentUser._id;
+      var reportExists = false;
+      this.props.item.reports.map((r) => {
+        if (r.email === auth().currentUser.email) {
+          reportExists = true;
+        }
+      });
+      if (reportExists === false && this.props.item.reports.length < 10) {
+        var data2 = {
+          id: this.props.item.owner,
+        };
+        var res2 = await axios.post(link + '/api/user/single', data2);
+        var owner = res2.data;
+        owner.id = owner._id;
+        var product = this.props.item;
+        product.id = product._id;
+        if (this.props.location && this.props.location.lat !== '') {
+          const d = this.handleDistance(
+            product.lat,
+            product.long,
+            this.props.location.lat,
+            this.props.location.long,
+          );
+          product.distance = d;
+        }
+        if (res2.data !== null) {
+          this.storeData(this.props.item._id + 'product', product);
+          this.storeData(this.props.item._id + 'owner', owner);
+          this.setState({
+            product: product,
+            owner: owner,
+            loadingProduct: false,
+            loadingOwner: false,
+            NF: false,
+          });
+        }
+        if (auth().currentUser) {
+          var data3 = {
+            id: auth().currentUser.email,
+          };
+          var res3 = await axios.post(link + '/api/user/single', data3);
+          if (res3.data !== null) {
+            var currentUser = res3.data;
+            currentUser.id = currentUser._id;
+            this.setState({
+              currentUser: currentUser,
+              like: product.likes.includes(auth().currentUser.email),
+              save: product.saves.includes(auth().currentUser.email),
+            });
+          }
+        }
+      } else {
         this.setState({
-          currentUser: currentUser,
-          like: product.likes.includes(auth().currentUser.email),
-          save: product.saves.includes(auth().currentUser.email),
+          product: [],
+          owner: [],
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: true,
         });
+      }
+    } else {
+      var data2 = {
+        id: this.props.item.owner,
+      };
+      var res2 = await axios.post(link + '/api/user/single', data2);
+      var owner = res2.data;
+      owner.id = owner._id;
+      var product = this.props.item;
+      product.id = product._id;
+      if (this.props.location && this.props.location.lat !== '') {
+        const d = this.handleDistance(
+          product.lat,
+          product.long,
+          this.props.location.lat,
+          this.props.location.long,
+        );
+        product.distance = d;
+      }
+      if (res2.data !== null) {
+        this.storeData(this.props.item._id + 'product', product);
+        this.storeData(this.props.item._id + 'owner', owner);
+        this.setState({
+          product: product,
+          owner: owner,
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: false,
+        });
+      }
+      if (auth().currentUser) {
+        var data3 = {
+          id: auth().currentUser.email,
+        };
+        var res3 = await axios.post(link + '/api/user/single', data3);
+        if (res3.data !== null) {
+          var currentUser = res3.data;
+          currentUser.id = currentUser._id;
+          this.setState({
+            currentUser: currentUser,
+            like: product.likes.includes(auth().currentUser.email),
+            save: product.saves.includes(auth().currentUser.email),
+          });
+        }
       }
     }
   };
@@ -172,9 +234,11 @@ export default class HomeCard2 extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
-          if (this.state.like) {
+          if (
+            this.state.like &&
+            auth().currentUser.email !== this.state.owner.email
+          ) {
             this.sendLikeActivity();
-            this.sendLikedPushNotification('Request', this.state.product.id);
           }
         }
       }
@@ -191,9 +255,13 @@ export default class HomeCard2 extends React.Component {
       email1: this.state.owner.email,
       email2: this.state.currentUser.email,
     };
-    var res = await axios.post(link + '/api/notifications/add', data);
-    if (res.data !== null) {
-      console.log(res.data);
+    var res = await axios.post(link + '/api/notifications/check', data);
+    if (res.data.length === 0) {
+      this.sendLikedPushNotification('Request', this.state.product.id);
+      var res2 = await axios.post(link + '/api/notifications/add', data);
+      if (res2.data !== null) {
+        console.log(res.data);
+      }
     }
   };
 
@@ -296,7 +364,7 @@ export default class HomeCard2 extends React.Component {
     console.log('174', re);
   };
 
-  handleReport = (e) => {
+  handleReport = async (e) => {
     console.log(e);
     this.setState({
       reportForm: false,
@@ -305,54 +373,17 @@ export default class HomeCard2 extends React.Component {
     setTimeout(() => {
       this.setState({
         reportSuccess: false,
+        NF: true,
       });
     }, 1500);
-    if (!this.state.currentUser.reports.includes(this.state.product.id)) {
-      firestore()
-        .collection('testusers')
-        .doc(this.state.currentUser.id)
-        .get()
-        .then((user) => {
-          var reports = user.data().reports;
-          var report = {
-            category: e,
-            id: this.state.product.id,
-            date: new Date(),
-          };
-          reports.push(report);
-          firestore()
-            .collection('testusers')
-            .doc(this.state.currentUser.id)
-            .update({
-              reports: reports,
-            })
-            .then(() => {
-              firestore()
-                .collection('testproducts')
-                .doc(this.state.product.id)
-                .get()
-                .then((product) => {
-                  var reports = product.data().reports;
-                  var report = {
-                    category: e,
-                    email: this.state.currentUser.email,
-                    date: new Date(),
-                  };
-                  reports.push(report);
-                  firestore()
-                    .collection('testproducts')
-                    .doc(this.state.product.id)
-                    .update({
-                      reports: reports,
-                    });
-                });
-            });
-        });
-    } else {
-      Snackbar.show({
-        text: 'Already reported',
-        duration: Snackbar.LENGTH_SHORT,
-      });
+    var data = {
+      id: this.state.product.id,
+      email: auth().currentUser.email,
+      report: e,
+    };
+    var res = await axios.post(link + '/api/product/report', data);
+    if (res.data !== null) {
+      console.log(res.data);
     }
   };
 
@@ -553,7 +584,7 @@ export default class HomeCard2 extends React.Component {
                         ) : null}
                       </View>
                       <Text style={styles.title}>
-                        I am looking for {this.state.product.description}
+                        {this.state.product.description}
                       </Text>
                     </View>
                     <View style={styles.bottom}>
@@ -776,7 +807,10 @@ export default class HomeCard2 extends React.Component {
                       paddingVertical: 15,
                       justifyContent: 'center',
                       borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
+                      borderBottomWidth:
+                        auth().currentUser.email === this.state.product.owner
+                          ? StyleSheet.hairlineWidth
+                          : 0,
                     }}>
                     <Fontisto
                       name="bookmark-alt"
@@ -804,7 +838,7 @@ export default class HomeCard2 extends React.Component {
                           this.setState({
                             isModalVisible: false,
                           });
-                          this.props.navigation.navigate('EditRequest', {
+                          this.props.navigation.navigate('EditItem', {
                             id: this.state.product.id,
                           });
                         }}
