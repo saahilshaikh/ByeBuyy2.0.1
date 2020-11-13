@@ -27,16 +27,16 @@ import auth from '@react-native-firebase/auth';
 import NoInternetScreen from './noInternetScreen';
 import messaging from '@react-native-firebase/messaging';
 import CustomDrawer from '../shared/customDrawer';
-import {CommonActions} from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-community/google-signin';
+import { CommonActions } from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-community/google-signin';
 import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 import Geocoder from 'react-native-geocoding';
-import {fcmService} from '../shared/FCMService';
-import {localNotificationService} from '../shared/LocalNotificationService';
+import { fcmService } from '../shared/FCMService';
+import { localNotificationService } from '../shared/LocalNotificationService';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 Geocoder.init('AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ');
 
@@ -165,7 +165,7 @@ export default class HomeScreen extends React.Component {
         location: location,
       });
     } else if (e.data.type === 'Chat') {
-      this.props.navigation.navigate('Chat', {id: e.id, location: location});
+      this.props.navigation.navigate('Chat', { id: e.id, location: location });
     } else if (e.data.type === 'Follow') {
       this.props.navigation.navigate('viewProfile', {
         id: e.data.id,
@@ -186,7 +186,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Deal') {
-      this.props.navigation.push('Deal', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Deal', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -196,7 +196,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Refer') {
-      this.props.navigation.push('Refer', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Refer', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -206,7 +206,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'About') {
-      this.props.navigation.push('About', {handleBack: this.handleBackHome});
+      this.props.navigation.push('About', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -216,7 +216,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Privacy') {
-      this.props.navigation.push('Privacy', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Privacy', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -226,7 +226,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Terms') {
-      this.props.navigation.push('Terms', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Terms', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -268,27 +268,9 @@ export default class HomeScreen extends React.Component {
       this.props.navigation.dispatch(
         CommonActions.reset({
           index: 1,
-          routes: [{name: 'Main'}],
+          routes: [{ name: 'Main' }],
         }),
       );
-      // firestore()
-      //     .collection('testusers')
-      //     .where('email', '==', email)
-      //     .get()
-      //     .then((snap) => {
-      //         snap.forEach((doc) => {
-      //             firestore()
-      //                 .collection('testusers')
-      //                 .doc(doc.id)
-      //                 .update({
-      //                     logout: true,
-      //                     active: false
-      //                 })
-      //                 .then(() => {
-      //                     console.log('Status Deactive');
-      //                 });
-      //         });
-      //     });
     }
   };
 
@@ -442,6 +424,15 @@ export default class HomeScreen extends React.Component {
           },
           async (error) => {
             console.log('Error in Location Access Settings');
+            this.setState(
+              {
+                location: {},
+                locationLoading: false,
+              },
+              () => {
+                console.log(this.state.location);
+              },
+            );
           },
           {
             enableHighAccuracy: true,
@@ -450,15 +441,35 @@ export default class HomeScreen extends React.Component {
           },
         );
       }
+      else {
+        this.setState(
+          {
+            location: {},
+            locationLoading: false,
+          },
+          () => {
+            console.log(this.state.location);
+          },
+        );
+      }
     } else {
       console.log('Error in Location Access');
+      this.setState(
+        {
+          location: {},
+          locationLoading: false,
+        },
+        () => {
+          console.log(this.state.location);
+        },
+      );
     }
   };
 
   handleSearch = () => {
     var location = this.state.location;
     console.log('Handling Search');
-    this.props.navigation.navigate('Search', {location: location});
+    this.props.navigation.navigate('Search', { location: location });
   };
 
   handleDrawrOpen = () => {
@@ -484,222 +495,222 @@ export default class HomeScreen extends React.Component {
             handleDeniedLocationPermission={this.handleDeniedLocationPermission}
           />
         ) : (
-          <>
-            {this.state.showNoInternet ? (
-              <NoInternetScreen handleReCheck={this.handlePermissionAndroid} />
-            ) : (
-              <>
-                {this.state.locationLoading ? (
-                  <LocationLoadingScreen />
-                ) : (
-                  <SafeAreaView style={styles.container}>
-                    <View
-                      style={{
-                        backgroundColor: '#1B1F22',
-                        paddingHorizontal: 15,
-                        paddingVertical: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <View style={{width: 30, height: 30}}>
-                          <Image
-                            style={styles.logo}
-                            source={require('../assets/images/icon.png')}
-                          />
-                        </View>
-                        <Text style={styles.header}>
-                          bye<Text style={styles.header2}>buyy</Text>
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <TouchableOpacity
-                          onPress={this.handleSearch}
-                          style={styles.headerIcon}>
-                          <Ionicons
-                            name="ios-search"
-                            size={20}
-                            color={colors.white}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.headerIcon}
-                          onPress={this.handleToggle}>
-                          <Ionicons
-                            name="ios-ellipsis-horizontal"
-                            size={20}
-                            color={colors.white}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <View style={styles.tabbar}>
-                      {this.state.tab === 'Posts' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/home.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Posts'})}
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/home.png')}
-                            style={styles.tabImage}
-                          />
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Chat' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/chat.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.setState({tab: 'Chat', tab2Count: 0})
-                          }
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/chat.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab2Count > 0 ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab2Count}
+            <>
+              {this.state.showNoInternet ? (
+                <NoInternetScreen handleReCheck={this.handlePermissionAndroid} />
+              ) : (
+                  <>
+                    {this.state.locationLoading ? (
+                      <LocationLoadingScreen />
+                    ) : (
+                        <SafeAreaView style={styles.container}>
+                          <View
+                            style={{
+                              backgroundColor: '#1B1F22',
+                              paddingHorizontal: 15,
+                              paddingVertical: 10,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <View style={{ width: 30, height: 30 }}>
+                                <Image
+                                  style={styles.logo}
+                                  source={require('../assets/images/icon.png')}
+                                />
+                              </View>
+                              <Text style={styles.header}>
+                                bye<Text style={styles.header2}>buyy</Text>
                               </Text>
                             </View>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <TouchableOpacity
+                                onPress={this.handleSearch}
+                                style={styles.headerIcon}>
+                                <Ionicons
+                                  name="ios-search"
+                                  size={20}
+                                  color={colors.white}
+                                />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={styles.headerIcon}
+                                onPress={this.handleToggle}>
+                                <Ionicons
+                                  name="ios-ellipsis-horizontal"
+                                  size={20}
+                                  color={colors.white}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                          <View style={styles.tabbar}>
+                            {this.state.tab === 'Posts' ? (
+                              <View style={styles.activeTab}>
+                                <Image
+                                  source={require('../assets/images/home.png')}
+                                  style={styles.tabImage}
+                                />
+                              </View>
+                            ) : (
+                                <TouchableOpacity
+                                  onPress={() => this.setState({ tab: 'Posts' })}
+                                  style={styles.tab}>
+                                  <Image
+                                    source={require('../assets/images/home.png')}
+                                    style={styles.tabImage}
+                                  />
+                                </TouchableOpacity>
+                              )}
+                            {this.state.tab === 'Chat' ? (
+                              <View style={styles.activeTab}>
+                                <Image
+                                  source={require('../assets/images/chat.png')}
+                                  style={styles.tabImage}
+                                />
+                              </View>
+                            ) : (
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.setState({ tab: 'Chat', tab2Count: 0 })
+                                  }
+                                  style={styles.tab}>
+                                  <Image
+                                    source={require('../assets/images/chat.png')}
+                                    style={styles.tabImage}
+                                  />
+                                  {this.state.tab2Count > 0 ? (
+                                    <View style={styles.tabCount}>
+                                      <Text style={styles.tabCountText}>
+                                        {this.state.tab2Count}
+                                      </Text>
+                                    </View>
+                                  ) : null}
+                                </TouchableOpacity>
+                              )}
+                            {this.state.tab === 'Activity' ? (
+                              <View style={styles.activeTab}>
+                                <Image
+                                  source={require('../assets/images/notification.png')}
+                                  style={styles.tabImage}
+                                />
+                              </View>
+                            ) : (
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.setState({ tab: 'Activity', tab3Count: 0 })
+                                  }
+                                  style={styles.tab}>
+                                  <Image
+                                    source={require('../assets/images/notification.png')}
+                                    style={styles.tabImage}
+                                  />
+                                  {this.state.tab3Count ? (
+                                    <View style={styles.tabCount}>
+                                      <Text style={styles.tabCountText}>
+                                        {this.state.tab3Count}
+                                      </Text>
+                                    </View>
+                                  ) : null}
+                                </TouchableOpacity>
+                              )}
+                            {this.state.tab === 'Profile' ? (
+                              <View style={styles.activeTab}>
+                                <Image
+                                  source={require('../assets/images/user.png')}
+                                  style={styles.tabImage}
+                                />
+                              </View>
+                            ) : (
+                                <TouchableOpacity
+                                  onPress={() => this.setState({ tab: 'Profile' })}
+                                  style={styles.tab}>
+                                  <Image
+                                    source={require('../assets/images/user.png')}
+                                    style={styles.tabImage}
+                                  />
+                                </TouchableOpacity>
+                              )}
+                          </View>
+                          {this.state.tab === 'Posts' ? (
+                            <ProductListScreen
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
                           ) : null}
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Activity' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/notification.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.setState({tab: 'Activity', tab3Count: 0})
-                          }
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/notification.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab3Count ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab3Count}
-                              </Text>
+                          {this.state.tab === 'Chat' ? (
+                            <ChatListScreen
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
+                          ) : null}
+                          {this.state.tab === 'Activity' ? (
+                            <NotiListScreen
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
+                          ) : null}
+                          {this.state.tab === 'Profile' ? (
+                            <ProfileScreen
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
+                          ) : null}
+                          {this.state.showDrawer ? (
+                            <View
+                              style={{
+                                width: width,
+                                height: '100%',
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: 'rgba(110,110,110,0.1)',
+                              }}>
+                              <TouchableOpacity
+                                onPress={this.handleToggleClose}
+                                style={{
+                                  width: width - 200,
+                                  height: '100%',
+                                }}></TouchableOpacity>
+                              <Animated.View
+                                style={{
+                                  width: 200,
+                                  alignItems: 'center',
+                                  height: '100%',
+                                  top: 0,
+                                  right: this.state.toggleValue,
+                                  position: 'absolute',
+                                  backgroundColor: colors.primary,
+                                  elevation: 10,
+                                  borderBottomLeftRadius: 10,
+                                  borderTopLeftRadius: 10,
+                                }}>
+                                <CustomDrawer
+                                  handleMenu={(e) => this.handleMenu(e)}
+                                  active={this.state.activeMenu}
+                                />
+                              </Animated.View>
                             </View>
                           ) : null}
-                        </TouchableOpacity>
+                        </SafeAreaView>
                       )}
-                      {this.state.tab === 'Profile' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/user.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Profile'})}
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/user.png')}
-                            style={styles.tabImage}
-                          />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                    {this.state.tab === 'Posts' ? (
-                      <ProductListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Chat' ? (
-                      <ChatListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Activity' ? (
-                      <NotiListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Profile' ? (
-                      <ProfileScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                    {this.state.showDrawer ? (
-                      <View
-                        style={{
-                          width: width,
-                          height: '100%',
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          backgroundColor: 'rgba(110,110,110,0.1)',
-                        }}>
-                        <TouchableOpacity
-                          onPress={this.handleToggleClose}
-                          style={{
-                            width: width - 200,
-                            height: '100%',
-                          }}></TouchableOpacity>
-                        <Animated.View
-                          style={{
-                            width: 200,
-                            alignItems: 'center',
-                            height: '100%',
-                            top: 0,
-                            right: this.state.toggleValue,
-                            position: 'absolute',
-                            backgroundColor: colors.primary,
-                            elevation: 10,
-                            borderBottomLeftRadius: 10,
-                            borderTopLeftRadius: 10,
-                          }}>
-                          <CustomDrawer
-                            handleMenu={(e) => this.handleMenu(e)}
-                            active={this.state.activeMenu}
-                          />
-                        </Animated.View>
-                      </View>
-                    ) : null}
-                  </SafeAreaView>
+                  </>
                 )}
-              </>
-            )}
-          </>
-        )}
+            </>
+          )}
         <SafeAreaView></SafeAreaView>
       </>
     );
