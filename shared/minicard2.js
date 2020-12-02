@@ -38,17 +38,29 @@ export default class MiniCard2 extends React.Component {
     const cardValue = await AsyncStorage.getItem(this.props.id + 'product');
     const cardValue2 = await AsyncStorage.getItem(this.props.id + 'owner');
     if (cardValue !== null && cardValue2 !== null) {
-      console.log('mini card2 local found');
-      this.setState({
-        product: JSON.parse(cardValue),
-        owner: JSON.parse(cardValue2),
-        loadingProduct: false,
-        loadingOwner: false,
-        NF: false,
-      });
+      // console.log('mini card2 local found');
+      var data1 = JSON.parse(cardValue);
+      var data2 = JSON.parse(cardValue2);
+      if (data1.varient && data2.name) {
+        this.setState({
+          product: data1,
+          owner: data2,
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: false,
+        });
+      } else {
+        this.setState({
+          product: [],
+          owner: [],
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: true,
+        });
+      }
       this.handleInit();
     } else {
-      console.log('mini card2 local not found');
+      // console.log('mini card2 local not found');
       this.handleInit();
     }
   }
@@ -72,7 +84,7 @@ export default class MiniCard2 extends React.Component {
     owner.id = owner._id;
     var product = res.data;
     product.id = product._id;
-    if ((res.data !== null) & (res2.data !== null)) {
+    if (res.data !== null && res2.data !== null) {
       if (res.data.varient) {
         this.storeData(this.props.id + 'product', product);
         this.storeData(this.props.id + 'owner', owner);
@@ -84,20 +96,25 @@ export default class MiniCard2 extends React.Component {
           NF: false,
         });
       } else {
+        console.log('Yup');
+        this.storeData(this.props.id + 'product', {});
+        this.storeData(this.props.id + 'owner', {});
         this.setState({
-          product: [],
-          owner: [],
-          loadingOwner: true,
-          loadingProduct: true,
+          product: {},
+          owner: {},
+          loadingOwner: false,
+          loadingProduct: false,
           NF: true,
         });
       }
     } else {
+      this.storeData(this.props.id + 'product', {});
+      this.storeData(this.props.id + 'owner', {});
       this.setState({
         product: [],
         owner: [],
-        loadingOwner: true,
-        loadingProduct: true,
+        loadingOwner: false,
+        loadingProduct: false,
         NF: true,
       });
     }
@@ -200,7 +217,18 @@ export default class MiniCard2 extends React.Component {
                     </View>
                   </View>
                 </View>
-              ) : null}
+              ) : (
+                <View style={styles.item}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: '#fff',
+                      fontFamily: 'Muli-Bold',
+                    }}>
+                    Post no longer exist
+                  </Text>
+                </View>
+              )}
             </>
           ) : (
             <View

@@ -17,156 +17,182 @@ import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
 import auth from '@react-native-firebase/auth';
 import axios from 'axios';
-import link from "../fetchPath";
+import link from '../fetchPath';
+import Snackbar from 'react-native-snackbar';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class LocationSelectorScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      lat:"",
-      long:"",
-      city:"",
-      country:"",
+      lat: '',
+      long: '',
+      city: '',
+      country: '',
       showResult: false,
       loading: false,
-      place: "",
+      place: '',
       result: [],
-      recentLocations:[],
-      home:{}
+      recentLocations: [],
+      home: {},
     };
   }
 
-  async componentDidMount(){
-    if(auth().currentUser)
-    {
-        var data={
-            id:auth().currentUser.email
-        }
-        var res=await axios.post(link+'/api/user/single',data);
-        if(res.data!==null)
-        {
-            this.setState({
-                home:res.data.home?res.data.home:{}
-            })
-        }
+  async componentDidMount() {
+    if (auth().currentUser) {
+      var data = {
+        id: auth().currentUser.email,
+      };
+      var res = await axios.post(link + '/api/user/single', data);
+      if (res.data !== null) {
+        this.setState({
+          home: res.data.home ? res.data.home : {},
+        });
+      }
     }
     this.handlePosition();
     const locationsValue = await AsyncStorage.getItem('bblocations');
-    if(locationsValue!==null)
-    {
+    if (locationsValue !== null) {
       console.log('Local Locations Found');
       this.setState({
-        recentLocations:JSON.parse(locationsValue)
-      })
+        recentLocations: JSON.parse(locationsValue),
+      });
     }
   }
 
   storeData = async (label, value) => {
     try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem(label, jsonValue)
+      const jsonValue = JSON.stringify(value);
+      await AsyncStorage.setItem(label, jsonValue);
     } catch (e) {
       // saving error
       console.log('Error Storing File', label, e);
     }
-  }
+  };
 
   handleAutoComplete = async (e) => {
-    this.setState({
-      place: e
-    }, () => {
-      if (this.state.place.length > 2) {
-        this.setState({
-          loading: true
-        })
-        fetch(
-          'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' + this.state.place + '&types=(cities)&key=AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ',
-        )
-          .then((response) => response.json())
-          .then(async (json) => {
-            var result = [];
-            json.predictions.map(item => {
-              result.push(item.description);
-            })
-            this.setState({
-              loading: false,
-              result: result
-            })
-          })
-      }
-      else {
-        this.setState({
-          result: []
-        })
-      }
-    })
-  }
+    this.setState(
+      {
+        place: e,
+      },
+      () => {
+        if (this.state.place.length > 2) {
+          this.setState({
+            loading: true,
+          });
+          fetch(
+            'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' +
+              this.state.place +
+              '&types=(cities)&key=AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ',
+          )
+            .then((response) => response.json())
+            .then(async (json) => {
+              var result = [];
+              json.predictions.map((item) => {
+                result.push(item.description);
+              });
+              this.setState({
+                loading: false,
+                result: result,
+              });
+            });
+        } else {
+          this.setState({
+            result: [],
+          });
+        }
+      },
+    );
+  };
 
   handleLocation = (e) => {
-    if(e!=="" && !this.state.recentLocations.includes(e))
-    {
-      var recents=this.state.recentLocations;
+    if (e !== '' && !this.state.recentLocations.includes(e)) {
+      var recents = this.state.recentLocations;
       recents.push(e);
-      this.storeData('bblocations',recents);
+      this.storeData('bblocations', recents);
     }
     var city = e.split(',')[0].replace(/\s/g, '');
     var country = e.split(',')[e.split(',').length - 1].replace(/\s/g, '');
-    this.props.route.params.handleLocation(city, country,this.props.route.params.location.lat,this.props.route.params.location.long);
+    this.props.route.params.handleLocation(
+      city,
+      country,
+      this.props.route.params.location.lat,
+      this.props.route.params.location.long,
+      'other',
+    );
     this.props.navigation.pop();
-  }
+  };
 
-  handleSetHome=async()=>{
-    var home={
-        lat:this.state.lat,
-        long:this.state.long,
-        city:this.state.city,
-        country:this.state.country
-        };
-    var data={
-        email:auth().currentUser.email,
-        home:home
+  handleSetHome = async () => {
+    var home = {
+      lat: this.state.lat,
+      long: this.state.long,
+      city: this.state.city,
+      country: this.state.country,
     };
-    var res=await axios.post(link+'/api/user/setHome',data);
-    if(res.data!==null)
-    {
-        if(res.data.type==='success')
-        {
-            this.setState({
-                home:home
-            })
-        }
-    }
-  }
-
-  handleRemoveHome=async()=>{
-    var home={};
-    var data={
-        email:auth().currentUser.email,
-        home:home
+    var data = {
+      email: auth().currentUser.email,
+      home: home,
     };
-    var res=await axios.post(link+'/api/user/setHome',data);
-    if(res.data!==null)
-    {
-        if(res.data.type==='success')
-        {
-            this.setState({
-                home:home
-            })
-        }
+    var res = await axios.post(link + '/api/user/setHome', data);
+    if (res.data !== null) {
+      if (res.data.type === 'success') {
+        this.setState({
+          home: home,
+        });
+      }
     }
-  }
+  };
 
-  handleHome=()=>{
-    this.props.route.params.handleLocation(this.state.home.city, this.state.home.country,this.state.home.lat,this.state.home.long);
-    this.props.navigation.pop();
-  }
+  handleRemoveHome = async () => {
+    var home = {};
+    var data = {
+      email: auth().currentUser.email,
+      home: home,
+    };
+    var res = await axios.post(link + '/api/user/setHome', data);
+    if (res.data !== null) {
+      if (res.data.type === 'success') {
+        this.setState({
+          home: home,
+        });
+      }
+    }
+  };
 
-  handleCurrentLocation=()=>{
-    this.props.route.params.handleLocation(this.state.city, this.state.country,this.state.lat,this.state.long);
+  handleHome = () => {
+    this.props.route.params.handleLocation(
+      this.state.home.city,
+      this.state.home.country,
+      this.state.home.lat,
+      this.state.home.long,
+      'home',
+    );
     this.props.navigation.pop();
-  }
+  };
+
+  handleCurrentLocation = () => {
+    this.props.route.params.handleLocation(
+      this.state.city,
+      this.state.country,
+      this.state.lat,
+      this.state.long,
+      'current',
+    );
+    this.props.navigation.pop();
+  };
+
+  handleAllLocations = () => {
+    this.props.route.params.handleLocation(
+      '',
+      '',
+      this.props.route.params.location.lat,
+      this.props.route.params.location.long,
+      'world',
+    );
+    this.props.navigation.pop();
+  };
 
   handlePosition = () => {
     Geolocation.getCurrentPosition(
@@ -194,7 +220,8 @@ export default class LocationSelectorScreen extends React.Component {
   handleGeoCoder = async (position) => {
     await Geocoder.from(position.coords.latitude, position.coords.longitude)
       .then((json) => {
-        var country = '',city = '';
+        var country = '',
+          city = '';
         json.results[0].address_components.map((item) => {
           if (item.types.includes('administrative_area_level_2')) {
             city = item.long_name;
@@ -202,10 +229,10 @@ export default class LocationSelectorScreen extends React.Component {
             country = item.long_name;
           }
         });
-          this.setState({
-            city: city,
-            country: country,
-          });
+        this.setState({
+          city: city,
+          country: country,
+        });
       })
       .catch((error) => console.warn(error));
   };
@@ -231,24 +258,22 @@ export default class LocationSelectorScreen extends React.Component {
                   justifyContent: 'center',
                   borderRadius: 10,
                 }}>
-                {
-                  this.state.loading
-                    ?
-                    <ActivityIndicator size="small" color={colors.baseline} />
-                    :
-                    <Ionicons
-                      name="ios-location-outline"
-                      size={26}
-                      color={colors.grey}
-                    />
-                }
+                {this.state.loading ? (
+                  <ActivityIndicator size="small" color={colors.baseline} />
+                ) : (
+                  <Ionicons
+                    name="ios-location-outline"
+                    size={26}
+                    color={colors.grey}
+                  />
+                )}
               </View>
               <TextInput
                 style={styles.input}
                 value={this.state.place}
                 placeholder="Enter a city name"
                 placeholderTextColor={colors.grey}
-                onChangeText={e => this.handleAutoComplete(e)}
+                onChangeText={(e) => this.handleAutoComplete(e)}
               />
               <TouchableOpacity
                 onPress={() => this.props.navigation.pop()}
@@ -263,35 +288,33 @@ export default class LocationSelectorScreen extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
-          <ScrollView style={{ width: '100%', flex: 1 }} keyboardShouldPersistTaps="handled" >
+          <ScrollView
+            style={{width: '100%', flex: 1}}
+            keyboardShouldPersistTaps="handled">
             <View style={styles.box}>
-              {
-                this.state.result.map(item => {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => this.handleLocation(item)}
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginVertical: 10,
-                      }}>
-                      <Text style={styles.topic}>{item}</Text>
-                      <Ionicons
-                        style={{ marginLeft: 5 }}
-                        name="ios-location-outline"
-                        size={20}
-                        color={colors.baseline}
-                      />
-                    </TouchableOpacity>
-                  )
-                })
-              }
-              {
-                this.state.result.length == 0
-                  ?
-                  <>
+              {this.state.result.map((item) => {
+                return (
                   <TouchableOpacity
-                    onPress={() => this.handleLocation("")}
+                    onPress={() => this.handleLocation(item)}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 10,
+                    }}>
+                    <Text style={styles.topic}>{item}</Text>
+                    <Ionicons
+                      style={{marginLeft: 5}}
+                      name="ios-location-outline"
+                      size={20}
+                      color={colors.baseline}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+              {this.state.result.length == 0 ? (
+                <>
+                  <TouchableOpacity
+                    onPress={this.handleAllLocations}
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
@@ -299,127 +322,156 @@ export default class LocationSelectorScreen extends React.Component {
                     }}>
                     <Text style={styles.topic}>All locations</Text>
                     <Ionicons
-                      style={{ marginLeft: 5 }}
+                      style={{marginLeft: 5}}
                       name="ios-location-outline"
                       size={20}
                       color={colors.baseline}
                     />
                   </TouchableOpacity>
-                  {
-                    auth().currentUser
-                    ?
+                  {auth().currentUser && this.state.lat ? (
                     <>
-                    {
-                    this.state.home.lat
-                    ?
-                    <TouchableOpacity
-                      onPress={this.handleHome}
-                      style={{
-                        marginVertical:5,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent:'space-between',
-                        width:'100%'
-                      }}>
-                      <View>
-                        <View style={{
+                      {this.state.home.lat ? (
+                        <TouchableOpacity
+                          onPress={this.handleHome}
+                          style={{
+                            marginVertical: 5,
                             flexDirection: 'row',
                             alignItems: 'center',
-                        }}>
+                            justifyContent: 'space-between',
+                            width: '100%',
+                          }}>
+                          <View>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Text style={styles.topic}>Home</Text>
+                              <Ionicons
+                                style={{marginLeft: 5}}
+                                name="ios-location-outline"
+                                size={20}
+                                color={colors.baseline}
+                              />
+                            </View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Regular',
+                                color: '#acadaa',
+                                marginLeft: 10,
+                              }}>
+                              {this.state.home.city}, {this.state.home.country}
+                            </Text>
+                          </View>
+                          <TouchableOpacity
+                            onPress={this.handleRemoveHome}
+                            style={{
+                              width: 40,
+                              height: 40,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: '#acadaa',
+                              borderRadius: 3,
+                            }}>
+                            <Ionicons
+                              name="ios-trash"
+                              size={25}
+                              color={colors.baseline}
+                            />
+                          </TouchableOpacity>
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={this.handleSetHome}
+                          style={{
+                            marginVertical: 5,
+                          }}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}>
                             <Text style={styles.topic}>Home</Text>
                             <Ionicons
-                            style={{ marginLeft: 5 }}
-                            name="ios-location-outline"
-                            size={20}
-                            color={colors.baseline}
+                              style={{marginLeft: 5}}
+                              name="ios-location-outline"
+                              size={20}
+                              color={colors.baseline}
                             />
-                        </View>
-                        <Text style={{fontSize:14,fontFamily:'Muli-Regular',color:"#acadaa",marginLeft:10}}>{this.state.home.city}, {this.state.home.country}</Text>
-                      </View>
-                      <TouchableOpacity onPress={this.handleRemoveHome} style={{width:40,height:40,alignItems:'center',justifyContent:'center',backgroundColor:'#acadaa',borderRadius:3}}>
-                        <Ionicons
-                            name="ios-trash"
-                            size={25}
-                            color={colors.baseline}
-                            />
-                      </TouchableOpacity>
-                    </TouchableOpacity>
-                    :
-                    <TouchableOpacity
-                      onPress={this.handleSetHome}
-                      style={{
-                        marginVertical:5,
-                      }}>
-                        <View style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}>
-                            <Text style={styles.topic}>Home</Text>
-                            <Ionicons
-                            style={{ marginLeft: 5 }}
-                            name="ios-location-outline"
-                            size={20}
-                            color={colors.baseline}
-                            />
-                        </View>
-                        <Text style={{fontSize:14,fontFamily:'Muli-Regular',color:"#acadaa",marginLeft:10}}>Home not set, set current location as home</Text>
-                    </TouchableOpacity>
-                    }
+                          </View>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Regular',
+                              color: '#acadaa',
+                              marginLeft: 10,
+                            }}>
+                            Home not set, set current location as home
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                     </>
-                    :
-                    null
-                  }
-                  {
-                    this.state.city
-                    ?
+                  ) : null}
+                  {this.state.city ? (
                     <TouchableOpacity
                       onPress={this.handleCurrentLocation}
                       style={{
-                        marginVertical:5,
+                        marginVertical: 5,
                       }}>
-                      <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                      }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
                         <Text style={styles.topic}>Current Location</Text>
                         <Ionicons
-                          style={{ marginLeft: 5 }}
+                          style={{marginLeft: 5}}
                           name="ios-location-outline"
                           size={20}
                           color={colors.baseline}
                         />
                       </View>
-                      <Text style={{fontSize:14,fontFamily:'Muli-Regular',color:"#acadaa",marginLeft:10}}>{this.state.city}, {this.state.country}</Text>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Muli-Regular',
+                          color: '#acadaa',
+                          marginLeft: 10,
+                        }}>
+                        {this.state.city}, {this.state.country}
+                      </Text>
                     </TouchableOpacity>
-                    :
-                    null
-                  }
-                  <Text style={{fontSize:14,fontFamily:'Muli-Bold',color:colors.baseline}}>Recent Accesed Locations</Text>
-                  {
-                    this.state.recentLocations.map(item=>{
-                      return(
-                        <TouchableOpacity
-                          onPress={() => this.handleLocation(item)}
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginVertical: 10,
-                          }}>
-                          <Text style={styles.topic}>{item}</Text>
-                          <Ionicons
-                            style={{ marginLeft: 5 }}
-                            name="ios-location-outline"
-                            size={20}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
-                      )
-                    })
-                  }
-                  </>
-                  :
-                  null
-              }
+                  ) : null}
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: 'Muli-Bold',
+                      color: colors.baseline,
+                    }}>
+                    Recent Accesed Locations
+                  </Text>
+                  {this.state.recentLocations.map((item) => {
+                    return (
+                      <TouchableOpacity
+                        onPress={() => this.handleLocation(item)}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          marginVertical: 10,
+                        }}>
+                        <Text style={styles.topic}>{item}</Text>
+                        <Ionicons
+                          style={{marginLeft: 5}}
+                          name="ios-location-outline"
+                          size={20}
+                          color={colors.baseline}
+                        />
+                      </TouchableOpacity>
+                    );
+                  })}
+                </>
+              ) : null}
             </View>
           </ScrollView>
         </SafeAreaView>
@@ -441,7 +493,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1B1F22',
     alignItems: 'center',
     borderBottomColor: colors.grey,
-    borderBottomWidth: StyleSheet.hairlineWidth
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   input: {
     width: width - 110,

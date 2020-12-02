@@ -35,7 +35,7 @@ export default class AddRequest extends React.Component {
     this.state = {
       category: '',
       type: 0,
-      desc: 'I am looking for, ',
+      desc: 'I am looking for ',
       city: '',
       loading: false,
       modalVisible: false,
@@ -51,7 +51,7 @@ export default class AddRequest extends React.Component {
       code: '',
       types: [
         {label: 'Select a type', value: 0},
-        {label: 'Share', value: 2},
+        {label: 'Borrow', value: 2},
         {label: 'Donate', value: 3},
       ],
       quantity: 1,
@@ -298,7 +298,7 @@ export default class AddRequest extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'share',
+          type: 'borrow',
           withh: '',
           quantity: 1,
           share_from: '',
@@ -351,7 +351,7 @@ export default class AddRequest extends React.Component {
   };
 
   handleDesc = (desc) => {
-    if (desc.includes('I am looking for, ')) {
+    if (desc.includes('I am looking for ')) {
       this.setState({desc});
     }
   };

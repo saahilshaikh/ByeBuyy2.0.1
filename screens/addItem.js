@@ -233,7 +233,7 @@ export default class AddItem extends React.Component {
       types: [
         {label: 'Select a type', value: 0},
         {label: 'Exchange', value: 1},
-        {label: 'Share', value: 2},
+        {label: 'Borrow', value: 2},
         {label: 'Donate', value: 3},
       ],
       quantities: [
@@ -560,7 +560,7 @@ export default class AddItem extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'share',
+          type: 'borrow',
           withh: '',
           quantity: this.state.quantity,
           share_from: this.state.sfd,
@@ -616,7 +616,7 @@ export default class AddItem extends React.Component {
     if (this.state.type === 1) {
       topic = 'Ready to exchange ' + this.state.wyh + ' with ' + this.state.wye;
     } else if (this.state.type === 2) {
-      topic = 'Ready to share ' + this.state.wyh;
+      topic = 'Ready to borrow ' + this.state.wyh;
     } else {
       topic = 'Ready to donate ' + this.state.wyh;
     }
@@ -992,8 +992,8 @@ export default class AddItem extends React.Component {
                                     <TouchableOpacity
                                       onPress={this.handlePicker}
                                       style={styles.editLogo}>
-                                      <Feather
-                                        name="edit-2"
+                                      <AntDesign
+                                        name="edit"
                                         style={{fontSize: 16, color: '#e5e5e5'}}
                                       />
                                     </TouchableOpacity>

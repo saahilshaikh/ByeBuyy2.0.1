@@ -36,7 +36,8 @@ export default class NotiCard extends React.Component {
     if (notiCardValue !== null && notiCardValue2 !== null) {
       console.log('Found local noti card');
       var value = JSON.parse(notiCardValue);
-      if (value.user !== auth().currentUser.email) {
+      var value2 = JSON.parse(notiCardValue2);
+      if (value.user !== auth().currentUser.email && value2.name) {
         this.setState({
           data: JSON.parse(notiCardValue),
           loading: false,
@@ -66,7 +67,7 @@ export default class NotiCard extends React.Component {
     };
     var res2 = await axios.post(link + '/api/user/single', data2);
     if (res.data !== null && res2.data !== null) {
-      if (res.data.user !== auth().currentUser.email) {
+      if (res.data.user !== auth().currentUser.email && res2.data.name) {
         var data3 = {
           id: this.props.id,
         };
@@ -88,8 +89,8 @@ export default class NotiCard extends React.Component {
           hide: false,
         });
       } else {
-        this.storeData(this.props.id + 'notiCard', res.data);
-        this.storeData(this.props.id + 'notiCardU', res2.data);
+        this.storeData(this.props.id + 'notiCard', {});
+        this.storeData(this.props.id + 'notiCardU', {});
         this.setState({
           loading: false,
           hide: true,

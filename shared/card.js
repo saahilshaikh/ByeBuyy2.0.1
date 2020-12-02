@@ -75,7 +75,6 @@ export default class Card extends React.Component {
           loadingOwner: false,
           NF: false,
         });
-        this.handleInit();
       } else {
         this.setState({
           product: [],
@@ -85,6 +84,7 @@ export default class Card extends React.Component {
           NF: true,
         });
       }
+      this.handleInit();
     } else {
       console.log('Card local not found');
       this.handleInit();
@@ -129,7 +129,7 @@ export default class Card extends React.Component {
               );
               product.distance = d;
             }
-            if (res2.data !== null) {
+            if (res2.data !== null && res2.data.name) {
               this.storeData(this.props.item._id + 'product', product);
               this.storeData(this.props.item._id + 'owner', owner);
               this.setState({
@@ -138,6 +138,16 @@ export default class Card extends React.Component {
                 loadingProduct: false,
                 loadingOwner: false,
                 NF: false,
+              });
+            } else {
+              this.storeData(this.props.item._id + 'product', {});
+              this.storeData(this.props.item._id + 'owner', {});
+              this.setState({
+                product: [],
+                owner: [],
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: true,
               });
             }
             if (auth().currentUser) {
@@ -167,6 +177,8 @@ export default class Card extends React.Component {
               }
             }
           } else {
+            this.storeData(this.props.item._id + 'product', {});
+            this.storeData(this.props.item._id + 'owner', {});
             this.setState({
               product: [],
               owner: [],
@@ -193,7 +205,7 @@ export default class Card extends React.Component {
             );
             product.distance = d;
           }
-          if (res2.data !== null) {
+          if (res2.data !== null && res2.data.name) {
             this.storeData(this.props.item._id + 'product', product);
             this.storeData(this.props.item._id + 'owner', owner);
             this.setState({
@@ -202,6 +214,16 @@ export default class Card extends React.Component {
               loadingProduct: false,
               loadingOwner: false,
               NF: false,
+            });
+          } else {
+            this.storeData(this.props.item._id + 'product', {});
+            this.storeData(this.props.item._id + 'owner', {});
+            this.setState({
+              product: [],
+              owner: [],
+              loadingProduct: false,
+              loadingOwner: false,
+              NF: true,
             });
           }
           if (auth().currentUser) {
@@ -232,6 +254,8 @@ export default class Card extends React.Component {
           }
         }
       } else {
+        this.storeData(this.props.item._id + 'product', {});
+        this.storeData(this.props.item._id + 'owner', {});
         this.setState({
           product: [],
           owner: [],
@@ -241,6 +265,8 @@ export default class Card extends React.Component {
         });
       }
     } else {
+      this.storeData(this.props.item._id + 'product', {});
+      this.storeData(this.props.item._id + 'owner', {});
       this.setState({
         product: [],
         owner: [],
@@ -308,6 +334,9 @@ export default class Card extends React.Component {
       var res = await axios.post(link + '/api/product/toggleLike', data);
       console.log(res.data);
       if (res.data !== null) {
+        if (this.props.handleRefresh) {
+          this.props.handleRefresh();
+        }
         if (res.data.type === 'success') {
           if (
             this.state.like &&
@@ -371,6 +400,11 @@ export default class Card extends React.Component {
         type: this.state.product.varient,
       };
       var res = await axios.post(link + '/api/product/toggleSave', data);
+      if (res.data !== null) {
+        if (this.props.handleRefresh) {
+          this.props.handleRefresh();
+        }
+      }
       console.log(res.data);
     } else {
       this.props.navigation.navigate('Login');

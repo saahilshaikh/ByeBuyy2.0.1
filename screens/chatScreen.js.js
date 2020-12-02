@@ -95,17 +95,13 @@ export default class ChatScreen extends React.PureComponent {
           block: ch.blocked.includes(auth().currentUser.email),
           showDeal: ch.deals.length > 0,
         });
-        this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 1000);
       } else {
         console.log('local chat not found');
-        this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 1000);
       }
+      this.handleInit();
+      this.inter = setInterval(() => {
+        this.handleInit();
+      }, 1000);
     } else {
       clearInterval(this.inter);
     }
@@ -136,7 +132,7 @@ export default class ChatScreen extends React.PureComponent {
           id: userId,
         };
         var res2 = await axios.post(link + '/api/user/single', data2);
-        if (res2.data !== null) {
+        if (res2.data !== null && res2.data.name) {
           this.storeData(this.props.route.params.id + 'chat', res.data);
           this.storeData(this.props.route.params.id + 'user', res2.data);
           this.setState({
@@ -146,7 +142,21 @@ export default class ChatScreen extends React.PureComponent {
             block: res.data.blocked.includes(auth().currentUser.email),
             showDeal: res.data.deals.length > 0,
           });
+        } else {
+          this.storeData(this.props.route.params.id + 'chat', {});
+          this.storeData(this.props.route.params.id + 'user', {});
+          this.setState({
+            loading: false,
+            NF: !false,
+          });
         }
+      } else {
+        this.storeData(this.props.route.params.id + 'chat', {});
+        this.storeData(this.props.route.params.id + 'user', {});
+        this.setState({
+          loading: false,
+          NF: !false,
+        });
       }
       var data3 = {
         id: auth().currentUser.email,

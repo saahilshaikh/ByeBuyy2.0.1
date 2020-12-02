@@ -44,24 +44,31 @@ export default class ChatCard extends React.Component {
       var chatcardValue2 = await AsyncStorage.getItem(
         this.props.item.id + 'user',
       );
-      if (chatcardValue !== null && chatcardValue2 !== null) {
+      if (
+        chatcardValue !== null &&
+        chatcardValue2 !== null &&
+        JSON.parse(chatcardValue2).name
+      ) {
         console.log('Found local chat card');
         this.setState({
           chat: JSON.parse(chatcardValue),
           user: JSON.parse(chatcardValue2),
           loading: false,
+          NF: false,
         });
-        this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 2000);
       } else {
         console.log('No local chat card found');
-        this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 2000);
+        this.setState({
+          chat: [],
+          user: [],
+          loading: false,
+          NF: true,
+        });
       }
+      this.handleInit();
+      this.inter = setInterval(() => {
+        this.handleInit();
+      }, 2000);
     } else {
       clearInterval(this.inter);
     }
@@ -90,7 +97,7 @@ export default class ChatCard extends React.Component {
         id: id,
       };
       var res2 = await axios.post(link + '/api/user/single', data2);
-      if (res.data !== null && res2.data !== null) {
+      if (res.data !== null && res2.data !== null && res2.data.name) {
         var uncount = 0;
         res.data.messages.map((m) => {
           if (m.read !== true && m.id !== auth().currentUser.email) {
@@ -104,6 +111,17 @@ export default class ChatCard extends React.Component {
           user: res2.data,
           loading: false,
           unread: uncount,
+          NF: false,
+        });
+      } else {
+        this.storeData(this.props.item.id + 'chat', {});
+        this.storeData(this.props.item.id + 'user', {});
+        this.setState({
+          chat: [],
+          user: [],
+          loading: false,
+          unread: 0,
+          NF: true,
         });
       }
     } else {
@@ -161,57 +179,61 @@ export default class ChatCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.push('Chat', {
-                id: this.state.chat._id,
-                location: this.props.location,
-              })
-            }
-            style={styles.chat}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <View style={styles.chatProfileImageBox}>
-                {this.state.user.photo ? (
-                  <Image
-                    source={{uri: this.state.user.photo}}
-                    style={styles.chatProfileImage}
-                  />
+          <>
+            {this.state.NF ? null : (
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.push('Chat', {
+                    id: this.state.chat._id,
+                    location: this.props.location,
+                  })
+                }
+                style={styles.chat}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <View style={styles.chatProfileImageBox}>
+                    {this.state.user.photo ? (
+                      <Image
+                        source={{uri: this.state.user.photo}}
+                        style={styles.chatProfileImage}
+                      />
+                    ) : (
+                      <Text style={styles.imageText}>
+                        {this.state.user.name.charAt(0).toUpperCase()}
+                      </Text>
+                    )}
+                  </View>
+                  <View>
+                    <Text style={styles.chatName}>{this.state.user.name}</Text>
+                    {this.state.chat.messages.length > 0 ? (
+                      <Text style={styles.chatMessage}>
+                        {
+                          this.state.chat.messages[
+                            this.state.chat.messages.length - 1
+                          ].message
+                        }
+                      </Text>
+                    ) : null}
+                  </View>
+                </View>
+                {this.state.unread > 0 ? (
+                  <View style={{position: 'relative'}}>
+                    <Ionicons
+                      name="chatbox-ellipses-outline"
+                      size={30}
+                      color={colors.grey}
+                    />
+                    <Text style={styles.unread}>{this.state.unread}</Text>
+                  </View>
                 ) : (
-                  <Text style={styles.imageText}>
-                    {this.state.user.name.charAt(0).toUpperCase()}
-                  </Text>
+                  <Ionicons
+                    name="chatbox-ellipses-outline"
+                    size={30}
+                    color={colors.grey}
+                  />
                 )}
-              </View>
-              <View>
-                <Text style={styles.chatName}>{this.state.user.name}</Text>
-                {this.state.chat.messages.length > 0 ? (
-                  <Text style={styles.chatMessage}>
-                    {
-                      this.state.chat.messages[
-                        this.state.chat.messages.length - 1
-                      ].message
-                    }
-                  </Text>
-                ) : null}
-              </View>
-            </View>
-            {this.state.unread > 0 ? (
-              <View style={{position: 'relative'}}>
-                <Ionicons
-                  name="chatbox-ellipses-outline"
-                  size={30}
-                  color={colors.grey}
-                />
-                <Text style={styles.unread}>{this.state.unread}</Text>
-              </View>
-            ) : (
-              <Ionicons
-                name="chatbox-ellipses-outline"
-                size={30}
-                color={colors.grey}
-              />
+              </TouchableOpacity>
             )}
-          </TouchableOpacity>
+          </>
         )}
       </View>
     );

@@ -62,6 +62,7 @@ export default class Card4 extends React.Component {
     var res = await axios.post(link + '/api/user/follow', data);
     if (res.data !== null) {
       console.log('Foll');
+      this.props.handleRefresh();
     }
   };
 

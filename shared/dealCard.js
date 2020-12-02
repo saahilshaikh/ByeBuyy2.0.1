@@ -1,39 +1,61 @@
 import React from 'react';
 import MiniCard from './mincard';
-import { View,Text ,StyleSheet,Dimensions,TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../appTheme';
 import Moment from 'react-moment';
 
-const {width,height}=Dimensions.get('window')
+const {width, height} = Dimensions.get('window');
 
-export default class DealCard extends React.Component{
-  constructor()
-  {
+export default class DealCard extends React.Component {
+  constructor() {
     super();
-    this.state={
-
-    }
+    this.state = {};
   }
-  render()
-  {
-    return(
+  render() {
+    return (
       <View style={styles.item}>
-        <View style={{width:'90%',alignItems:'center',flexDirection:'row',justifyContent:'space-between',marginBottom:10}}>
-          <Text style={styles.itemDate}>Deal accomplised on <Moment element={Text} fromNow>{this.props.item.date}</Moment></Text>
-          <TouchableOpacity onPress={()=>this.props.navigation.navigate('DealInfo',{item:this.props.item})}>
-            <Ionicons name="ios-information-circle-outline" size={26} color={colors.baseline} />
+        <View
+          style={{
+            width: '90%',
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            marginBottom: 10,
+          }}>
+          <Text style={styles.itemDate}>
+            Deal accomplished on{' '}
+            <Moment element={Text} fromNow>
+              {this.props.item.date}
+            </Moment>
+          </Text>
+          <TouchableOpacity
+            onPress={() =>
+              this.props.navigation.navigate('DealInfo', {
+                item: this.props.item,
+              })
+            }>
+            <Ionicons
+              name="ios-information-circle-outline"
+              size={26}
+              color={colors.baseline}
+            />
           </TouchableOpacity>
         </View>
         <MiniCard id={this.props.item.id1} navigation={this.props.navigation} />
       </View>
-    )
+    );
   }
 }
 
-
 const styles = StyleSheet.create({
-  item:{
+  item: {
     padding: 15,
     width: '95%',
     alignItems: 'center',
@@ -42,9 +64,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderRadius: 10,
   },
-  itemDate:{
-    fontFamily:'Muli-Bold',
-    color:colors.grey,
-    fontSize:14
-  }
+  itemDate: {
+    fontFamily: 'Muli-Bold',
+    color: colors.grey,
+    fontSize: 14,
+  },
 });

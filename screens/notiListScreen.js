@@ -41,6 +41,9 @@ export default class NotiListScreen extends React.Component {
     });
     if (auth().currentUser) {
       this.handleInit();
+      setInterval(() => {
+        this.handleInit();
+      }, 3000);
     } else {
       this.setState({
         loading: false,
@@ -206,7 +209,14 @@ export default class NotiListScreen extends React.Component {
         ) : (
           <>
             {auth().currentUser ? (
-              <ScrollView style={{width: '100%'}}>
+              <ScrollView
+                style={{width: '100%'}}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={this.handleRefresh}
+                  />
+                }>
                 <View style={styles.list}>
                   {this.state.today.length > 0 ? (
                     <View style={{width: '90%', marginTop: 10}}>

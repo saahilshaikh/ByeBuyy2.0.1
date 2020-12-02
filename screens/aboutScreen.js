@@ -10,17 +10,16 @@ import {
   Image,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { ScrollView } from 'react-native-gesture-handler';
+import {ScrollView} from 'react-native-gesture-handler';
 import colors from '../appTheme';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class AboutScreen extends React.Component {
-
   handleBack = () => {
     this.props.navigation.pop();
-    this.props.route.params.handleBack()
-  }
+    this.props.route.params.handleBack();
+  };
   render() {
     return (
       <SafeAreaView style={styles.container}>
@@ -33,34 +32,31 @@ export default class AboutScreen extends React.Component {
             alignItems: 'center',
             width: '100%',
             borderBottomColor: colors.grey,
-            borderBottomWidth: StyleSheet.hairlineWidth
+            borderBottomWidth: StyleSheet.hairlineWidth,
           }}>
-          <TouchableOpacity
-            onPress={this.handleBack}>
-            <Ionicons
-              name="ios-arrow-back"
-              size={30}
-              color={colors.baseline}
-            />
+          <TouchableOpacity onPress={this.handleBack}>
+            <Ionicons name="ios-arrow-back" size={30} color={colors.baseline} />
           </TouchableOpacity>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
-              marginLeft: 10
+              marginLeft: 10,
             }}>
-            <View style={{ width: 30, height: 30 }}>
+            <View style={{width: 30, height: 30}}>
               <Image
-                style={{ width: '100%', height: '100%' }}
+                style={{width: '100%', height: '100%'}}
                 source={require('../assets/images/icon.png')}
               />
             </View>
-            <Text style={styles.header}>bye<Text style={styles.header2}>buyy</Text></Text>
+            <Text style={styles.header}>
+              bye<Text style={styles.header2}>buyy</Text>
+            </Text>
           </View>
         </View>
-        <ScrollView style={{ width: '100%', flex: 1 }}>
-          <View style={{ width: '100%', flex: 1 }}>
+        <ScrollView style={{width: '100%', flex: 1}}>
+          <View style={{width: '100%', flex: 1}}>
             <Text
               style={{
                 fontSize: 24,
@@ -70,37 +66,37 @@ export default class AboutScreen extends React.Component {
                 marginTop: 20,
               }}>
               About
-          </Text>
-            <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+            </Text>
+            <View style={{width: '100%', flex: 1, alignItems: 'center'}}>
               <View style={styles.box}>
                 <Text style={styles.boxText}>
-                  Byebuyy provides a needs-fulfillment service and enables its
-                  users to connect to other users for the purpose of sharing /
-                  donating /exchanging or bartering products owned and offered for
-                  sharing/ exchange by such users. Byebuyyy enables users to find
-                  products/providers in their vicinity. Let us share the joy of
-                  giving.
-              </Text>
+                  Join the byebuyy Community Free! Find products for exchange,
+                  borrow and donate.Connect with people and never miss out on
+                  moments in life just because you dont own a commodity.
+                </Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.boxText}>
-                  You can reach us at, Oneco.work, 2/3, 2nd Floor, 80 Feet Road,
-                  Barleyz Junction, Koramangala, Bengaluru, Karnataka-560034. or
-                you can mail us{' '}
+                  You can reach us at, #432, Ist and 2ND Floor, 4th cross, 2nd
+                  block, HRBR Layout, K. HALLI, Kalyan Nagar Bengaluru,
+                  Karnataka 560043 IN or you can mail us{' '}
                   <Text
-                    onPress={() => Linking.openURL('mailto:feedback@byebuyy.com')}
-                    style={{ color: colors.baseline, fontWeight: 'bold' }}>
-                    feedback@byebuyy.com
-                </Text>
+                    onPress={() =>
+                      Linking.openURL('mailto:grievance.byebuyy@gmail.com')
+                    }
+                    style={{color: colors.baseline, fontWeight: 'bold'}}>
+                    grievance.byebuyy@gmail.com
+                  </Text>
                 </Text>
               </View>
               <View style={styles.box}>
                 <Text style={styles.boxText}>
-                  Developed and maintained by <Text
+                  Powered by{' '}
+                  <Text
                     onPress={() => Linking.openURL('https://augendtech.com')}
-                    style={{ color: colors.baseline, fontWeight: 'bold' }}>
+                    style={{color: colors.baseline, fontWeight: 'bold'}}>
                     Augend Tech
-                </Text>
+                  </Text>
                 </Text>
               </View>
             </View>
@@ -120,7 +116,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   header: {
-    color: colors.baseline,
+    color: colors.white,
     fontSize: 20,
     fontFamily: 'Muli-Bold',
     marginLeft: 10,

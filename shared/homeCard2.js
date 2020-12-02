@@ -60,7 +60,6 @@ export default class HomeCard2 extends React.Component {
           loadingOwner: false,
           NF: false,
         });
-        this.handleInit();
       } else {
         this.setState({
           product: [],
@@ -70,6 +69,7 @@ export default class HomeCard2 extends React.Component {
           NF: true,
         });
       }
+      this.handleInit();
     } else {
       console.log('Card2 local not found');
       this.handleInit();
@@ -108,7 +108,7 @@ export default class HomeCard2 extends React.Component {
           );
           product.distance = d;
         }
-        if (res2.data !== null) {
+        if (res2.data !== null && res2.data.name) {
           this.storeData(this.props.item._id + 'product', product);
           this.storeData(this.props.item._id + 'owner', owner);
           this.setState({
@@ -117,6 +117,16 @@ export default class HomeCard2 extends React.Component {
             loadingProduct: false,
             loadingOwner: false,
             NF: false,
+          });
+        } else {
+          this.storeData(this.props.item._id + 'product', {});
+          this.storeData(this.props.item._id + 'owner', {});
+          this.setState({
+            product: [],
+            owner: [],
+            loadingProduct: false,
+            loadingOwner: false,
+            NF: true,
           });
         }
         if (auth().currentUser) {
@@ -135,6 +145,8 @@ export default class HomeCard2 extends React.Component {
           }
         }
       } else {
+        this.storeData(this.props.item._id + 'product', {});
+        this.storeData(this.props.item._id + 'owner', {});
         this.setState({
           product: [],
           owner: [],
@@ -161,7 +173,7 @@ export default class HomeCard2 extends React.Component {
         );
         product.distance = d;
       }
-      if (res2.data !== null) {
+      if (res2.data !== null && res2.data.name) {
         this.storeData(this.props.item._id + 'product', product);
         this.storeData(this.props.item._id + 'owner', owner);
         this.setState({
@@ -170,6 +182,16 @@ export default class HomeCard2 extends React.Component {
           loadingProduct: false,
           loadingOwner: false,
           NF: false,
+        });
+      } else {
+        this.storeData(this.props.item._id + 'product', {});
+        this.storeData(this.props.item._id + 'owner', {});
+        this.setState({
+          product: [],
+          owner: [],
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: true,
         });
       }
       if (auth().currentUser) {
@@ -187,6 +209,176 @@ export default class HomeCard2 extends React.Component {
           });
         }
       }
+    }
+  };
+
+  handleInit2 = async () => {
+    if (this.props.item._id) {
+      var data = {
+        id: this.props.item._id,
+      };
+      var res = await axios.post(link + '/api/product/single', data);
+      if (res.data !== null) {
+        if (res.data.varient === 'Request') {
+          if (auth().currentUser) {
+            var reportExists = false;
+            res.data.reports.map((r) => {
+              if (r.email === auth().currentUser.email) {
+                reportExists = true;
+              }
+            });
+            if (reportExists === false && res.data.reports.length < 10) {
+              var data2 = {
+                id: res.data.owner,
+              };
+              var res2 = await axios.post(link + '/api/user/single', data2);
+              var owner = res2.data;
+              owner.id = owner._id;
+              var product = res.data;
+              product.id = product._id;
+              if (this.props.location && this.props.location.lat !== '') {
+                const d = this.handleDistance(
+                  product.lat,
+                  product.long,
+                  this.props.location.lat,
+                  this.props.location.long,
+                );
+                product.distance = d;
+              }
+              if (res2.data !== null && res2.data.name) {
+                this.storeData(this.props.item._id + 'product', product);
+                this.storeData(this.props.item._id + 'owner', owner);
+                this.setState({
+                  product: product,
+                  owner: owner,
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: false,
+                });
+              } else {
+                this.storeData(this.props.item._id + 'product', {});
+                this.storeData(this.props.item._id + 'owner', {});
+                this.setState({
+                  product: [],
+                  owner: [],
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: true,
+                });
+              }
+              if (auth().currentUser) {
+                var data3 = {
+                  id: auth().currentUser.email,
+                };
+                var res3 = await axios.post(link + '/api/user/single', data3);
+                if (res3.data !== null) {
+                  var currentUser = res3.data;
+                  currentUser.id = currentUser._id;
+                  this.setState({
+                    currentUser: currentUser,
+                    like: product.likes.includes(auth().currentUser.email),
+                    save: product.saves.includes(auth().currentUser.email),
+                  });
+                }
+              }
+            } else {
+              this.storeData(this.props.item._id + 'product', {});
+              this.storeData(this.props.item._id + 'owner', {});
+              this.setState({
+                product: [],
+                owner: [],
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: true,
+              });
+            }
+          } else {
+            var data2 = {
+              id: res.data.owner,
+            };
+            var res2 = await axios.post(link + '/api/user/single', data2);
+            var owner = res2.data;
+            owner.id = owner._id;
+            var product = res.data;
+            product.id = product._id;
+            if (this.props.location && this.props.location.lat !== '') {
+              const d = this.handleDistance(
+                product.lat,
+                product.long,
+                this.props.location.lat,
+                this.props.location.long,
+              );
+              product.distance = d;
+            }
+            if (res2.data !== null && res2.data.name) {
+              this.storeData(this.props.item._id + 'product', product);
+              this.storeData(this.props.item._id + 'owner', owner);
+              this.setState({
+                product: product,
+                owner: owner,
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: false,
+              });
+            } else {
+              this.storeData(this.props.item._id + 'product', {});
+              this.storeData(this.props.item._id + 'owner', {});
+              this.setState({
+                product: [],
+                owner: [],
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: true,
+              });
+            }
+            if (auth().currentUser) {
+              var data3 = {
+                id: auth().currentUser.email,
+              };
+              var res3 = await axios.post(link + '/api/user/single', data3);
+              if (res3.data !== null) {
+                var currentUser = res3.data;
+                currentUser.id = currentUser._id;
+                this.setState({
+                  currentUser: currentUser,
+                  like: product.likes.includes(auth().currentUser.email),
+                  save: product.saves.includes(auth().currentUser.email),
+                });
+              }
+            }
+          }
+        } else {
+          this.storeData(this.props.item._id + 'product', {});
+          this.storeData(this.props.item._id + 'owner', {});
+          this.setState({
+            product: [],
+            owner: [],
+            loadingProduct: false,
+            loadingOwner: false,
+            NF: true,
+          });
+        }
+      } else {
+        this.storeData(this.props.item._id + 'product', {});
+        this.storeData(this.props.item._id + 'owner', {});
+        this.setState({
+          product: [],
+          owner: [],
+          loadingProduct: false,
+          loadingOwner: false,
+          NF: true,
+        });
+      }
+    } else {
+      this.storeData(this.props.item._id + 'product', {});
+      this.storeData(this.props.item._id + 'owner', {});
+      this.setState({
+        product: [],
+        owner: [],
+        loadingProduct: false,
+        loadingOwner: false,
+        NF: true,
+      });
     }
   };
 

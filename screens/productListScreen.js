@@ -70,9 +70,10 @@ export default class ProductListScreen extends React.Component {
         },
       ],
       showMode: 'A',
-      current: 'All locations',
+      current: 'World',
       loadmore: true,
       showNew: false,
+      locationType: 'All locations',
     };
   }
 
@@ -180,6 +181,7 @@ export default class ProductListScreen extends React.Component {
     this.setState({
       refreshing: true,
       showNew: false,
+      initialLoading: true,
     });
     var data = {
       mode: 'A',
@@ -194,9 +196,11 @@ export default class ProductListScreen extends React.Component {
         showProducts: res.data,
         loadmore: true,
         activeCat: 'All',
-        current: 'All locations',
+        current: 'World',
+        locationType: 'All locations',
         showMode: 'A',
         refreshing: false,
+        initialLoading: false,
       });
     }
   };
@@ -235,10 +239,11 @@ export default class ProductListScreen extends React.Component {
     }
   };
 
-  handleLocation = async (city, country, lat, long) => {
+  handleLocation = async (city, country, lat, long, type) => {
+    console.log(lat, long);
     console.log('PLS 97', city);
     console.log('PLS 98', country);
-    if (city !== '' && country !== '') {
+    if (type === 'other') {
       var location = {
         lat: lat,
         long: long,
@@ -247,21 +252,55 @@ export default class ProductListScreen extends React.Component {
         {
           current: city + ',' + country,
           location: location,
+          locationType: city + ',' + country,
         },
         () => {
           this.handleCategory(this.state.activeCat);
         },
       );
     } else {
-      this.setState(
-        {
-          current: 'All locations',
-        },
-        () => {
-          console.log(this.state.current);
-          this.handleCategory(this.state.activeCat);
-        },
-      );
+      if (type === 'world') {
+        this.setState(
+          {
+            current: 'World',
+            locationType: 'All locations',
+          },
+          () => {
+            console.log(this.state.current);
+            this.handleCategory(this.state.activeCat);
+          },
+        );
+      } else if (type === 'current') {
+        var location = {
+          lat: lat,
+          long: long,
+        };
+        this.setState(
+          {
+            current: city + ',' + country,
+            location: location,
+            locationType: 'Current Location',
+          },
+          () => {
+            this.handleCategory('All');
+          },
+        );
+      } else if (type === 'home') {
+        var location = {
+          lat: lat,
+          long: long,
+        };
+        this.setState(
+          {
+            current: city + ',' + country,
+            locationType: 'Home',
+            location: location,
+          },
+          () => {
+            this.handleCategory('All');
+          },
+        );
+      }
     }
   };
 
@@ -313,8 +352,7 @@ export default class ProductListScreen extends React.Component {
       var data = {
         mode: this.state.showMode,
         category: e,
-        loc:
-          this.state.current === 'All locations' ? 'World' : this.state.current,
+        loc: this.state.current,
       };
       var res = await axios.post(link + '/api/showProducts10/filter', data);
       res.data.map((item) => {
@@ -331,8 +369,7 @@ export default class ProductListScreen extends React.Component {
       var data = {
         category: e,
         mode: this.state.showMode,
-        loc:
-          this.state.current === 'All locations' ? 'World' : this.state.current,
+        loc: this.state.current,
       };
       var res = await axios.post(link + '/api/showProducts10/filter', data);
       if (res.data) {
@@ -366,8 +403,7 @@ export default class ProductListScreen extends React.Component {
       count: this.state.products.length,
       category: this.state.activeCat,
       mode: this.state.showMode,
-      loc:
-        this.state.current === 'All locations' ? 'World' : this.state.current,
+      loc: this.state.current,
     };
     var res = await axios.post(link + '/api/showProductsNext10/filter', data);
     if (res.data) {
@@ -433,7 +469,7 @@ export default class ProductListScreen extends React.Component {
                 color: colors.white,
                 fontFamily: 'Muli-Bold',
               }}>
-              {this.state.current}
+              {this.state.locationType}
             </Text>
             <Ionicons name="ios-caret-down" size={14} color={colors.white} />
           </TouchableOpacity>
@@ -857,7 +893,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 10,
   },
   floatingButtonText: {
     fontSize: 14,

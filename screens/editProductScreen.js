@@ -31,7 +31,7 @@ import LoadingScreen from './loadingScreen';
 import axios from 'axios';
 import link from '../fetchPath';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 export default class EditProductScreen extends React.Component {
   constructor() {
     super();
@@ -102,15 +102,14 @@ export default class EditProductScreen extends React.Component {
         },
       ],
       quantity: 1,
-    }
+    };
   }
 
   async componentDidMount() {
     var res = await axios.get(link + '/api/categories');
-    if(res.data!==null)
-    {
+    if (res.data !== null) {
       var categories = [],
-      x = {};
+        x = {};
       x['value'] = '';
       x['label'] = 'Select a category';
       categories.push(x);
@@ -126,23 +125,23 @@ export default class EditProductScreen extends React.Component {
       });
     }
     var data2 = {
-      id: this.props.route.params.id
-    }
-    console.log("EDIT ID:",this.props.route.params.id);
+      id: this.props.route.params.id,
+    };
+    console.log('EDIT ID:', this.props.route.params.id);
     var res2 = await axios.post(link + '/api/product/single', data2);
-    console.log("data2:",data2);
-    if(res2.data!==null)
-    {
-        console.log('DOC: ', res2.data.quantity);
-        var images = [];
-        res2.data.images.map(item => {
-          var newItem = {
-            key: item.index,
-            uri: item.image
-          }
-          images.push(newItem);
-        })
-        this.setState({
+    console.log('data2:', data2);
+    if (res2.data !== null) {
+      console.log('DOC: ', res2.data.quantity);
+      var images = [];
+      res2.data.images.map((item) => {
+        var newItem = {
+          key: item.index,
+          uri: item.image,
+        };
+        images.push(newItem);
+      });
+      this.setState(
+        {
           wyh: res2.data.what,
           wye: res2.data.withh ? res2.data.withh : '',
           sfd: res2.data.share_from,
@@ -158,204 +157,203 @@ export default class EditProductScreen extends React.Component {
           type: res2.data.type,
           country: res2.data.country,
           code: res2.data.code,
-          quantity: res2.data.quantity
-        }, () => {
-          console.log("Q:", this.state.quantity);
-        });
-        var date = new Date(res2.data.share_from);
-        var day = date.getDate();
-        var day2 = date.getDate() + 1;
-        var month = date.getMonth() + 1;
-        var month2 = date.getMonth() + 1;
-        var month3 = date.getMonth() + 1;
-        var day3;
-        day3 = day2 + 29;
-        month3 = month2;
-        var year = date.getFullYear();
-        var year2 = year;
-        if ((0 == year % 4 && 0 != year % 100) || 0 == year % 400) {
-          if (month2 === 2 && day2 > 29) {
-            day2 = day2 - 29;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (
-            day2 > 30 &&
-            (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-          ) {
-            day2 = day2 - 30;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (
-            day2 > 31 &&
-            (month2 === 1 ||
-              month2 === 3 ||
-              month2 === 5 ||
-              month2 === 7 ||
-              month2 === 8 ||
-              month2 === 10)
-          ) {
-            day2 = day2 - 31;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (day2 > 31 && month2 === 12) {
-            day2 = day2 - 31;
-            month2 = 1;
-            year = year + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (month3 === 2 && day3 > 29) {
-            day3 = day3 - 29;
-            month3 = month3 + 1;
-          }
-          if (
-            day3 > 30 &&
-            (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-          ) {
-            day3 = day3 - 30;
-            month3 = month3 + 1;
-          }
-          if (
-            day3 > 31 &&
-            (month3 === 1 ||
-              month3 === 3 ||
-              month3 === 5 ||
-              month3 === 7 ||
-              month3 === 8 ||
-              month3 === 10)
-          ) {
-            day3 = day3 - 31;
-            month3 = month3 + 1;
-          }
-          if (day3 > 31 && month3 === 12) {
-            day3 = day3 - 31;
-            month3 = 1;
-            year2 = year2 + 1;
-          }
-        } else {
-          if (month2 > 12) {
-            month2 = month2 - 12;
-            month3 = month3 - 12;
-          }
-          if (month2 === 2 && day2 > 28) {
-            day2 = day2 - 28;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (
-            day2 > 30 &&
-            (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-          ) {
-            day2 = day2 - 30;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (
-            day2 > 31 &&
-            (month2 === 1 ||
-              month2 === 3 ||
-              month2 === 5 ||
-              month2 === 7 ||
-              month2 === 8 ||
-              month2 === 10)
-          ) {
-            day2 = day2 - 31;
-            month2 = month2 + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (day2 > 31 && month2 === 12) {
-            day2 = day2 - 31;
-            month2 = 1;
-            year = year + 1;
-            day3 = day2 + 29;
-            month3 = month2;
-          }
-          if (month3 === 2 && day3 > 28) {
-            day3 = day3 - 28;
-            month3 = month3 + 1;
-          }
-          if (
-            day3 > 30 &&
-            (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-          ) {
-            day3 = day3 - 30;
-            month3 = month3 + 1;
-          }
-          if (
-            day3 > 31 &&
-            (month3 === 1 ||
-              month3 === 3 ||
-              month3 === 5 ||
-              month3 === 7 ||
-              month3 === 8 ||
-              month3 === 10)
-          ) {
-            day3 = day3 - 31;
-            month3 = month3 + 1;
-          }
-          if (day3 > 31 && month3 === 12) {
-            day3 = day3 - 31;
-            month3 = 1;
-            year2 = year2 + 1;
-          }
-          console.log(day3);
+          quantity: res2.data.quantity,
+        },
+        () => {
+          console.log('Q:', this.state.quantity);
+        },
+      );
+      var date = new Date(res2.data.share_from);
+      var day = date.getDate();
+      var day2 = date.getDate() + 1;
+      var month = date.getMonth() + 1;
+      var month2 = date.getMonth() + 1;
+      var month3 = date.getMonth() + 1;
+      var day3;
+      day3 = day2 + 29;
+      month3 = month2;
+      var year = date.getFullYear();
+      var year2 = year;
+      if ((0 == year % 4 && 0 != year % 100) || 0 == year % 400) {
+        if (month2 === 2 && day2 > 29) {
+          day2 = day2 - 29;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
         }
-        if (day < 10) {
-          day = ('0' + day).slice(-2);
+        if (
+          day2 > 30 &&
+          (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
+        ) {
+          day2 = day2 - 30;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
         }
-        if (day2 < 10) {
-          day2 = ('0' + day2).slice(-2);
+        if (
+          day2 > 31 &&
+          (month2 === 1 ||
+            month2 === 3 ||
+            month2 === 5 ||
+            month2 === 7 ||
+            month2 === 8 ||
+            month2 === 10)
+        ) {
+          day2 = day2 - 31;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
         }
-        if (day3 < 10) {
-          day3 = ('0' + day3).slice(-2);
+        if (day2 > 31 && month2 === 12) {
+          day2 = day2 - 31;
+          month2 = 1;
+          year = year + 1;
+          day3 = day2 + 29;
+          month3 = month2;
         }
-        if (month < 10) {
-          month = ('0' + month).slice(-2);
+        if (month3 === 2 && day3 > 29) {
+          day3 = day3 - 29;
+          month3 = month3 + 1;
         }
-        if (month2 < 10) {
-          month2 = ('0' + month2).slice(-2);
+        if (
+          day3 > 30 &&
+          (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
+        ) {
+          day3 = day3 - 30;
+          month3 = month3 + 1;
         }
-        if (month3 < 10) {
-          month3 = ('0' + month3).slice(-2);
+        if (
+          day3 > 31 &&
+          (month3 === 1 ||
+            month3 === 3 ||
+            month3 === 5 ||
+            month3 === 7 ||
+            month3 === 8 ||
+            month3 === 10)
+        ) {
+          day3 = day3 - 31;
+          month3 = month3 + 1;
         }
-        var minDate2 = year + '-' + month2 + '-' + day2;
-        var maxDate2 = year + '-' + month3 + '-' + day3;
-        console.log(minDate2, maxDate2);
+        if (day3 > 31 && month3 === 12) {
+          day3 = day3 - 31;
+          month3 = 1;
+          year2 = year2 + 1;
+        }
+      } else {
+        if (month2 > 12) {
+          month2 = month2 - 12;
+          month3 = month3 - 12;
+        }
+        if (month2 === 2 && day2 > 28) {
+          day2 = day2 - 28;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
+        }
+        if (
+          day2 > 30 &&
+          (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
+        ) {
+          day2 = day2 - 30;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
+        }
+        if (
+          day2 > 31 &&
+          (month2 === 1 ||
+            month2 === 3 ||
+            month2 === 5 ||
+            month2 === 7 ||
+            month2 === 8 ||
+            month2 === 10)
+        ) {
+          day2 = day2 - 31;
+          month2 = month2 + 1;
+          day3 = day2 + 29;
+          month3 = month2;
+        }
+        if (day2 > 31 && month2 === 12) {
+          day2 = day2 - 31;
+          month2 = 1;
+          year = year + 1;
+          day3 = day2 + 29;
+          month3 = month2;
+        }
+        if (month3 === 2 && day3 > 28) {
+          day3 = day3 - 28;
+          month3 = month3 + 1;
+        }
+        if (
+          day3 > 30 &&
+          (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
+        ) {
+          day3 = day3 - 30;
+          month3 = month3 + 1;
+        }
+        if (
+          day3 > 31 &&
+          (month3 === 1 ||
+            month3 === 3 ||
+            month3 === 5 ||
+            month3 === 7 ||
+            month3 === 8 ||
+            month3 === 10)
+        ) {
+          day3 = day3 - 31;
+          month3 = month3 + 1;
+        }
+        if (day3 > 31 && month3 === 12) {
+          day3 = day3 - 31;
+          month3 = 1;
+          year2 = year2 + 1;
+        }
+        console.log(day3);
+      }
+      if (day < 10) {
+        day = ('0' + day).slice(-2);
+      }
+      if (day2 < 10) {
+        day2 = ('0' + day2).slice(-2);
+      }
+      if (day3 < 10) {
+        day3 = ('0' + day3).slice(-2);
+      }
+      if (month < 10) {
+        month = ('0' + month).slice(-2);
+      }
+      if (month2 < 10) {
+        month2 = ('0' + month2).slice(-2);
+      }
+      if (month3 < 10) {
+        month3 = ('0' + month3).slice(-2);
+      }
+      var minDate2 = year + '-' + month2 + '-' + day2;
+      var maxDate2 = year + '-' + month3 + '-' + day3;
+      console.log(minDate2, maxDate2);
+      this.setState({
+        minDate2,
+        maxDate2,
+      });
+      if (res2.data.type === 'exchange') {
         this.setState({
-          minDate2,
-          maxDate2,
+          type: 1,
+          topic:
+            'Ready to exchange ' + res2.data.what + ' with ' + res2.data.withh,
         });
-        if (res2.data.type === 'exchange') {
-          this.setState({
-            type: 1,
-            topic:
-              'Ready to exchange ' +
-              res2.data.what +
-              ' with ' +
-              res2.data.withh,
-          });
-        } else if (res2.data.type === 'share') {
-          this.setState({
-            type: 2,
-            topic: 'Ready to share ' + res2.data.what,
-          });
-        }
+      } else if (res2.data.type === 'share') {
+        this.setState({
+          type: 2,
+          topic: 'Ready to share ' + res2.data.what,
+        });
+      }
     }
   }
 
-  componentWillUnmount(){
-    this.setState = (state,callback)=>{
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
       return;
-  };
+    };
   }
 
   handleLocation = async () => {
@@ -474,15 +472,18 @@ export default class EditProductScreen extends React.Component {
   };
 
   handlePicker = () => {
-    this.props.navigation.navigate('PickPhotos', { handleImages: e => this.handleImages(e), images: this.state.images });
-  }
+    this.props.navigation.navigate('PickPhotos', {
+      handleImages: (e) => this.handleImages(e),
+      images: this.state.images,
+    });
+  };
 
   handleImages = (e) => {
-    console.log("ADD ITEM:", e);
+    console.log('ADD ITEM:', e);
     this.setState({
-      images: e
-    })
-  }
+      images: e,
+    });
+  };
 
   handleSubmit = async () => {
     console.log('Running Edit Item');
@@ -540,17 +541,13 @@ export default class EditProductScreen extends React.Component {
       });
     } else if (this.state.desc === '' || this.state.desc.length < 10) {
       Snackbar.show({
-        text:
-          'Please add a product description of atleast 10 characters',
+        text: 'Please add a product description of atleast 10 characters',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
         loading: false,
       });
-    } else if (
-      this.state.city === '' &&
-      this.state.neighbourhood === ''
-    ) {
+    } else if (this.state.city === '' && this.state.neighbourhood === '') {
       Snackbar.show({
         text: 'Please add a location',
         duration: Snackbar.LENGTH_SHORT,
@@ -568,71 +565,67 @@ export default class EditProductScreen extends React.Component {
       });
     } else {
       var props = this.props;
-        var images = [];
-        for (var i = 0; i < this.state.images.length; i++) {
-          if (!this.state.images[i].uri.includes('http')) {
-            var url = await this.handleUpload(this.state.images[i]);
-            var image = {};
-            image['image'] = url;
-            image['index'] = this.state.images[i].key;
-            images.push(image);
-          } else {
-            var image = {};
-            image['image'] = this.state.images[i].uri;
-            image['index'] = this.state.images[i].key;
-            images.push(image);
-          }
+      var images = [];
+      for (var i = 0; i < this.state.images.length; i++) {
+        if (!this.state.images[i].uri.includes('http')) {
+          var url = await this.handleUpload(this.state.images[i]);
+          var image = {};
+          image['image'] = url;
+          image['index'] = this.state.images[i].key;
+          images.push(image);
+        } else {
+          var image = {};
+          image['image'] = this.state.images[i].uri;
+          image['index'] = this.state.images[i].key;
+          images.push(image);
         }
-        var data={
-            varient:'Product',
-            images:images,
-            what: this.state.wyh,
-            category: this.state.category,
-            description: this.state.desc,
-            city: this.state.city,
-            lat: this.state.lat,
-            long: this.state.long,
-            neighbourhood: this.state.neighbourhood,
-            country: this.state.country,
-            code: this.state.code,
-            withh: this.state.wye,
-            quantity: this.state.quantity,
-            share_from: this.state.share_from,
-            share_till: this.state.share_till,
-            giveaway: this.state.giveaway,
-            id:this.props.route.params.id
+      }
+      var data = {
+        varient: 'Product',
+        images: images,
+        what: this.state.wyh,
+        category: this.state.category,
+        description: this.state.desc,
+        city: this.state.city,
+        lat: this.state.lat,
+        long: this.state.long,
+        neighbourhood: this.state.neighbourhood,
+        country: this.state.country,
+        code: this.state.code,
+        withh: this.state.wye,
+        quantity: this.state.quantity,
+        share_from: this.state.share_from,
+        share_till: this.state.share_till,
+        giveaway: this.state.giveaway,
+        id: this.props.route.params.id,
+      };
+      var res = await axios.post(link + '/api/updateProduct', data);
+      if (res.data !== null) {
+        if (res.data.type === 'success') {
+          this.setState(
+            {
+              loading: false,
+              visible: true,
+              success: true,
+            },
+            () => {
+              setTimeout(function () {
+                props.navigation.pop();
+              }, 2000);
+            },
+          );
+        } else {
+          this.setState({
+            loading: false,
+            visible: true,
+            success: true,
+          });
+          Snackbar.show({
+            text: 'Error',
+            duration: Snackbar.LENGTH_SHORT,
+          });
         }
-        var res=await axios.post(link+'/api/updateProduct',data)
-        if(res.data!==null)
-        {
-          if(res.data.type==='success')
-          {
-            this.setState(
-              {
-                loading: false,
-                visible: true,
-                success: true,
-              },
-              () => {
-                setTimeout(function () {
-                  props.navigation.pop();
-                }, 2000);
-              },
-            );
-          }
-          else{
-            this.setState(
-              {
-                loading: false,
-                visible: true,
-                success: true,
-              });
-            Snackbar.show({
-              text:'Error',
-              duration:Snackbar.LENGTH_SHORT
-            })
-          }
-        }
+      }
     }
   };
 
@@ -651,7 +644,7 @@ export default class EditProductScreen extends React.Component {
     );
     await RNFS.readFile(e.uri, 'base64').then(async (result) => {
       await storageRef.putString(result, 'base64', {
-        contentType: "jpg",
+        contentType: 'jpg',
       });
     });
     await storageRef.getDownloadURL().then((url) => {
@@ -689,372 +682,394 @@ export default class EditProductScreen extends React.Component {
             </Text>
           </View>
         ) : (
-            <View style={{ width: '100%', flex: 1 }}>
-              {this.state.contentLoading ? (
-                <LoadingScreen />
-              ) : (
-                  <View style={{ width: '100%', flex: 1 }}>
-                    {this.state.success ? (
-                      <View
-                        style={{
-                          width: '100%',
-                          flex: 1,
-                          backgroundColor: '#15202B',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <View style={{ width: 200, height: 200 }}>
-                          <LottieView
-                            source={require('../assets/433-checked-done.json')}
-                            autoPlay={true}
-                            loop={false}
-                            style={{ transform: [{ scale: 1.5 }] }}
-                          />
+          <View style={{width: '100%', flex: 1}}>
+            {this.state.contentLoading ? (
+              <LoadingScreen />
+            ) : (
+              <View style={{width: '100%', flex: 1}}>
+                {this.state.success ? (
+                  <View
+                    style={{
+                      width: '100%',
+                      flex: 1,
+                      backgroundColor: '#15202B',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <View style={{width: 200, height: 200}}>
+                      <LottieView
+                        source={require('../assets/433-checked-done.json')}
+                        autoPlay={true}
+                        loop={false}
+                        style={{transform: [{scale: 1.5}]}}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        color: '#e5e5e5',
+                        textAlign: 'center',
+                        marginTop: 20,
+                        width: '80%',
+                      }}>
+                      Product edited succesfully
+                    </Text>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      alignItems: 'center',
+                    }}>
+                    <View style={{width: '100%', flex: 1}}>
+                      <View style={styles.header}>
+                        <View
+                          style={{alignItems: 'center', flexDirection: 'row'}}>
+                          <TouchableOpacity
+                            style={styles.action}
+                            onPress={() => this.props.navigation.pop()}>
+                            <Ionicons
+                              name="ios-close"
+                              size={30}
+                              style={{color: '#d65a31'}}
+                            />
+                          </TouchableOpacity>
+                          <Text style={styles.headerText}>Edit Product</Text>
                         </View>
-                        <Text
-                          style={{
-                            fontSize: 24,
-                            color: '#e5e5e5',
-                            textAlign: 'center',
-                            marginTop: 20,
-                            width: '80%',
-                          }}>
-                          Product edited succesfully
-                </Text>
+                        <TouchableOpacity onPress={this.handleSubmit}>
+                          <Ionicons
+                            name="ios-checkmark"
+                            size={35}
+                            color="#d65a31"
+                          />
+                        </TouchableOpacity>
                       </View>
-                    ) : (
+
+                      <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        style={{width: '100%'}}>
                         <View
                           style={{
-                            flex: 1,
                             width: '100%',
                             alignItems: 'center',
+                            paddingTop: 10,
                           }}>
-                          <View style={{ width: '100%', flex: 1 }}>
-                            <View style={styles.header}>
-                              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                <TouchableOpacity
-                                  style={styles.action}
-                                  onPress={() => this.props.navigation.pop()}>
-                                  <Ionicons
-                                    name="ios-close"
-                                    size={30}
-                                    style={{ color: '#d65a31' }}
-                                  />
-                                </TouchableOpacity>
-                                <Text style={styles.headerText}>Edit Product</Text>
-                              </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              What do you have ?
+                            </Text>
+                            <TextInput
+                              style={styles.input}
+                              autoCapitalize="none"
+                              maxLength={40}
+                              onChangeText={(wyh) => this.setState({wyh})}
+                              value={this.state.wyh}></TextInput>
+                          </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              Describe what you have
+                            </Text>
+                            <TextInput
+                              style={styles.inputArea}
+                              autoCapitalize="none"
+                              multiline={true}
+                              maxLength={400}
+                              onChangeText={(desc) => this.setState({desc})}
+                              value={this.state.desc}></TextInput>
+                          </View>
+                          {this.state.type === 1 ? (
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>
+                                What do you want to exchange with ?
+                              </Text>
+                              <TextInput
+                                style={styles.input}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(wye) => this.setState({wye})}
+                                value={this.state.wye}></TextInput>
+                            </View>
+                          ) : null}
+
+                          {this.state.type === 2 ? (
+                            <>
+                              {this.state.giveaway === false ? (
+                                <View style={styles.DateGroup}>
+                                  <View style={styles.inputGroupRow}>
+                                    <Text style={styles.inputGroupText}>
+                                      Share from
+                                    </Text>
+                                    <DatePicker
+                                      style={{width: width * 0.4, marginTop: 5}}
+                                      date={this.state.sfd}
+                                      mode="date"
+                                      placeholder="select date"
+                                      format="YYYY-MM-DD"
+                                      minDate={this.state.minDate}
+                                      maxDate={this.state.minDate}
+                                      confirmBtnText="Confirm"
+                                      cancelBtnText="Cancel"
+                                      customStyles={{
+                                        dateIcon: {
+                                          position: 'absolute',
+                                          right: 0,
+                                          marginLeft: 0,
+                                        },
+                                        dateInput: {
+                                          marginRight: 40,
+                                          backgroundColor: '#e5e5e5',
+                                          color: '192734',
+                                          borderRadius: 3,
+                                          borderWidth: 0,
+                                        },
+                                        // ... You can check the source to find the other keys.
+                                      }}
+                                      onDateChange={(date) => {
+                                        this.setState({sfd: date});
+                                      }}
+                                    />
+                                  </View>
+                                  <View>
+                                    <Text style={styles.inputGroupText}>
+                                      Share to
+                                    </Text>
+                                    <DatePicker
+                                      style={{width: width * 0.4, marginTop: 5}}
+                                      date={this.state.std}
+                                      mode="date"
+                                      placeholder="select date"
+                                      format="YYYY-MM-DD"
+                                      minDate={this.state.minDate2}
+                                      maxDate={this.state.maxDate2}
+                                      confirmBtnText="Confirm"
+                                      cancelBtnText="Cancel"
+                                      customStyles={{
+                                        dateIcon: {
+                                          position: 'absolute',
+                                          right: 0,
+                                          marginLeft: 0,
+                                        },
+                                        dateInput: {
+                                          marginRight: 40,
+                                          backgroundColor: '#e5e5e5',
+                                          color: '192734',
+                                          borderRadius: 3,
+                                          borderWidth: 0,
+                                        },
+                                        // ... You can check the source to find the other keys.
+                                      }}
+                                      onDateChange={(date) => {
+                                        this.setState({std: date});
+                                      }}
+                                    />
+                                  </View>
+                                </View>
+                              ) : null}
                               <TouchableOpacity
-                                onPress={this.handleSubmit}
-                              >
-                                <Ionicons
-                                  name="ios-checkmark"
-                                  size={35}
+                                onPress={() =>
+                                  this.setState({
+                                    giveaway: !this.state.giveaway,
+                                  })
+                                }
+                                style={{
+                                  flexDirection: 'row',
+                                  width: '90%',
+                                  alignItems: 'center',
+                                  marginBottom: 15,
+                                }}>
+                                {this.state.giveaway ? (
+                                  <Ionicons
+                                    name="ios-radio-button-on"
+                                    size={(6 / 100) * width}
+                                    style={{color: '#d65a31', marginRight: 15}}
+                                  />
+                                ) : (
+                                  <Ionicons
+                                    name="ios-radio-button-off"
+                                    size={(6 / 100) * width}
+                                    style={{color: '#c5c5c5', marginRight: 15}}
+                                  />
+                                )}
+                                <Text style={styles.selectorText}>
+                                  I'm giving away for free
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          ) : null}
+                          <View
+                            style={{
+                              width: '90%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}>
+                            <View style={styles.inputGroup2}>
+                              <Text style={styles.inputGroupText}>
+                                Category
+                              </Text>
+                              <View style={{width: '100%'}}>
+                                <SelectInput
+                                  value={this.state.category}
+                                  options={this.state.categories}
+                                  onCancelEditing={() =>
+                                    console.log('onCancel')
+                                  }
+                                  onSubmitEditing={(e) => {
+                                    this.setState({
+                                      category: e,
+                                    });
+                                  }}
+                                  style={styles.picker}
+                                  labelStyle={{fontSize: 16, color: '#464646'}}
+                                />
+                              </View>
+                            </View>
+                            <View style={styles.inputGroup3}>
+                              <Text style={styles.inputGroupText}>
+                                Quantity
+                              </Text>
+                              <View style={{width: '100%'}}>
+                                <SelectInput
+                                  value={this.state.quantity}
+                                  options={this.state.quantities}
+                                  onCancelEditing={() =>
+                                    console.log('onCancel')
+                                  }
+                                  onSubmitEditing={(e) => {
+                                    this.setState({
+                                      quantity: e,
+                                    });
+                                  }}
+                                  style={styles.picker}
+                                  labelStyle={{fontSize: 16, color: '#464646'}}
+                                />
+                              </View>
+                            </View>
+                          </View>
+                          {this.state.loadingLocation ? (
+                            <View
+                              style={{
+                                width: '90%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <View style={{width: '10%'}}>
+                                <ActivityIndicator
+                                  size="large"
                                   color="#d65a31"
                                 />
-                              </TouchableOpacity>
-                            </View>
-
-                            <ScrollView
-                              keyboardShouldPersistTaps="handled"
-                              style={{ width: '100%' }}>
-                              <View style={{ width: '100%', alignItems: 'center', paddingTop: 10 }}>
-                                <View style={styles.inputGroup}>
-                                  <Text style={styles.inputGroupText}>
-                                    What do you have ?
-                            </Text>
-                                  <TextInput
-                                    style={styles.input}
-                                    autoCapitalize="none"
-                                    maxLength={40}
-                                    onChangeText={(wyh) => this.setState({ wyh })}
-                                    value={this.state.wyh}></TextInput>
-                                </View>
-                                <View style={styles.inputGroup}>
-                                  <Text style={styles.inputGroupText}>
-                                    Describe what you have
-                        </Text>
-                                  <TextInput
-                                    style={styles.inputArea}
-                                    autoCapitalize="none"
-                                    multiline={true}
-                                    maxLength={400}
-                                    onChangeText={(desc) => this.setState({ desc })}
-                                    value={this.state.desc}></TextInput>
-                                </View>
-                                {this.state.type === 1 ? (
-                                  <View style={styles.inputGroup}>
-                                    <Text style={styles.inputGroupText}>
-                                      What do you want to exchange with ?
-                          </Text>
-                                    <TextInput
-                                      style={styles.input}
-                                      autoCapitalize="none"
-                                      maxLength={40}
-                                      onChangeText={(wye) => this.setState({ wye })}
-                                      value={this.state.wye}></TextInput>
-                                  </View>
-                                ) : null}
-
-                                {this.state.type === 2 ? (
-                                  <>
-                                    {this.state.giveaway === false ? (
-                                      <View style={styles.DateGroup}>
-                                        <View style={styles.inputGroupRow}>
-                                          <Text style={styles.inputGroupText}>
-                                            Share from
-                                </Text>
-                                          <DatePicker
-                                            style={{ width: width * 0.4, marginTop: 5 }}
-                                            date={this.state.sfd}
-                                            mode="date"
-                                            placeholder="select date"
-                                            format="YYYY-MM-DD"
-                                            minDate={this.state.minDate}
-                                            maxDate={this.state.minDate}
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            customStyles={{
-                                              dateIcon: {
-                                                position: 'absolute',
-                                                right: 0,
-                                                marginLeft: 0,
-                                              },
-                                              dateInput: {
-                                                marginRight: 40,
-                                                backgroundColor: '#e5e5e5',
-                                                color: '192734',
-                                                borderRadius: 3,
-                                                borderWidth: 0,
-                                              },
-                                              // ... You can check the source to find the other keys.
-                                            }}
-                                            onDateChange={(date) => {
-                                              this.setState({ sfd: date });
-                                            }}
-                                          />
-                                        </View>
-                                        <View>
-                                          <Text style={styles.inputGroupText}>
-                                            Share to
-                                </Text>
-                                          <DatePicker
-                                            style={{ width: width * 0.4, marginTop: 5 }}
-                                            date={this.state.std}
-                                            mode="date"
-                                            placeholder="select date"
-                                            format="YYYY-MM-DD"
-                                            minDate={this.state.minDate2}
-                                            maxDate={this.state.maxDate2}
-                                            confirmBtnText="Confirm"
-                                            cancelBtnText="Cancel"
-                                            customStyles={{
-                                              dateIcon: {
-                                                position: 'absolute',
-                                                right: 0,
-                                                marginLeft: 0,
-                                              },
-                                              dateInput: {
-                                                marginRight: 40,
-                                                backgroundColor: '#e5e5e5',
-                                                color: '192734',
-                                                borderRadius: 3,
-                                                borderWidth: 0,
-                                              },
-                                              // ... You can check the source to find the other keys.
-                                            }}
-                                            onDateChange={(date) => {
-                                              this.setState({ std: date });
-                                            }}
-                                          />
-                                        </View>
-                                      </View>
-                                    ) : null}
-                                    <TouchableOpacity
-                                      onPress={() =>
-                                        this.setState({ giveaway: !this.state.giveaway })
-                                      }
-                                      style={{
-                                        flexDirection: 'row',
-                                        width: '90%',
-                                        alignItems: 'center',
-                                        marginBottom: 15,
-                                      }}>
-                                      {this.state.giveaway ? (
-                                        <Ionicons
-                                          name="ios-radio-button-on"
-                                          size={(6 / 100) * width}
-                                          style={{ color: '#d65a31', marginRight: 15 }}
-                                        />
-                                      ) : (
-                                          <Ionicons
-                                            name="ios-radio-button-off"
-                                            size={(6 / 100) * width}
-                                            style={{ color: '#c5c5c5', marginRight: 15 }}
-                                          />
-                                        )}
-                                      <Text style={styles.selectorText}>
-                                        I'm giving away for free
-                            </Text>
-                                    </TouchableOpacity>
-                                  </>
-                                ) : null}
-                                <View
-                                  style={{
-                                    width: '90%',
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                  }}>
-                                  <View style={styles.inputGroup2}>
-                                    <Text style={styles.inputGroupText}>Category</Text>
-                                    <View style={{ width: '100%' }}>
-                                      <SelectInput
-                                        value={this.state.category}
-                                        options={this.state.categories}
-                                        onCancelEditing={() => console.log('onCancel')}
-                                        onSubmitEditing={(e) => {
-                                          this.setState({
-                                            category: e,
-                                          });
-                                        }}
-                                        style={styles.picker}
-                                        labelStyle={{ fontSize: 16, color: '#464646' }}
-                                      />
-                                    </View>
-                                  </View>
-                                  <View style={styles.inputGroup3}>
-                                    <Text style={styles.inputGroupText}>Quantity</Text>
-                                    <View style={{ width: '100%' }}>
-                                      <SelectInput
-                                        value={this.state.quantity}
-                                        options={this.state.quantities}
-                                        onCancelEditing={() => console.log('onCancel')}
-                                        onSubmitEditing={(e) => {
-                                          this.setState({
-                                            quantity: e,
-                                          });
-                                        }}
-                                        style={styles.picker}
-                                        labelStyle={{ fontSize: 16, color: '#464646' }}
-                                      />
-                                    </View>
-                                  </View>
-                                </View>
-                                {this.state.loadingLocation ? (
-                                  <View
-                                    style={{
-                                      width: '90%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <View style={{ width: '10%' }}>
-                                      <ActivityIndicator size="large" color="#d65a31" />
-                                    </View>
-                                    <Text
-                                      style={{
-                                        fontSize: 16,
-                                        color: '#ACADAA',
-                                        marginLeft: 10,
-                                        fontFamily: 'Muli-Bold',
-                                      }}>
-                                      Finding Location
-                            </Text>
-                                  </View>
-                                ) : (
-                                    <>
-                                      <View style={{ width: '90%' }}>
-                                        <Text style={styles.inputGroupText}>
-                                          Location
-                              </Text>
-                                        <Text
-                                          style={{
-                                            fontSize: 16,
-                                            color: '#d65a31',
-                                            fontFamily: 'Muli-Bold',
-                                          }}>
-                                          {this.state.neighbourhood} ,{this.state.city} ,
-                                {this.state.country}
-                                        </Text>
-                                      </View>
-                                      <TouchableOpacity
-                                        onPress={this.handleLocation}
-                                        style={{
-                                          width: '90%',
-                                          alignItems: 'center',
-                                          flexDirection: 'row',
-                                          marginTop: 10,
-                                        }}>
-                                        <Feather
-                                          name="arrow-up-circle"
-                                          style={{ fontSize: 30, color: '#d65a31' }}
-                                        />
-                                        <Text
-                                          style={{
-                                            fontSize: 16,
-                                            color: '#ACADAA',
-                                            marginLeft: 10,
-                                            fontFamily: 'Muli-Bold',
-                                          }}>
-                                          Update to current location
-                                        </Text>
-                                      </TouchableOpacity>
-                                    </>
-                                  )}
-                                <View
-                                  style={[
-                                    styles.inputGroup,
-                                    { marginTop: 20, marginBottom: 30 },
-                                  ]}>
-                                  <Text style={styles.inputGroupText}>Images</Text>
-                                  <View
-                                    style={{
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                      width: '100%',
-                                      flexWrap: 'wrap',
-                                      marginTop: 5,
-                                    }}>
-                                    {this.state.images.length > 0 ? (
-                                      <>
-                                        {this.state.images.map((image) => {
-                                          return (
-                                            <View styles={{ position: 'relative' }}>
-                                              <Image
-                                                source={{ uri: image.uri }}
-                                                style={styles.imagePicker}
-                                              />
-                                              <TouchableOpacity
-                                                onPress={this.handlePicker}
-                                                style={styles.editLogo}>
-                                                <Feather
-                                                  name="edit-2"
-                                                  style={{ fontSize: 16, color: '#e5e5e5' }}
-                                                />
-                                              </TouchableOpacity>
-                                            </View>
-                                          );
-                                        })}
-                                      </>
-                                    ) : null}
-                                    {this.state.images.length < 5 ? (
-                                      <TouchableOpacity
-                                        onPress={this.handlePicker}
-                                        style={styles.imagePicker}>
-                                        <AntDesign name="plus" style={styles.upload} />
-                                      </TouchableOpacity>
-                                    ) : null}
-                                  </View>
-                                </View>
                               </View>
-                            </ScrollView>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  color: '#ACADAA',
+                                  marginLeft: 10,
+                                  fontFamily: 'Muli-Bold',
+                                }}>
+                                Finding Location
+                              </Text>
+                            </View>
+                          ) : (
+                            <>
+                              <View style={{width: '90%'}}>
+                                <Text style={styles.inputGroupText}>
+                                  Location
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#d65a31',
+                                    fontFamily: 'Muli-Bold',
+                                  }}>
+                                  {this.state.neighbourhood} ,{this.state.city}{' '}
+                                  ,{this.state.country}
+                                </Text>
+                              </View>
+                              <TouchableOpacity
+                                onPress={this.handleLocation}
+                                style={{
+                                  width: '90%',
+                                  alignItems: 'center',
+                                  flexDirection: 'row',
+                                  marginTop: 10,
+                                }}>
+                                <Feather
+                                  name="arrow-up-circle"
+                                  style={{fontSize: 30, color: '#d65a31'}}
+                                />
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#ACADAA',
+                                    marginLeft: 10,
+                                    fontFamily: 'Muli-Bold',
+                                  }}>
+                                  Update to current location
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          )}
+                          <View
+                            style={[
+                              styles.inputGroup,
+                              {marginTop: 20, marginBottom: 30},
+                            ]}>
+                            <Text style={styles.inputGroupText}>Images</Text>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                width: '100%',
+                                flexWrap: 'wrap',
+                                marginTop: 5,
+                              }}>
+                              {this.state.images.length > 0 ? (
+                                <>
+                                  {this.state.images.map((image) => {
+                                    return (
+                                      <View styles={{position: 'relative'}}>
+                                        <Image
+                                          source={{uri: image.uri}}
+                                          style={styles.imagePicker}
+                                        />
+                                        <TouchableOpacity
+                                          onPress={this.handlePicker}
+                                          style={styles.editLogo}>
+                                          <AntDesign
+                                            name="edit"
+                                            style={{
+                                              fontSize: 16,
+                                              color: '#e5e5e5',
+                                            }}
+                                          />
+                                        </TouchableOpacity>
+                                      </View>
+                                    );
+                                  })}
+                                </>
+                              ) : null}
+                              {this.state.images.length < 5 ? (
+                                <TouchableOpacity
+                                  onPress={this.handlePicker}
+                                  style={styles.imagePicker}>
+                                  <AntDesign
+                                    name="plus"
+                                    style={styles.upload}
+                                  />
+                                </TouchableOpacity>
+                              ) : null}
+                            </View>
                           </View>
                         </View>
-                      )}
+                      </ScrollView>
+                    </View>
                   </View>
-                )
-              }
-            </View>
-          )}
+                )}
+              </View>
+            )}
+          </View>
+        )}
       </SafeAreaView>
     );
   }
