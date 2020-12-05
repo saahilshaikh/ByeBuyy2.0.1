@@ -49,10 +49,11 @@ export default class AddRequest extends React.Component {
       loadingLocation: false,
       country: '',
       code: '',
+      expiry: '',
       types: [
         {label: 'Select a type', value: 0},
         {label: 'Borrow', value: 2},
-        {label: 'Donate', value: 3},
+        {label: 'Give it for free', value: 3},
       ],
       quantity: 1,
       quantities: [
@@ -283,6 +284,7 @@ export default class AddRequest extends React.Component {
           share_from: '',
           share_till: '',
           giveaway: false,
+          expiry: '',
         };
       } else if (this.state.type === 2) {
         var data = {
@@ -304,6 +306,7 @@ export default class AddRequest extends React.Component {
           share_from: '',
           share_till: '',
           giveaway: false,
+          expiry: '',
         };
       } else {
         var data = {
@@ -319,12 +322,13 @@ export default class AddRequest extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'donate',
+          type: 'give it for free',
           withh: '',
           quantity: 1,
           share_from: '',
           share_till: '',
           giveaway: false,
+          expiry: '',
         };
       }
       const res = await axios.post(link + '/api/postProduct', data);

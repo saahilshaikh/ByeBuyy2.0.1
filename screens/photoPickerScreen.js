@@ -144,26 +144,27 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Gallery Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openPicker({
-        width: 1000,
-        height: 1000,
-        cropping: true,
-        multiple: false,
+        width: 1500,
+        height: 1500,
+        multiple: true,
         mediaType: 'photo',
       })
-        .then((item) => {
-          console.log(item);
-          var i = this.state.images.length + 1;
-          var photos = [];
-          var photos = this.state.images;
-          var image = {};
-          image['uri'] = item.path;
-          image['key'] = i;
-          image['file'] = item;
-          photos.push(image);
-          console.log(photos);
-          this.setState({
-            images: photos,
-          });
+        .then((items) => {
+          console.log(items);
+          for (var x = 0; x < items.length; x++) {
+            var i = this.state.images.length + 1;
+            var photos = [];
+            var photos = this.state.images;
+            var image = {};
+            image['uri'] = items[x].path;
+            image['key'] = i;
+            image['file'] = items[x];
+            photos.push(image);
+            console.log(photos);
+            this.setState({
+              images: photos,
+            });
+          }
         })
         .catch((err) => {
           console.log(err);

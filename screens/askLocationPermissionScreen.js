@@ -9,11 +9,11 @@ import {
   Image,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
-import { PulseLoader } from 'react-native-indicator';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {PulseLoader} from 'react-native-indicator';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../appTheme';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const AskLocationPermissionScreen = (props) => {
   return (
@@ -50,18 +50,22 @@ const AskLocationPermissionScreen = (props) => {
           To enjoy all that ByeBuyy offers you,we need to know where to look for
           them
         </Text>
-        <TouchableOpacity onPress={props.handleAllowedLocationPermission} style={styles.permButton}>
+        <TouchableOpacity
+          onPress={props.handleAllowedLocationPermission}
+          style={styles.permButton}>
           <Text style={styles.buttomText}>Allow Location Access</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={props.handleDeniedLocationPermission} style={styles.denyButton}>
+        <TouchableOpacity
+          onPress={props.handleDeniedLocationPermission}
+          style={styles.denyButton}>
           <Text
             style={[
               styles.buttomText,
-              { textDecorationLine: 'underline', fontSize: 14 },
+              {textDecorationLine: 'underline', fontSize: 14},
             ]}>
             Deny Access
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

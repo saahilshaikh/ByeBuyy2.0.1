@@ -56,6 +56,13 @@ export default class EditProductScreen extends React.Component {
       lat: '',
       long: '',
       type: '',
+      expiry: '',
+      types: [
+        {label: 'Select a type', value: ''},
+        {label: 'Exchange', value: 'exchange'},
+        {label: 'Borrow', value: 'borrow'},
+        {label: 'Give it for free', value: 'give it for free'},
+      ],
       country: '',
       code: '',
       quantities: [
@@ -102,6 +109,7 @@ export default class EditProductScreen extends React.Component {
         },
       ],
       quantity: 1,
+      minDate: new Date(),
     };
   }
 
@@ -131,7 +139,7 @@ export default class EditProductScreen extends React.Component {
     var res2 = await axios.post(link + '/api/product/single', data2);
     console.log('data2:', data2);
     if (res2.data !== null) {
-      console.log('DOC: ', res2.data.quantity);
+      console.log('DOC: ', res2.data.share_till);
       var images = [];
       res2.data.images.map((item) => {
         var newItem = {
@@ -140,211 +148,40 @@ export default class EditProductScreen extends React.Component {
         };
         images.push(newItem);
       });
-      this.setState(
-        {
-          wyh: res2.data.what,
-          wye: res2.data.withh ? res2.data.withh : '',
-          sfd: res2.data.share_from,
-          std: res2.data.share_till,
-          giveaway: res2.data.giveaway ? true : false,
-          category: res2.data.category,
-          desc: res2.data.description,
-          images: images,
-          city: res2.data.city,
-          neighbourhood: res2.data.neighbourhood,
-          lat: res2.data.lat,
-          long: res2.data.long,
-          type: res2.data.type,
-          country: res2.data.country,
-          code: res2.data.code,
-          quantity: res2.data.quantity,
-        },
-        () => {
-          console.log('Q:', this.state.quantity);
-        },
-      );
-      var date = new Date(res2.data.share_from);
-      var day = date.getDate();
-      var day2 = date.getDate() + 1;
-      var month = date.getMonth() + 1;
-      var month2 = date.getMonth() + 1;
-      var month3 = date.getMonth() + 1;
-      var day3;
-      day3 = day2 + 29;
-      month3 = month2;
-      var year = date.getFullYear();
-      var year2 = year;
-      if ((0 == year % 4 && 0 != year % 100) || 0 == year % 400) {
-        if (month2 === 2 && day2 > 29) {
-          day2 = day2 - 29;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (
-          day2 > 30 &&
-          (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-        ) {
-          day2 = day2 - 30;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (
-          day2 > 31 &&
-          (month2 === 1 ||
-            month2 === 3 ||
-            month2 === 5 ||
-            month2 === 7 ||
-            month2 === 8 ||
-            month2 === 10)
-        ) {
-          day2 = day2 - 31;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (day2 > 31 && month2 === 12) {
-          day2 = day2 - 31;
-          month2 = 1;
-          year = year + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (month3 === 2 && day3 > 29) {
-          day3 = day3 - 29;
-          month3 = month3 + 1;
-        }
-        if (
-          day3 > 30 &&
-          (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-        ) {
-          day3 = day3 - 30;
-          month3 = month3 + 1;
-        }
-        if (
-          day3 > 31 &&
-          (month3 === 1 ||
-            month3 === 3 ||
-            month3 === 5 ||
-            month3 === 7 ||
-            month3 === 8 ||
-            month3 === 10)
-        ) {
-          day3 = day3 - 31;
-          month3 = month3 + 1;
-        }
-        if (day3 > 31 && month3 === 12) {
-          day3 = day3 - 31;
-          month3 = 1;
-          year2 = year2 + 1;
-        }
-      } else {
-        if (month2 > 12) {
-          month2 = month2 - 12;
-          month3 = month3 - 12;
-        }
-        if (month2 === 2 && day2 > 28) {
-          day2 = day2 - 28;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (
-          day2 > 30 &&
-          (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-        ) {
-          day2 = day2 - 30;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (
-          day2 > 31 &&
-          (month2 === 1 ||
-            month2 === 3 ||
-            month2 === 5 ||
-            month2 === 7 ||
-            month2 === 8 ||
-            month2 === 10)
-        ) {
-          day2 = day2 - 31;
-          month2 = month2 + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (day2 > 31 && month2 === 12) {
-          day2 = day2 - 31;
-          month2 = 1;
-          year = year + 1;
-          day3 = day2 + 29;
-          month3 = month2;
-        }
-        if (month3 === 2 && day3 > 28) {
-          day3 = day3 - 28;
-          month3 = month3 + 1;
-        }
-        if (
-          day3 > 30 &&
-          (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-        ) {
-          day3 = day3 - 30;
-          month3 = month3 + 1;
-        }
-        if (
-          day3 > 31 &&
-          (month3 === 1 ||
-            month3 === 3 ||
-            month3 === 5 ||
-            month3 === 7 ||
-            month3 === 8 ||
-            month3 === 10)
-        ) {
-          day3 = day3 - 31;
-          month3 = month3 + 1;
-        }
-        if (day3 > 31 && month3 === 12) {
-          day3 = day3 - 31;
-          month3 = 1;
-          year2 = year2 + 1;
-        }
-        console.log(day3);
-      }
-      if (day < 10) {
-        day = ('0' + day).slice(-2);
-      }
-      if (day2 < 10) {
-        day2 = ('0' + day2).slice(-2);
-      }
-      if (day3 < 10) {
-        day3 = ('0' + day3).slice(-2);
-      }
-      if (month < 10) {
-        month = ('0' + month).slice(-2);
-      }
-      if (month2 < 10) {
-        month2 = ('0' + month2).slice(-2);
-      }
-      if (month3 < 10) {
-        month3 = ('0' + month3).slice(-2);
-      }
-      var minDate2 = year + '-' + month2 + '-' + day2;
-      var maxDate2 = year + '-' + month3 + '-' + day3;
-      console.log(minDate2, maxDate2);
+      this.setState({
+        wyh: res2.data.what,
+        wye: res2.data.withh ? res2.data.withh : '',
+        sfd: res2.data.share_from,
+        std: res2.data.share_till,
+        giveaway: res2.data.giveaway ? true : false,
+        category: res2.data.category,
+        desc: res2.data.description,
+        images: images,
+        city: res2.data.city,
+        neighbourhood: res2.data.neighbourhood,
+        lat: res2.data.lat,
+        long: res2.data.long,
+        type: res2.data.type,
+        country: res2.data.country,
+        code: res2.data.code,
+        quantity: res2.data.quantity,
+        expiry: res2.data.expiry,
+      });
+      var minDate2 = res2.data.share_till ? res2.data.share_till : new Date();
+      var maxDate2 = minDate2;
+      maxDate2.setDate(maxDate2.getDate() + 30);
       this.setState({
         minDate2,
         maxDate2,
       });
       if (res2.data.type === 'exchange') {
         this.setState({
-          type: 1,
           topic:
             'Ready to exchange ' + res2.data.what + ' with ' + res2.data.withh,
         });
-      } else if (res2.data.type === 'share') {
+      } else if (res2.data.type === 'borrow') {
         this.setState({
-          type: 2,
-          topic: 'Ready to share ' + res2.data.what,
+          topic: 'Ready to borrow ' + res2.data.what,
         });
       }
     }
@@ -509,7 +346,7 @@ export default class EditProductScreen extends React.Component {
       });
     } else if (
       this.state.sfd === '' &&
-      this.state.type === 2 &&
+      this.state.type === 'borrow' &&
       this.state.giveaway === false
     ) {
       Snackbar.show({
@@ -521,7 +358,7 @@ export default class EditProductScreen extends React.Component {
       });
     } else if (
       this.state.std === '' &&
-      this.state.type === 2 &&
+      this.state.type === 'borrow' &&
       this.state.giveaway === false
     ) {
       Snackbar.show({
@@ -594,10 +431,12 @@ export default class EditProductScreen extends React.Component {
         code: this.state.code,
         withh: this.state.wye,
         quantity: this.state.quantity,
-        share_from: this.state.share_from,
-        share_till: this.state.share_till,
+        share_from: this.state.sfd,
+        share_till: this.state.std,
         giveaway: this.state.giveaway,
         id: this.props.route.params.id,
+        type: this.state.type,
+        expiry: this.state.expiry,
       };
       var res = await axios.post(link + '/api/updateProduct', data);
       if (res.data !== null) {
@@ -632,12 +471,7 @@ export default class EditProductScreen extends React.Component {
   handleUpload = async (e) => {
     console.log('Running Upload');
     var topic = '';
-    if (this.state.type === 1) {
-      topic = 'Ready to exchange ' + this.state.wyh + ' with ' + this.state.wye;
-    }
-    if (this.state.type === 2) {
-      topic = 'Ready to share ' + this.state.wyh;
-    }
+    topic = 'Ready to exchange ' + this.state.wyh + ' with ' + this.state.wye;
     var y;
     var storageRef = storage().ref(
       `users/${auth().currentUser.email}/products/${topic}/${e.key}`,
@@ -756,6 +590,23 @@ export default class EditProductScreen extends React.Component {
                             paddingTop: 10,
                           }}>
                           <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Type</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.type}
+                                options={this.state.types}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    type: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                          </View>
+                          <View style={styles.inputGroup}>
                             <Text style={styles.inputGroupText}>
                               What do you have ?
                             </Text>
@@ -778,7 +629,7 @@ export default class EditProductScreen extends React.Component {
                               onChangeText={(desc) => this.setState({desc})}
                               value={this.state.desc}></TextInput>
                           </View>
-                          {this.state.type === 1 ? (
+                          {this.state.type === 'exchange' ? (
                             <View style={styles.inputGroup}>
                               <Text style={styles.inputGroupText}>
                                 What do you want to exchange with ?
@@ -792,7 +643,7 @@ export default class EditProductScreen extends React.Component {
                             </View>
                           ) : null}
 
-                          {this.state.type === 2 ? (
+                          {this.state.type === 'borrow' ? (
                             <>
                               {this.state.giveaway === false ? (
                                 <View style={styles.DateGroup}>
@@ -947,6 +798,41 @@ export default class EditProductScreen extends React.Component {
                               </View>
                             </View>
                           </View>
+                          {this.state.type === 'give it for free' &&
+                          this.state.category === 'Food' ? (
+                            <View style={styles.expiry}>
+                              <Text style={styles.inputGroupText}>
+                                Food Expiry Date
+                              </Text>
+                              <DatePicker
+                                style={{width: width * 0.9, marginTop: 5}}
+                                date={this.state.expiry}
+                                mode="date"
+                                placeholder="select date"
+                                format="YYYY-MM-DD"
+                                confirmBtnText="Confirm"
+                                cancelBtnText="Cancel"
+                                customStyles={{
+                                  dateIcon: {
+                                    position: 'absolute',
+                                    right: 0,
+                                    marginLeft: 0,
+                                  },
+                                  dateInput: {
+                                    marginRight: 40,
+                                    backgroundColor: '#e5e5e5',
+                                    color: '192734',
+                                    borderRadius: 3,
+                                    borderWidth: 0,
+                                  },
+                                  // ... You can check the source to find the other keys.
+                                }}
+                                onDateChange={(date) => {
+                                  this.setState({expiry: date});
+                                }}
+                              />
+                            </View>
+                          ) : null}
                           {this.state.loadingLocation ? (
                             <View
                               style={{
@@ -992,7 +878,7 @@ export default class EditProductScreen extends React.Component {
                                   width: '90%',
                                   alignItems: 'center',
                                   flexDirection: 'row',
-                                  marginTop: 10,
+                                  marginVertical: 10,
                                 }}>
                                 <Feather
                                   name="arrow-up-circle"
@@ -1010,57 +896,59 @@ export default class EditProductScreen extends React.Component {
                               </TouchableOpacity>
                             </>
                           )}
-                          <View
-                            style={[
-                              styles.inputGroup,
-                              {marginTop: 20, marginBottom: 30},
-                            ]}>
-                            <Text style={styles.inputGroupText}>Images</Text>
+                          {this.state.type === 'exchange' ? (
                             <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                width: '100%',
-                                flexWrap: 'wrap',
-                                marginTop: 5,
-                              }}>
-                              {this.state.images.length > 0 ? (
-                                <>
-                                  {this.state.images.map((image) => {
-                                    return (
-                                      <View styles={{position: 'relative'}}>
-                                        <Image
-                                          source={{uri: image.uri}}
-                                          style={styles.imagePicker}
-                                        />
-                                        <TouchableOpacity
-                                          onPress={this.handlePicker}
-                                          style={styles.editLogo}>
-                                          <AntDesign
-                                            name="edit"
-                                            style={{
-                                              fontSize: 16,
-                                              color: '#e5e5e5',
-                                            }}
+                              style={[
+                                styles.inputGroup,
+                                {marginTop: 20, marginBottom: 30},
+                              ]}>
+                              <Text style={styles.inputGroupText}>Images</Text>
+                              <View
+                                style={{
+                                  flexDirection: 'row',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  flexWrap: 'wrap',
+                                  marginTop: 5,
+                                }}>
+                                {this.state.images.length > 0 ? (
+                                  <>
+                                    {this.state.images.map((image) => {
+                                      return (
+                                        <View styles={{position: 'relative'}}>
+                                          <Image
+                                            source={{uri: image.uri}}
+                                            style={styles.imagePicker}
                                           />
-                                        </TouchableOpacity>
-                                      </View>
-                                    );
-                                  })}
-                                </>
-                              ) : null}
-                              {this.state.images.length < 5 ? (
-                                <TouchableOpacity
-                                  onPress={this.handlePicker}
-                                  style={styles.imagePicker}>
-                                  <AntDesign
-                                    name="plus"
-                                    style={styles.upload}
-                                  />
-                                </TouchableOpacity>
-                              ) : null}
+                                          <TouchableOpacity
+                                            onPress={this.handlePicker}
+                                            style={styles.editLogo}>
+                                            <AntDesign
+                                              name="edit"
+                                              style={{
+                                                fontSize: 16,
+                                                color: '#e5e5e5',
+                                              }}
+                                            />
+                                          </TouchableOpacity>
+                                        </View>
+                                      );
+                                    })}
+                                  </>
+                                ) : null}
+                                {this.state.images.length < 5 ? (
+                                  <TouchableOpacity
+                                    onPress={this.handlePicker}
+                                    style={styles.imagePicker}>
+                                    <AntDesign
+                                      name="plus"
+                                      style={styles.upload}
+                                    />
+                                  </TouchableOpacity>
+                                ) : null}
+                              </View>
                             </View>
-                          </View>
+                          ) : null}
                         </View>
                       </ScrollView>
                     </View>

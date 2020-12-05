@@ -29,7 +29,7 @@ import LoadingScreen from './loadingScreen';
 import axios from 'axios';
 import link from '../fetchPath';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 export default class EditRequest extends React.Component {
   constructor() {
     super();
@@ -42,6 +42,12 @@ export default class EditRequest extends React.Component {
       visible: true,
       contentLoading: true,
       categories: [],
+      type: '',
+      types: [
+        {label: 'Select a type', value: ''},
+        {label: 'Borrow', value: 'borrow'},
+        {label: 'Give it for free', value: 'give it for free'},
+      ],
       neighbourhood: '',
       success: false,
       lat: '',
@@ -98,10 +104,9 @@ export default class EditRequest extends React.Component {
 
   async componentDidMount() {
     var res = await axios.get(link + '/api/categories');
-    if(res.data!==null)
-    {
+    if (res.data !== null) {
       var categories = [],
-      x = {};
+        x = {};
       x['value'] = '';
       x['label'] = 'Select a category';
       categories.push(x);
@@ -117,31 +122,31 @@ export default class EditRequest extends React.Component {
       });
     }
     var data2 = {
-      id: this.props.route.params.id
-    }
-    console.log("EDIT ID:",this.props.route.params.id);
+      id: this.props.route.params.id,
+    };
+    console.log('EDIT ID:', this.props.route.params.id);
     var res2 = await axios.post(link + '/api/product/single', data2);
-    console.log("data2:",data2);
-    if(res2.data!==null)
-    {
+    console.log('data2:', data2);
+    if (res2.data !== null) {
+      console.log(res2.data);
       this.setState({
         city: res2.data.city,
-          neighbourhood: res2.data.neighbourhood,
-          lat: res2.data.lat,
-          long: res2.data.long,
-          country: res2.data.country,
-          code: res2.data.code,
-          category: res2.data.category,
-          desc: res2.data.description,
-      })
+        neighbourhood: res2.data.neighbourhood,
+        lat: res2.data.lat,
+        long: res2.data.long,
+        country: res2.data.country,
+        code: res2.data.code,
+        category: res2.data.category,
+        desc: res2.data.description,
+        type: res2.data.type,
+      });
     }
-
   }
 
-  componentWillUnmount(){
-    this.setState = (state,callback)=>{
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
       return;
-  };
+    };
   }
 
   handleLocation = async () => {
@@ -259,35 +264,32 @@ export default class EditRequest extends React.Component {
       .catch((error) => console.warn(error));
   };
 
-  handleSubmit = async() => {
+  handleSubmit = async () => {
     var props = this.props;
     if (this.state.desc === '' || this.state.desc.length < 20) {
       Snackbar.show({
         text: 'Please add proper request',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else if (this.state.category === '') {
+    } else if (this.state.category === '') {
       Snackbar.show({
         text: 'Please select a product category',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else if (this.state.city === '' && this.state.neighbourhood === '') {
+    } else if (this.state.city === '' && this.state.neighbourhood === '') {
       Snackbar.show({
         text: 'Please add a location',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else {
+    } else {
       var props = this.props;
       this.setState({
-        loading: true
-      })
-      var data={
-        varient:'Request',
-        images:[],
-        what: "",
+        loading: true,
+      });
+      var data = {
+        varient: 'Request',
+        images: [],
+        what: '',
         category: this.state.category,
         description: this.state.desc,
         city: this.state.city,
@@ -298,42 +300,39 @@ export default class EditRequest extends React.Component {
         code: this.state.code,
         withh: this.state.wye,
         quantity: 0,
-        share_from: "",
-        share_till: "",
+        share_from: '',
+        share_till: '',
         giveaway: false,
-        id:this.props.route.params.id
-    }
-    var res=await axios.post(link+'/api/updateProduct',data)
-    if(res.data!==null)
-    {
-      if(res.data.type==='success')
-      {
-        this.setState(
-          {
-            loading: false,
-            visible: true,
-            success: true,
-          },
-          () => {
-            setTimeout(function () {
-              props.navigation.pop();
-            }, 2000);
-          },
-        );
-      }
-      else{
-        this.setState(
-          {
+        id: this.props.route.params.id,
+        type: this.state.type,
+      };
+      var res = await axios.post(link + '/api/updateProduct', data);
+      if (res.data !== null) {
+        if (res.data.type === 'success') {
+          this.setState(
+            {
+              loading: false,
+              visible: true,
+              success: true,
+            },
+            () => {
+              setTimeout(function () {
+                props.navigation.pop();
+              }, 2000);
+            },
+          );
+        } else {
+          this.setState({
             loading: false,
             visible: true,
             success: true,
           });
-        Snackbar.show({
-          text:'Error',
-          duration:Snackbar.LENGTH_SHORT
-        })
+          Snackbar.show({
+            text: 'Error',
+            duration: Snackbar.LENGTH_SHORT,
+          });
+        }
       }
-    }
     }
   };
 
@@ -366,178 +365,196 @@ export default class EditRequest extends React.Component {
             </Text>
           </View>
         ) : (
-            <View style={{ width: '100%', flex: 1 }}>
-              {this.state.contentLoading ? (
-                <LoadingScreen />
-              ) : (
-                  <View style={{ width: '100%', flex: 1 }}>
-                    {this.state.success ? (
-                      <View
-                        style={{
-                          width: '100%',
-                          flex: 1,
-                          backgroundColor: '#15202B',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <View style={{ width: 200, height: 200 }}>
-                          <LottieView
-                            source={require('../assets/433-checked-done.json')}
-                            autoPlay={true}
-                            loop={false}
-                            style={{ transform: [{ scale: 1.5 }] }}
-                          />
-                        </View>
-                        <Text
-                          style={{
-                            fontSize: 24,
-                            color: '#e5e5e5',
-                            textAlign: 'center',
-                            marginTop: 20,
-                            width: '80%',
-                          }}>
-                          Requested succesfully updated
-                </Text>
-                      </View>
-                    ) : (
+          <View style={{width: '100%', flex: 1}}>
+            {this.state.contentLoading ? (
+              <LoadingScreen />
+            ) : (
+              <View style={{width: '100%', flex: 1}}>
+                {this.state.success ? (
+                  <View
+                    style={{
+                      width: '100%',
+                      flex: 1,
+                      backgroundColor: '#15202B',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <View style={{width: 200, height: 200}}>
+                      <LottieView
+                        source={require('../assets/433-checked-done.json')}
+                        autoPlay={true}
+                        loop={false}
+                        style={{transform: [{scale: 1.5}]}}
+                      />
+                    </View>
+                    <Text
+                      style={{
+                        fontSize: 24,
+                        color: '#e5e5e5',
+                        textAlign: 'center',
+                        marginTop: 20,
+                        width: '80%',
+                      }}>
+                      Requested succesfully updated
+                    </Text>
+                  </View>
+                ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      alignItems: 'center',
+                    }}>
+                    <View style={{width: '100%', flex: 1}}>
+                      <View style={styles.header}>
                         <View
-                          style={{
-                            flex: 1,
-                            width: '100%',
-                            alignItems: 'center',
-                          }}>
-                          <View style={{ width: '100%', flex: 1 }}>
-                            <View style={styles.header}>
-                              <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                                <TouchableOpacity
-                                  style={styles.action}
-                                  onPress={() => this.props.navigation.pop()}>
-                                  <Ionicons
-                                    name="ios-close"
-                                    size={30}
-                                    style={{ color: '#d65a31' }}
-                                  />
-                                </TouchableOpacity>
-                                <Text style={styles.headerText}>Add Request</Text>
-                              </View>
-                              {
-                                this.state.loading
-                                  ?
-                                  <ActivityIndicator size="large" color="#d65a31" />
-                                  :
-                                  <TouchableOpacity
-                                    onPress={this.handleSubmit}>
-                                    <Ionicons
-                                      name="ios-checkmark"
-                                      size={35}
-                                      color="#d65a31"
-                                    />
-                                  </TouchableOpacity>
-                              }
-                            </View>
-
-                            <ScrollView
-                              keyboardShouldPersistTaps="handled"
-                              style={{ width: '100%', paddingTop: 10 }}>
-                              <View style={{ width: '100%', alignItems: 'center' }}>
-                                <View style={styles.inputGroup}>
-                                  <Text style={styles.inputGroupText}>
-                                    What do you want to request
-                            </Text>
-                                  <TextInput
-                                    style={styles.inputArea}
-                                    autoCapitalize="none"
-                                    multiline={true}
-                                    maxLength={300}
-                                    onChangeText={(desc) => this.setState({ desc })}
-                                    value={this.state.desc}></TextInput>
-                                </View>
-                                <View style={styles.inputGroup}>
-                                  <Text style={styles.inputGroupText}>Category</Text>
-                                  <View style={{ width: '100%' }}>
-                                    <SelectInput
-                                      value={this.state.category}
-                                      options={this.state.categories}
-                                      onCancelEditing={() => console.log('onCancel')}
-                                      onSubmitEditing={(e) => {
-                                        this.setState({
-                                          category: e,
-                                        });
-                                      }}
-                                      style={styles.picker}
-                                      labelStyle={{ fontSize: 16, color: '#464646' }}
-                                    />
-                                  </View>
-                                </View>
-                                {this.state.loadingLocation ? (
-                                  <View
-                                    style={{
-                                      width: '90%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <View style={{ width: '10%' }}>
-                                      <ActivityIndicator size="large" color="#d65a31" />
-                                    </View>
-                                    <Text
-                                      style={{
-                                        fontSize: 16,
-                                        color: '#ACADAA',
-                                        marginLeft: 10,
-                                        fontFamily: 'Muli-Bold',
-                                      }}>
-                                      Finding Location
-                            </Text>
-                                  </View>
-                                ) : (
-                                    <>
-                                      <View style={{ width: '90%' }}>
-                                        <Text style={styles.inputGroupText}>
-                                          Location
-                              </Text>
-                                        <Text
-                                          style={{
-                                            fontSize: 16,
-                                            color: '#d65a31',
-                                            fontFamily: 'Muli-Bold',
-                                          }}>
-                                          {this.state.neighbourhood} ,{this.state.city} ,
-                                {this.state.country}
-                                        </Text>
-                                      </View>
-                                      <TouchableOpacity
-                                        onPress={this.handleLocation}
-                                        style={{
-                                          width: '90%',
-                                          alignItems: 'center',
-                                          flexDirection: 'row',
-                                          marginTop: 10,
-                                        }}>
-                                        <Feather
-                                          name="arrow-up-circle"
-                                          style={{ fontSize: 30, color: '#d65a31' }}
-                                        />
-                                        <Text
-                                          style={{
-                                            fontSize: 16,
-                                            color: '#ACADAA',
-                                            marginLeft: 10,
-                                            fontFamily: 'Muli-Bold',
-                                          }}>
-                                          Update to current location
-                                        </Text>
-                                      </TouchableOpacity>
-                                    </>
-                                  )}
-                              </View>
-                            </ScrollView>
-                          </View>
+                          style={{alignItems: 'center', flexDirection: 'row'}}>
+                          <TouchableOpacity
+                            style={styles.action}
+                            onPress={() => this.props.navigation.pop()}>
+                            <Ionicons
+                              name="ios-close"
+                              size={30}
+                              style={{color: '#d65a31'}}
+                            />
+                          </TouchableOpacity>
+                          <Text style={styles.headerText}>Edit Request</Text>
                         </View>
-                      )}
+                        {this.state.loading ? (
+                          <ActivityIndicator size="large" color="#d65a31" />
+                        ) : (
+                          <TouchableOpacity onPress={this.handleSubmit}>
+                            <Ionicons
+                              name="ios-checkmark"
+                              size={35}
+                              color="#d65a31"
+                            />
+                          </TouchableOpacity>
+                        )}
+                      </View>
+
+                      <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        style={{width: '100%', paddingTop: 10}}>
+                        <View style={{width: '100%', alignItems: 'center'}}>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Type</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.type}
+                                options={this.state.types}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    type: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                          </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              What do you want to request
+                            </Text>
+                            <TextInput
+                              style={styles.inputArea}
+                              autoCapitalize="none"
+                              multiline={true}
+                              maxLength={300}
+                              onChangeText={(desc) => this.setState({desc})}
+                              value={this.state.desc}></TextInput>
+                          </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Category</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.category}
+                                options={this.state.categories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    category: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                          </View>
+                          {this.state.loadingLocation ? (
+                            <View
+                              style={{
+                                width: '90%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <View style={{width: '10%'}}>
+                                <ActivityIndicator
+                                  size="large"
+                                  color="#d65a31"
+                                />
+                              </View>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  color: '#ACADAA',
+                                  marginLeft: 10,
+                                  fontFamily: 'Muli-Bold',
+                                }}>
+                                Finding Location
+                              </Text>
+                            </View>
+                          ) : (
+                            <>
+                              <View style={{width: '90%'}}>
+                                <Text style={styles.inputGroupText}>
+                                  Location
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#d65a31',
+                                    fontFamily: 'Muli-Bold',
+                                  }}>
+                                  {this.state.neighbourhood} ,{this.state.city}{' '}
+                                  ,{this.state.country}
+                                </Text>
+                              </View>
+                              <TouchableOpacity
+                                onPress={this.handleLocation}
+                                style={{
+                                  width: '90%',
+                                  alignItems: 'center',
+                                  flexDirection: 'row',
+                                  marginTop: 10,
+                                }}>
+                                <Feather
+                                  name="arrow-up-circle"
+                                  style={{fontSize: 30, color: '#d65a31'}}
+                                />
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                    color: '#ACADAA',
+                                    marginLeft: 10,
+                                    fontFamily: 'Muli-Bold',
+                                  }}>
+                                  Update to current location
+                                </Text>
+                              </TouchableOpacity>
+                            </>
+                          )}
+                        </View>
+                      </ScrollView>
+                    </View>
                   </View>
                 )}
-            </View>
-          )}
+              </View>
+            )}
+          </View>
+        )}
       </SafeAreaView>
     );
   }

@@ -61,44 +61,8 @@ export default class ViewProductScreen extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    if (
-      this.props.route.params &&
-      this.props.route.params.screen !== undefined
-    ) {
-      var id = this.props.route.params.screen;
-    } else {
-      var id = this.props.route.state
-        ? this.props.route.state.routes[0].name
-        : this.props.route.params.id;
-    }
-    const cardValue = await AsyncStorage.getItem(id + 'product');
-    const cardValue2 = await AsyncStorage.getItem(id + 'owner');
-    if (cardValue !== null && cardValue2 !== null) {
-      console.log('Card Details local found');
-      var product = JSON.parse(cardValue);
-      if (product.varient === 'Product') {
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-        });
-        this.handleInit();
-      } else {
-        this.setState({
-          product: [],
-          owner: [],
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: true,
-        });
-      }
-    } else {
-      console.log('Card Details local not found');
-      this.handleInit();
-    }
+  componentDidMount() {
+    this.handleInit();
   }
 
   componentWillUnmount() {

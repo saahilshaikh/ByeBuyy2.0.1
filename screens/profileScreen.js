@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   ScrollView,
   Image,
   RefreshControl,
@@ -20,9 +19,6 @@ import MyPostScreen from './myPostScreen';
 import LikedPostScreen from './likedPostScreen';
 import SavedPostScreen from './savedPostScreen';
 import MyRatingScreen from './myRatingScreen';
-import Swiper from 'react-native-swiper';
-
-const {width, height} = Dimensions.get('window');
 
 export default class ProfileScreen extends React.Component {
   constructor() {
@@ -166,7 +162,9 @@ export default class ProfileScreen extends React.Component {
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
-                            this.props.navigation.navigate('ProfileEdit')
+                            this.props.navigation.navigate('ProfileEdit', {
+                              handleRefresh: this.handleRefresh,
+                            })
                           }
                           style={{
                             width: 30,

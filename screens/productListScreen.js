@@ -92,6 +92,7 @@ export default class ProductListScreen extends React.Component {
         categories: JSON.parse(catValue),
         categoriesLoading: false,
       });
+      this.handleInit();
     } else {
       console.log('No local posts list found');
       this.handleInit();

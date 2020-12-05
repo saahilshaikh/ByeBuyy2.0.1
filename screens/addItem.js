@@ -34,181 +34,17 @@ const {width, height} = Dimensions.get('window');
 export default class AddItem extends React.Component {
   constructor() {
     super();
-    var date = new Date();
-    var day = date.getDate();
-    var day2 = date.getDate() + 1;
-    var month = date.getMonth() + 1;
-    var month2 = date.getMonth() + 1;
-    var month3 = date.getMonth() + 1;
-    var day3;
-    day3 = day2 + 29;
-    month3 = month2;
-    var year = date.getFullYear();
-    var year2 = year;
-    if ((0 == year % 4 && 0 != year % 100) || 0 == year % 400) {
-      if (month2 === 2 && day2 > 29) {
-        day2 = day2 - 29;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (
-        day2 > 30 &&
-        (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-      ) {
-        day2 = day2 - 30;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (
-        day2 > 31 &&
-        (month2 === 1 ||
-          month2 === 3 ||
-          month2 === 5 ||
-          month2 === 7 ||
-          month2 === 8 ||
-          month2 === 10)
-      ) {
-        day2 = day2 - 31;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (day2 > 31 && month2 === 12) {
-        day2 = day2 - 31;
-        month2 = 1;
-        year = year + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (month3 === 2 && day3 > 29) {
-        day3 = day3 - 29;
-        month3 = month3 + 1;
-      }
-      if (
-        day3 > 30 &&
-        (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-      ) {
-        day3 = day3 - 30;
-        month3 = month3 + 1;
-      }
-      if (
-        day3 > 31 &&
-        (month3 === 1 ||
-          month3 === 3 ||
-          month3 === 5 ||
-          month3 === 7 ||
-          month3 === 8 ||
-          month3 === 10)
-      ) {
-        day3 = day3 - 31;
-        month3 = month3 + 1;
-      }
-      if (day3 > 31 && month3 === 12) {
-        day3 = day3 - 31;
-        month3 = 1;
-        year2 = year2 + 1;
-      }
-    } else {
-      if (month2 > 12) {
-        month2 = month2 - 12;
-        month3 = month3 - 12;
-      }
-      if (month2 === 2 && day2 > 28) {
-        day2 = day2 - 28;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (
-        day2 > 30 &&
-        (month2 === 4 || month2 === 6 || month2 === 9 || month2 === 11)
-      ) {
-        day2 = day2 - 30;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (
-        day2 > 31 &&
-        (month2 === 1 ||
-          month2 === 3 ||
-          month2 === 5 ||
-          month2 === 7 ||
-          month2 === 8 ||
-          month2 === 10)
-      ) {
-        day2 = day2 - 31;
-        month2 = month2 + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (day2 > 31 && month2 === 12) {
-        day2 = day2 - 31;
-        month2 = 1;
-        year = year + 1;
-        day3 = day2 + 29;
-        month3 = month2;
-      }
-      if (month3 === 2 && day3 > 28) {
-        day3 = day3 - 28;
-        month3 = month3 + 1;
-      }
-      if (
-        day3 > 30 &&
-        (month3 === 4 || month3 === 6 || month3 === 9 || month3 === 11)
-      ) {
-        day3 = day3 - 30;
-        month3 = month3 + 1;
-      }
-      if (
-        day3 > 31 &&
-        (month3 === 1 ||
-          month3 === 3 ||
-          month3 === 5 ||
-          month3 === 7 ||
-          month3 === 8 ||
-          month3 === 10)
-      ) {
-        day3 = day3 - 31;
-        month3 = month3 + 1;
-      }
-      if (day3 > 31 && month3 === 12) {
-        day3 = day3 - 31;
-        month3 = 1;
-        year2 = year2 + 1;
-      }
-      console.log(day3);
-    }
-    if (day < 10) {
-      day = ('0' + day).slice(-2);
-    }
-    if (day2 < 10) {
-      day2 = ('0' + day2).slice(-2);
-    }
-    if (day3 < 10) {
-      day3 = ('0' + day3).slice(-2);
-    }
-    if (month < 10) {
-      month = ('0' + month).slice(-2);
-    }
-    if (month2 < 10) {
-      month2 = ('0' + month2).slice(-2);
-    }
-    if (month3 < 10) {
-      month3 = ('0' + month3).slice(-2);
-    }
-    var minDate = year + '-' + month + '-' + day;
-    var minDate2 = year + '-' + month2 + '-' + day2;
-    var maxDate2 = year + '-' + month3 + '-' + day3;
+    var minDate = new Date();
+    var minDate2 = new Date();
+    var maxDate2 = new Date();
+    maxDate2.setDate(maxDate2.getDate() + 30);
     console.log(minDate2, maxDate2);
     this.state = {
       type: 0,
       wyh: '',
       wye: '',
       sfd: minDate,
-      std: '',
+      std: minDate2,
       giveaway: false,
       category: '',
       desc: '',
@@ -219,6 +55,7 @@ export default class AddItem extends React.Component {
       visible: true,
       contentLoading: true,
       categories: [],
+      dCategories: [],
       neighbourhood: '',
       minDate: minDate,
       minDate2: minDate2,
@@ -230,11 +67,12 @@ export default class AddItem extends React.Component {
       country: '',
       code: '',
       quantity: 1,
+      expiry: '',
       types: [
         {label: 'Select a type', value: 0},
         {label: 'Exchange', value: 1},
         {label: 'Borrow', value: 2},
-        {label: 'Donate', value: 3},
+        {label: 'Give it for free', value: 3},
       ],
       quantities: [
         {
@@ -297,10 +135,27 @@ export default class AddItem extends React.Component {
         categories.push(x2);
       });
       console.log(categories);
-      this.setState({
-        categories: categories,
-        contentLoading: false,
+      var dCategories = [];
+      res2.data.map((item) => {
+        var y2 = {};
+        y2['value'] = item.name;
+        y2['label'] = item.name;
+        dCategories.push(y2);
       });
+      var y = {};
+      y['value'] = 'Food';
+      y['label'] = 'Food';
+      dCategories.push(y);
+      this.setState(
+        {
+          categories: categories,
+          dCategories: dCategories,
+          contentLoading: false,
+        },
+        () => {
+          console.log(this.state.categories);
+        },
+      );
     }
   }
 
@@ -545,6 +400,7 @@ export default class AddItem extends React.Component {
           quantity: this.state.quantity,
           share_from: '',
           share_till: '',
+          expiry: '',
         };
       } else if (this.state.type === 2) {
         var data = {
@@ -565,6 +421,7 @@ export default class AddItem extends React.Component {
           quantity: this.state.quantity,
           share_from: this.state.sfd,
           share_till: this.state.std,
+          expiry: '',
         };
       } else {
         var data = {
@@ -580,11 +437,12 @@ export default class AddItem extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'donate',
+          type: 'give it for free',
           withh: '',
           quantity: this.state.quantity,
           share_from: '',
           share_till: '',
+          expiry: this.state.expiry,
         };
       }
       const res = await axios.post(link + '/api/postProduct', data);
@@ -618,7 +476,7 @@ export default class AddItem extends React.Component {
     } else if (this.state.type === 2) {
       topic = 'Ready to borrow ' + this.state.wyh;
     } else {
-      topic = 'Ready to donate ' + this.state.wyh;
+      topic = 'Ready to give it for free ' + this.state.wyh;
     }
     var y;
     var storageRef = storage().ref(
@@ -867,23 +725,44 @@ export default class AddItem extends React.Component {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                         }}>
-                        <View style={styles.inputGroup2}>
-                          <Text style={styles.inputGroupText}>Category</Text>
-                          <View style={{width: '100%'}}>
-                            <SelectInput
-                              value={this.state.category}
-                              options={this.state.categories}
-                              onCancelEditing={() => console.log('onCancel')}
-                              onSubmitEditing={(e) => {
-                                this.setState({
-                                  category: e,
-                                });
-                              }}
-                              style={styles.picker}
-                              labelStyle={{fontSize: 16, color: '#464646'}}
-                            />
+                        {this.state.type && this.state.type === 3 ? (
+                          <View style={styles.inputGroup2}>
+                            <Text style={styles.inputGroupText}>Category</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.category}
+                                options={this.state.dCategories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    category: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
                           </View>
-                        </View>
+                        ) : (
+                          <View style={styles.inputGroup2}>
+                            <Text style={styles.inputGroupText}>Category</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.category}
+                                options={this.state.categories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    category: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                          </View>
+                        )}
+
                         {/* <View style={styles.inputGroup3}>
                               <Text style={styles.inputGroupText}>Quantity</Text>
                               <View style={{ width: '100%' }}>
@@ -902,7 +781,41 @@ export default class AddItem extends React.Component {
                               </View>
                             </View> */}
                       </View>
-
+                      {this.state.type === 3 &&
+                      this.state.category === 'Food' ? (
+                        <View style={styles.expiry}>
+                          <Text style={styles.inputGroupText}>
+                            Food Expiry Date
+                          </Text>
+                          <DatePicker
+                            style={{width: width * 0.9, marginTop: 5}}
+                            date={this.state.expiry}
+                            mode="date"
+                            placeholder="select date"
+                            format="YYYY-MM-DD"
+                            confirmBtnText="Confirm"
+                            cancelBtnText="Cancel"
+                            customStyles={{
+                              dateIcon: {
+                                position: 'absolute',
+                                right: 0,
+                                marginLeft: 0,
+                              },
+                              dateInput: {
+                                marginRight: 40,
+                                backgroundColor: '#e5e5e5',
+                                color: '192734',
+                                borderRadius: 3,
+                                borderWidth: 0,
+                              },
+                              // ... You can check the source to find the other keys.
+                            }}
+                            onDateChange={(date) => {
+                              this.setState({expiry: date});
+                            }}
+                          />
+                        </View>
+                      ) : null}
                       {this.state.loadingLocation ? (
                         <View
                           style={{
@@ -1100,6 +1013,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  expiry: {
+    width: '90%',
+    marginBottom: 15,
     justifyContent: 'space-between',
   },
   inputGroupRow: {

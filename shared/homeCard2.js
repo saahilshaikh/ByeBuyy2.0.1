@@ -703,8 +703,7 @@ export default class HomeCard2 extends React.Component {
                       <Text style={styles.type}>
                         {this.state.product.type}, {this.state.product.category}
                       </Text>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View style={{flexDirection: 'row'}}>
                         <Image
                           source={{
                             uri:
@@ -775,6 +774,7 @@ export default class HomeCard2 extends React.Component {
                           </>
                         ) : null}
                       </View>
+                      <Text style={styles.title2}>Asking :</Text>
                       <Text style={styles.title}>
                         {this.state.product.description}
                       </Text>
@@ -1030,7 +1030,7 @@ export default class HomeCard2 extends React.Component {
                           this.setState({
                             isModalVisible: false,
                           });
-                          this.props.navigation.navigate('EditItem', {
+                          this.props.navigation.navigate('EditRequest', {
                             id: this.state.product.id,
                           });
                         }}
@@ -1330,6 +1330,11 @@ const styles = StyleSheet.create({
     color: colors.grey,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
+  },
+  title2: {
+    color: colors.white,
+    fontSize: 14,
+    fontFamily: 'Muli-Bold',
   },
   title: {
     color: colors.white,

@@ -961,6 +961,35 @@ export default class Card extends React.Component {
                         </Text>
                         {this.state.viewmore ? (
                           <>
+                            {this.state.product.type === 'give it for free' ? (
+                              <>
+                                <Text style={styles.subHeader}>
+                                  Expiry Date
+                                </Text>
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                  }}>
+                                  <Ionicons
+                                    name="ios-calendar"
+                                    style={{
+                                      fontSize: 18,
+                                      color: colors.white,
+                                    }}
+                                  />
+                                  <Text
+                                    style={{
+                                      fontSize: 14,
+                                      fontFamily: 'Muli-Bold',
+                                      color: colors.white,
+                                      marginLeft: 5,
+                                    }}>
+                                    {this.state.product.expiry}
+                                  </Text>
+                                </View>
+                              </>
+                            ) : null}
                             <Text style={styles.subHeader}>Description</Text>
                             <Text style={styles.desc}>
                               {this.state.product.description}

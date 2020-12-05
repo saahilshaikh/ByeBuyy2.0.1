@@ -67,6 +67,7 @@ class LoginScreen extends React.Component {
             }),
           );
         } else {
+          auth().signOut();
           Snackbar.show({
             text: re.data.error,
             duration: Snackbar.LENGTH_SHORT,
@@ -142,6 +143,7 @@ class LoginScreen extends React.Component {
             }),
           );
         } else {
+          auth().signOut();
           Snackbar.show({
             text: re.data.error,
             duration: Snackbar.LENGTH_SHORT,

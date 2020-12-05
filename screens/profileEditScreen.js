@@ -10,7 +10,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
@@ -25,33 +25,33 @@ import SelectInput from 'react-native-select-input-ios';
 
 var RNFS = require('react-native-fs');
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class ProfileEditScreen extends React.Component {
   constructor() {
     super();
     this.state = {
-      name: "",
-      photo: "",
-      uname: "",
+      name: '',
+      photo: '',
+      uname: '',
       editedPhoto: false,
-      prof: "",
-      bio: "",
+      prof: '',
+      bio: '',
       loading: true,
       saving: false,
       profs: [
-        { "label": "Select a type", "value": "" },
-        { "label": "Student", "value": "Student" },
-        { "label": "Non-Student", "value": 'Non-Student' },
+        {label: 'Select a type', value: ''},
+        {label: 'Student', value: 'Student'},
+        {label: 'Non-Student', value: 'Non-Student'},
       ],
-      profStudent: ""
+      profStudent: '',
     };
   }
 
   async componentDidMount() {
     var data = {
-      id: auth().currentUser.email
-    }
+      id: auth().currentUser.email,
+    };
     var res = await axios.post(link + '/api/user/single', data);
     if (res.data !== null) {
       this.setState({
@@ -60,15 +60,15 @@ export default class ProfileEditScreen extends React.Component {
         photo: res.data.photo,
         prof: res.data.prof,
         profStudent: res.data.institution,
-        loading: false
-      })
+        loading: false,
+      });
     }
   }
 
   handleSave = async () => {
     this.setState({
-      saving: true
-    })
+      saving: true,
+    });
     if (this.state.name === '') {
       this.setState({
         loading: false,
@@ -77,8 +77,7 @@ export default class ProfileEditScreen extends React.Component {
         text: 'Please enter your name!',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else if (this.state.uname === '') {
+    } else if (this.state.uname === '') {
       this.setState({
         loading: false,
       });
@@ -86,8 +85,7 @@ export default class ProfileEditScreen extends React.Component {
         text: 'Please enter a user name!',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else if (this.state.uname.includes('@')) {
+    } else if (this.state.uname.includes('@')) {
       this.setState({
         loading: false,
       });
@@ -95,8 +93,7 @@ export default class ProfileEditScreen extends React.Component {
         text: 'User name cannot include @ symbol!',
         duration: Snackbar.LENGTH_SHORT,
       });
-    }
-    else {
+    } else {
       var err = await this.handleUName();
       if (err === false) {
         if (this.state.editedPhoto) {
@@ -108,10 +105,7 @@ export default class ProfileEditScreen extends React.Component {
               })
               .then(() => {
                 storage()
-                  .ref(
-                    `users/${auth().currentUser.email
-                    }/profile/profileimage`,
-                  )
+                  .ref(`users/${auth().currentUser.email}/profile/profileimage`)
                   .getDownloadURL()
                   .then(async (url) => {
                     var data = {
@@ -121,12 +115,16 @@ export default class ProfileEditScreen extends React.Component {
                       photo: url,
                       prof: this.state.prof,
                       profStudent: this.state.profStudent,
-                    }
-                    var res = await axios.post(link + '/api/user/editWithImage', data)
+                    };
+                    var res = await axios.post(
+                      link + '/api/user/editWithImage',
+                      data,
+                    );
                     if (res.data !== null) {
                       this.setState({
-                        saving: false
-                      })
+                        saving: false,
+                      });
+                      this.props.route.params.handleRefresh();
                       this.props.navigation.pop();
                     }
                   });
@@ -142,48 +140,50 @@ export default class ProfileEditScreen extends React.Component {
                 });
               });
           });
-        }
-        else {
+        } else {
           var data = {
             email: auth().currentUser.email,
             name: this.state.name,
             uname: this.state.uname,
             prof: this.state.prof,
             profStudent: this.state.profStudent,
-          }
-          var res = await axios.post(link + '/api/user/edit', data)
+          };
+          var res = await axios.post(link + '/api/user/edit', data);
           if (res.data !== null) {
             this.setState({
-              saving: false
-            })
+              saving: false,
+            });
+            this.props.route.params.handleRefresh();
             this.props.navigation.pop();
           }
         }
-      }
-      else {
+      } else {
         Snackbar.show({
           text: 'User name already taken!',
           duration: Snackbar.LENGTH_SHORT,
         });
         this.setState({
-          saving: false
-        })
+          saving: false,
+        });
       }
     }
-  }
+  };
 
   handleUName = async () => {
     var result = false;
     var res = await axios.get(link + '/api/userUname/' + this.state.uname);
     if (res.data !== null) {
-      res.data.map(data => {
-        if (data.email !== auth().currentUser.email && data.uname === this.state.uname.toLowerCase()) {
-          result = true
+      res.data.map((data) => {
+        if (
+          data.email !== auth().currentUser.email &&
+          data.uname === this.state.uname.toLowerCase()
+        ) {
+          result = true;
         }
-      })
+      });
     }
     return result;
-  }
+  };
 
   handleImageChange = () => {
     Keyboard.dismiss();
@@ -199,8 +199,8 @@ export default class ProfileEditScreen extends React.Component {
         console.log(item);
         this.setState({
           photo: item.path,
-          editedPhoto: true
-        })
+          editedPhoto: true,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -237,104 +237,129 @@ export default class ProfileEditScreen extends React.Component {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            {
-              this.state.saving
-                ?
-                <ActivityIndicator size='large' color={colors.baseline} />
-                :
-                <TouchableOpacity onPress={this.handleSave}>
-                  <Ionicons name="ios-checkmark" size={35} color={colors.baseline} />
-                </TouchableOpacity>
-            }
+            {this.state.saving ? (
+              <ActivityIndicator size="large" color={colors.baseline} />
+            ) : (
+              <TouchableOpacity onPress={this.handleSave}>
+                <Ionicons
+                  name="ios-checkmark"
+                  size={35}
+                  color={colors.baseline}
+                />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
-        <ScrollView style={{ width: '100%', flex: 1, paddingTop: 10 }}>
-          {
-            !this.state.loading
-              ?
-              <View
-                style={{ width: '100%', alignItems: 'center', paddingVertical: 10 }}>
-                <View style={styles.profileImageBox}>
-                  {
-                    this.state.photo
-                      ?
-                      <Image
-                        source={{ uri: this.state.photo }}
-                        style={styles.profileImage}
-                      />
-                      :
-                      <View style={styles.profileImageTextBox}>
-                        <Text style={styles.imageText}>{this.state.name.charAt(0).toUpperCase()}</Text>
-                      </View>
-                  }
-                  <TouchableOpacity onPress={this.handleImageChange} style={styles.profileEditButton}>
-                    <Ionicons name="ios-camera" size={24} color={colors.baseline} />
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputGroupText}>Your name</Text>
-                  <TextInput
-                    style={styles.input}
-                    autoCapitalize="none"
-                    maxLength={25}
-                    onChangeText={(name) => this.setState({ name })}
-                    value={this.state.name}></TextInput>
-                </View>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputGroupText}>User name</Text>
-                  <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={{ fontFamily: 'Muli-Bold', fontSize: 20, color: colors.baseline, marginLeft: 5 }}>@</Text>
-                    <TextInput
-                      style={[styles.input, { width: '90%' }]}
-                      autoCapitalize="none"
-                      maxLength={20}
-                      onChangeText={(uname) => this.setState({ uname: uname.replace(' ', '') })}
-                      value={this.state.uname}></TextInput>
+        <ScrollView style={{width: '100%', flex: 1, paddingTop: 10}}>
+          {!this.state.loading ? (
+            <View
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                paddingVertical: 10,
+              }}>
+              <View style={styles.profileImageBox}>
+                {this.state.photo ? (
+                  <Image
+                    source={{uri: this.state.photo}}
+                    style={styles.profileImage}
+                  />
+                ) : (
+                  <View style={styles.profileImageTextBox}>
+                    <Text style={styles.imageText}>
+                      {this.state.name.charAt(0).toUpperCase()}
+                    </Text>
                   </View>
-                </View>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.inputGroupText}>Profession</Text>
-                  <View style={{ width: '100%' }}>
-                    <SelectInput
-                      value={this.state.prof}
-                      options={this.state.profs}
-                      onCancelEditing={() => console.log('onCancel')}
-                      onSubmitEditing={(e) => {
-                        this.setState({
-                          prof: e,
-                        });
-                      }}
-                      style={styles.input}
-                      labelStyle={{ fontSize: 16, color: colors.darkText, fontFamily: 'Muli-Regular' }}
-                    />
-                  </View>
-                </View>
-                {
-                  this.state.prof === 'Student'
-                    ?
-                    <View style={styles.inputGroup}>
-                      <Text style={styles.inputGroupText}>Institution</Text>
-                      <TextInput
-                        value={this.state.profStudent}
-                        onChangeText={(text) => {
-                          this.setState({
-                            profStudent: text,
-                          });
-                        }}
-                        ref={(input) => {
-                          this.fourthTextInput = input;
-                        }}
-                        maxLength={50}
-                        style={styles.input}
-                      ></TextInput>
-                    </View>
-                    :
-                    null
-                }
+                )}
+                <TouchableOpacity
+                  onPress={this.handleImageChange}
+                  style={styles.profileEditButton}>
+                  <Ionicons
+                    name="ios-camera"
+                    size={24}
+                    color={colors.baseline}
+                  />
+                </TouchableOpacity>
               </View>
-              :
-              <ActivityIndicator size='large' color={colors.baseline} />
-          }
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputGroupText}>Your name</Text>
+                <TextInput
+                  style={styles.input}
+                  autoCapitalize="none"
+                  maxLength={25}
+                  onChangeText={(name) => this.setState({name})}
+                  value={this.state.name}></TextInput>
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputGroupText}>User name</Text>
+                <View
+                  style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: 'Muli-Bold',
+                      fontSize: 20,
+                      color: colors.baseline,
+                      marginLeft: 5,
+                    }}>
+                    @
+                  </Text>
+                  <TextInput
+                    style={[styles.input, {width: '90%'}]}
+                    autoCapitalize="none"
+                    maxLength={20}
+                    onChangeText={(uname) =>
+                      this.setState({uname: uname.replace(' ', '')})
+                    }
+                    value={this.state.uname}></TextInput>
+                </View>
+              </View>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputGroupText}>Profession</Text>
+                <View style={{width: '100%'}}>
+                  <SelectInput
+                    value={this.state.prof}
+                    options={this.state.profs}
+                    onCancelEditing={() => console.log('onCancel')}
+                    onSubmitEditing={(e) => {
+                      this.setState({
+                        prof: e,
+                      });
+                    }}
+                    style={styles.input}
+                    labelStyle={{
+                      fontSize: 16,
+                      color: colors.darkText,
+                      fontFamily: 'Muli-Regular',
+                    }}
+                  />
+                </View>
+              </View>
+              {this.state.prof === 'Student' ? (
+                <View style={styles.inputGroup}>
+                  <Text style={styles.inputGroupText}>Institution</Text>
+                  <TextInput
+                    value={this.state.profStudent}
+                    onChangeText={(text) => {
+                      this.setState({
+                        profStudent: text,
+                      });
+                    }}
+                    ref={(input) => {
+                      this.fourthTextInput = input;
+                    }}
+                    maxLength={50}
+                    style={styles.input}></TextInput>
+                </View>
+              ) : null}
+            </View>
+          ) : (
+            <ActivityIndicator size="large" color={colors.baseline} />
+          )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -371,7 +396,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.white
+    backgroundColor: colors.white,
   },
   imageText: {
     fontFamily: 'Muli-Bold',
@@ -388,7 +413,7 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 5
+    elevation: 5,
   },
   inputGroup: {
     width: '90%',

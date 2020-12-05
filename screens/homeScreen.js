@@ -493,6 +493,20 @@ export default class HomeScreen extends React.Component {
     }
   };
 
+  handleDeniedLocationPermission = () => {
+    console.log('LOCATION ACCESS DENIED');
+    this.setState(
+      {
+        location: {},
+        locationLoading: false,
+        showLocationAccess: false,
+      },
+      () => {
+        console.log(this.state.location);
+      },
+    );
+  };
+
   handleSearch = () => {
     var location = this.state.location;
     console.log('Handling Search');

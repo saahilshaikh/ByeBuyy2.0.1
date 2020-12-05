@@ -12,10 +12,12 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
-import { CommonActions } from '@react-navigation/native';
+import {CommonActions} from '@react-navigation/native';
 import colors from '../appTheme';
+import axios from 'axios';
+import link from '../fetchPath';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class SignInScreen extends React.Component {
   constructor() {
@@ -28,7 +30,7 @@ export default class SignInScreen extends React.Component {
       loading: false,
     };
   }
-  handleSignIn = () => {
+  handleSignIn = async () => {
     this.setState({
       loading: true,
       error: '',
@@ -51,14 +53,34 @@ export default class SignInScreen extends React.Component {
     } else {
       auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(() => {
-          console.log('Login Success');
-          this.props.navigation.dispatch(
-            CommonActions.reset({
-              index: 1,
-              routes: [{ name: 'Main' }],
-            }),
-          );
+        .then(async () => {
+          var data2 = {
+            name: 'User',
+            uname: '',
+            photo: '',
+            email: this.state.email,
+            loginType: 'basic',
+            prof: '',
+            institution: '',
+          };
+          const re = await axios.post(link + '/api/user/signup', data2);
+          if (re.data.type === 'success') {
+            console.log(re.data.success);
+            this.props.navigation.dispatch(
+              CommonActions.reset({
+                routes: [{name: 'Main'}],
+              }),
+            );
+          } else {
+            auth().signOut();
+            Snackbar.show({
+              text: re.data.error,
+              duration: Snackbar.LENGTH_SHORT,
+            });
+            this.setState({
+              loading: false,
+            });
+          }
         })
         .catch((err) => {
           if (err.code === 'auth/invalid-email') {
@@ -102,7 +124,7 @@ export default class SignInScreen extends React.Component {
             <Ionicons
               name="ios-arrow-back"
               size={40}
-              style={{ color: colors.baseline }}
+              style={{color: colors.baseline}}
             />
           </TouchableOpacity>
           <Text
@@ -118,74 +140,74 @@ export default class SignInScreen extends React.Component {
           {this.state.loading ? (
             <ActivityIndicator size="large" color={colors.baseline} />
           ) : (
-              <>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputHeader}>Email</Text>
-                  <TextInput
-                    value={this.state.email}
-                    onChangeText={(text) => {
-                      this.setState({
-                        email: text,
-                      });
-                    }}
-                    onSubmitEditing={() => {
-                      this.secondTextInput.focus();
-                    }}
-                    style={styles.input}></TextInput>
-                </View>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputHeader}>Password</Text>
-                  <TextInput
-                    value={this.state.password}
-                    onChangeText={(text) => {
-                      this.setState({
-                        password: text,
-                      });
-                    }}
-                    ref={(input) => {
-                      this.secondTextInput = input;
-                    }}
-                    onSubmitEditing={this.handleSignIn}
-                    style={[styles.input, { paddingRight: 40 }]}
-                    secureTextEntry={!this.state.show}></TextInput>
-                  <TouchableOpacity onPress={() => this.setState({ show: !this.state.show })} style={styles.passwordIcon}>
-                    {
-                      this.state.show
-                        ?
-                        <Ionicons
-                          name="ios-eye"
-                          size={20}
-                          style={{ color: colors.grey }}
-                        />
-                        :
-                        <Ionicons
-                          name="ios-eye-off"
-                          size={20}
-                          style={{ color: colors.grey }}
-                        />
-                    }
-                  </TouchableOpacity>
-                </View>
+            <>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputHeader}>Email</Text>
+                <TextInput
+                  value={this.state.email}
+                  onChangeText={(text) => {
+                    this.setState({
+                      email: text,
+                    });
+                  }}
+                  onSubmitEditing={() => {
+                    this.secondTextInput.focus();
+                  }}
+                  style={styles.input}></TextInput>
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputHeader}>Password</Text>
+                <TextInput
+                  value={this.state.password}
+                  onChangeText={(text) => {
+                    this.setState({
+                      password: text,
+                    });
+                  }}
+                  ref={(input) => {
+                    this.secondTextInput = input;
+                  }}
+                  onSubmitEditing={this.handleSignIn}
+                  style={[styles.input, {paddingRight: 40}]}
+                  secureTextEntry={!this.state.show}></TextInput>
                 <TouchableOpacity
-                  onPress={this.handleSignIn}
-                  style={styles.button}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.white,
-                      fontFamily: 'Muli-Bold',
-                    }}>
-                    Login
-                </Text>
+                  onPress={() => this.setState({show: !this.state.show})}
+                  style={styles.passwordIcon}>
+                  {this.state.show ? (
+                    <Ionicons
+                      name="ios-eye"
+                      size={20}
+                      style={{color: colors.grey}}
+                    />
+                  ) : (
+                    <Ionicons
+                      name="ios-eye-off"
+                      size={20}
+                      style={{color: colors.grey}}
+                    />
+                  )}
                 </TouchableOpacity>
-              </>
-            )}
+              </View>
+              <TouchableOpacity
+                onPress={this.handleSignIn}
+                style={styles.button}>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: colors.white,
+                    fontFamily: 'Muli-Bold',
+                  }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+            </>
+          )}
           {!this.state.loading ? (
             <>
-              <View style={{ width: '100%', alignItems: 'center' }}>
+              <View style={{width: '100%', alignItems: 'center'}}>
                 <Text
                   onPress={() => {
-                    this.setState({ error: '' });
+                    this.setState({error: ''});
                     this.props.navigation.navigate('Forgot');
                   }}
                   style={{
@@ -213,7 +235,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: '100%',
     marginBottom: 30,
-    position: 'relative'
+    position: 'relative',
   },
   inputHeader: {
     fontSize: 14,
@@ -264,6 +286,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
