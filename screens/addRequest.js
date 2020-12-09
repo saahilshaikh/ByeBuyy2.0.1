@@ -99,6 +99,27 @@ export default class AddRequest extends React.Component {
           label: '10',
         },
       ],
+      subcategory: 'Action and adventure',
+      bcategories: [
+        {label: 'Action and adventure', value: 'Action and adventure'},
+        {label: 'Biography', value: 'Biography'},
+        {label: 'College', value: 'College'},
+        {label: 'Comic', value: 'Comic'},
+        {label: 'Competitive exams', value: 'Competitive exams'},
+        {label: 'Cooking', value: 'Cooking'},
+        {label: 'Fiction', value: 'Fiction'},
+        {label: 'History', value: 'History'},
+        {label: 'Horror', value: 'Horror'},
+        {label: 'Novel & literature', value: 'Novel & literature'},
+        {label: 'Others', value: 'Others'},
+        {label: 'Pre school', value: 'Pre school'},
+        {label: 'Regional language', value: 'Regional language'},
+        {label: 'Religous', value: 'Religous'},
+        {label: 'Romance', value: 'Romance'},
+        {label: 'Sci-Fi', value: 'Sci-Fi'},
+        {label: 'Self help', value: 'Self help'},
+        {label: 'Suspense and thriller', value: 'Suspense and thriller'},
+      ],
     };
   }
 
@@ -285,6 +306,9 @@ export default class AddRequest extends React.Component {
           share_till: '',
           giveaway: false,
           expiry: '',
+          from: '',
+          to: '',
+          subcategory: this.state.subcategory,
         };
       } else if (this.state.type === 2) {
         var data = {
@@ -307,6 +331,9 @@ export default class AddRequest extends React.Component {
           share_till: '',
           giveaway: false,
           expiry: '',
+          from: '',
+          to: '',
+          subcategory: this.state.subcategory,
         };
       } else {
         var data = {
@@ -329,6 +356,9 @@ export default class AddRequest extends React.Component {
           share_till: '',
           giveaway: false,
           expiry: '',
+          from: '',
+          to: '',
+          subcategory: this.state.subcategory,
         };
       }
       const res = await axios.post(link + '/api/postProduct', data);
@@ -474,18 +504,6 @@ export default class AddRequest extends React.Component {
                         </View>
                       </View>
                       <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>
-                          What do you want to request ?
-                        </Text>
-                        <TextInput
-                          style={styles.inputArea}
-                          autoCapitalize="none"
-                          multiline={true}
-                          maxLength={300}
-                          onChangeText={(desc) => this.handleDesc(desc)}
-                          value={this.state.desc}></TextInput>
-                      </View>
-                      <View style={styles.inputGroup}>
                         <Text style={styles.inputGroupText}>Category</Text>
                         <View style={{width: '100%'}}>
                           <SelectInput
@@ -502,6 +520,38 @@ export default class AddRequest extends React.Component {
                           />
                         </View>
                       </View>
+                      {this.state.category === 'Books' ? (
+                        <View style={styles.inputGroup}>
+                          <Text style={styles.inputGroupText}>Category</Text>
+                          <View style={{width: '100%'}}>
+                            <SelectInput
+                              value={this.state.subcategory}
+                              options={this.state.bcategories}
+                              onCancelEditing={() => console.log('onCancel')}
+                              onSubmitEditing={(e) => {
+                                this.setState({
+                                  subcategory: e,
+                                });
+                              }}
+                              style={styles.picker}
+                              labelStyle={{fontSize: 16, color: '#464646'}}
+                            />
+                          </View>
+                        </View>
+                      ) : null}
+                      <View style={styles.inputGroup}>
+                        <Text style={styles.inputGroupText}>
+                          What do you want to request ?
+                        </Text>
+                        <TextInput
+                          style={styles.inputArea}
+                          autoCapitalize="none"
+                          multiline={true}
+                          maxLength={300}
+                          onChangeText={(desc) => this.handleDesc(desc)}
+                          value={this.state.desc}></TextInput>
+                      </View>
+
                       {this.state.loadingLocation ? (
                         <View
                           style={{
@@ -582,7 +632,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#15202B',
+    backgroundColor: '#31363C',
   },
   header: {
     width: '100%',
@@ -590,7 +640,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 60,
-    backgroundColor: '#192734',
+    backgroundColor: '#1B1F22',
     elevation: 3,
     justifyContent: 'space-between',
   },

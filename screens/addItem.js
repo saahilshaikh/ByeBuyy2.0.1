@@ -29,6 +29,8 @@ import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import axios from 'axios';
 import link from '../fetchPath';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Moment from 'react-moment';
 
 const {width, height} = Dimensions.get('window');
 export default class AddItem extends React.Component {
@@ -67,11 +69,11 @@ export default class AddItem extends React.Component {
       country: '',
       code: '',
       quantity: 1,
-      expiry: '',
+      expiry: new Date(),
       types: [
         {label: 'Select a type', value: 0},
         {label: 'Exchange', value: 1},
-        {label: 'Borrow', value: 2},
+        {label: 'Lend', value: 2},
         {label: 'Give it for free', value: 3},
       ],
       quantities: [
@@ -117,6 +119,31 @@ export default class AddItem extends React.Component {
           label: '10',
         },
       ],
+      showMode: 'date',
+      showTime: false,
+      from: new Date(),
+      to: new Date(),
+      subcategory: 'Action and adventure',
+      bcategories: [
+        {label: 'Action and adventure', value: 'Action and adventure'},
+        {label: 'Biography', value: 'Biography'},
+        {label: 'College', value: 'College'},
+        {label: 'Comic', value: 'Comic'},
+        {label: 'Competitive exams', value: 'Competitive exams'},
+        {label: 'Cooking', value: 'Cooking'},
+        {label: 'Fiction', value: 'Fiction'},
+        {label: 'History', value: 'History'},
+        {label: 'Horror', value: 'Horror'},
+        {label: 'Novel & literature', value: 'Novel & literature'},
+        {label: 'Others', value: 'Others'},
+        {label: 'Pre school', value: 'Pre school'},
+        {label: 'Regional language', value: 'Regional language'},
+        {label: 'Religous', value: 'Religous'},
+        {label: 'Romance', value: 'Romance'},
+        {label: 'Sci-Fi', value: 'Sci-Fi'},
+        {label: 'Self help', value: 'Self help'},
+        {label: 'Suspense and thriller', value: 'Suspense and thriller'},
+      ],
     };
   }
 
@@ -135,21 +162,9 @@ export default class AddItem extends React.Component {
         categories.push(x2);
       });
       console.log(categories);
-      var dCategories = [];
-      res2.data.map((item) => {
-        var y2 = {};
-        y2['value'] = item.name;
-        y2['label'] = item.name;
-        dCategories.push(y2);
-      });
-      var y = {};
-      y['value'] = 'Food';
-      y['label'] = 'Food';
-      dCategories.push(y);
       this.setState(
         {
           categories: categories,
-          dCategories: dCategories,
           contentLoading: false,
         },
         () => {
@@ -401,6 +416,9 @@ export default class AddItem extends React.Component {
           share_from: '',
           share_till: '',
           expiry: '',
+          subcategory: this.state.subcategory,
+          from: this.state.from,
+          to: this.state.to,
         };
       } else if (this.state.type === 2) {
         var data = {
@@ -416,12 +434,15 @@ export default class AddItem extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'borrow',
+          type: 'lend',
           withh: '',
           quantity: this.state.quantity,
           share_from: this.state.sfd,
           share_till: this.state.std,
           expiry: '',
+          subcategory: this.state.subcategory,
+          from: this.state.from,
+          to: this.state.to,
         };
       } else {
         var data = {
@@ -443,6 +464,9 @@ export default class AddItem extends React.Component {
           share_from: '',
           share_till: '',
           expiry: this.state.expiry,
+          subcategory: this.state.subcategory,
+          from: this.state.from,
+          to: this.state.to,
         };
       }
       const res = await axios.post(link + '/api/postProduct', data);
@@ -491,6 +515,36 @@ export default class AddItem extends React.Component {
       y = url;
     });
     return y;
+  };
+
+  handleDate = (event, selectedDate) => {
+    console.log(event, selectedDate);
+    this.setState({
+      expiry: selectedDate,
+      showTime: false,
+    });
+  };
+
+  handleTo = (e, date) => {
+    console.log('to');
+    date.setDate(this.state.expiry.getDate());
+    date.setMonth(this.state.expiry.getMonth());
+    date.setFullYear(this.state.expiry.getFullYear());
+    this.setState({
+      to: date,
+      showTime2: false,
+    });
+  };
+
+  handleFrom = (e, date) => {
+    console.log('from');
+    date.setDate(this.state.expiry.getDate());
+    date.setMonth(this.state.expiry.getMonth());
+    date.setFullYear(this.state.expiry.getFullYear());
+    this.setState({
+      from: date,
+      showTime1: false,
+    });
   };
 
   render() {
@@ -607,43 +661,6 @@ export default class AddItem extends React.Component {
                           />
                         </View>
                       </View>
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>
-                          What do you have ?
-                        </Text>
-                        <TextInput
-                          style={styles.input}
-                          autoCapitalize="none"
-                          maxLength={40}
-                          onChangeText={(wyh) => this.setState({wyh})}
-                          value={this.state.wyh}></TextInput>
-                      </View>
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>
-                          Describe what you have
-                        </Text>
-                        <TextInput
-                          style={styles.inputArea}
-                          autoCapitalize="none"
-                          multiline={true}
-                          maxLength={400}
-                          onChangeText={(desc) => this.setState({desc})}
-                          value={this.state.desc}></TextInput>
-                      </View>
-                      {this.state.type === 1 ? (
-                        <View style={styles.inputGroup}>
-                          <Text style={styles.inputGroupText}>
-                            What do you want to exchange with ?
-                          </Text>
-                          <TextInput
-                            style={styles.input}
-                            autoCapitalize="none"
-                            maxLength={40}
-                            onChangeText={(wye) => this.setState({wye})}
-                            value={this.state.wye}></TextInput>
-                        </View>
-                      ) : null}
-
                       {this.state.type === 2 ? (
                         <>
                           <View style={styles.DateGroup}>
@@ -725,43 +742,23 @@ export default class AddItem extends React.Component {
                           alignItems: 'center',
                           justifyContent: 'space-between',
                         }}>
-                        {this.state.type && this.state.type === 3 ? (
-                          <View style={styles.inputGroup2}>
-                            <Text style={styles.inputGroupText}>Category</Text>
-                            <View style={{width: '100%'}}>
-                              <SelectInput
-                                value={this.state.category}
-                                options={this.state.dCategories}
-                                onCancelEditing={() => console.log('onCancel')}
-                                onSubmitEditing={(e) => {
-                                  this.setState({
-                                    category: e,
-                                  });
-                                }}
-                                style={styles.picker}
-                                labelStyle={{fontSize: 16, color: '#464646'}}
-                              />
-                            </View>
+                        <View style={styles.inputGroup2}>
+                          <Text style={styles.inputGroupText}>Category</Text>
+                          <View style={{width: '100%'}}>
+                            <SelectInput
+                              value={this.state.category}
+                              options={this.state.categories}
+                              onCancelEditing={() => console.log('onCancel')}
+                              onSubmitEditing={(e) => {
+                                this.setState({
+                                  category: e,
+                                });
+                              }}
+                              style={styles.picker}
+                              labelStyle={{fontSize: 16, color: '#464646'}}
+                            />
                           </View>
-                        ) : (
-                          <View style={styles.inputGroup2}>
-                            <Text style={styles.inputGroupText}>Category</Text>
-                            <View style={{width: '100%'}}>
-                              <SelectInput
-                                value={this.state.category}
-                                options={this.state.categories}
-                                onCancelEditing={() => console.log('onCancel')}
-                                onSubmitEditing={(e) => {
-                                  this.setState({
-                                    category: e,
-                                  });
-                                }}
-                                style={styles.picker}
-                                labelStyle={{fontSize: 16, color: '#464646'}}
-                              />
-                            </View>
-                          </View>
-                        )}
+                        </View>
 
                         {/* <View style={styles.inputGroup3}>
                               <Text style={styles.inputGroupText}>Quantity</Text>
@@ -781,41 +778,158 @@ export default class AddItem extends React.Component {
                               </View>
                             </View> */}
                       </View>
+                      {this.state.category === 'Books' ? (
+                        <View
+                          style={{
+                            width: '90%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                          }}>
+                          <View style={styles.inputGroup2}>
+                            <Text style={styles.inputGroupText}>
+                              Sub-Category
+                            </Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.subcategory}
+                                options={this.state.bcategories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    subcategory: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                          </View>
+                        </View>
+                      ) : null}
                       {this.state.type === 3 &&
                       this.state.category === 'Food' ? (
                         <View style={styles.expiry}>
-                          <Text style={styles.inputGroupText}>
-                            Food Expiry Date
-                          </Text>
-                          <DatePicker
-                            style={{width: width * 0.9, marginTop: 5}}
-                            date={this.state.expiry}
-                            mode="date"
-                            placeholder="select date"
-                            format="YYYY-MM-DD"
-                            confirmBtnText="Confirm"
-                            cancelBtnText="Cancel"
-                            customStyles={{
-                              dateIcon: {
-                                position: 'absolute',
-                                right: 0,
-                                marginLeft: 0,
-                              },
-                              dateInput: {
-                                marginRight: 40,
-                                backgroundColor: '#e5e5e5',
-                                color: '192734',
-                                borderRadius: 3,
-                                borderWidth: 0,
-                              },
-                              // ... You can check the source to find the other keys.
-                            }}
-                            onDateChange={(date) => {
-                              this.setState({expiry: date});
-                            }}
-                          />
+                          <Text style={styles.inputGroupText}>Pickup Date</Text>
+                          <TouchableOpacity
+                            style={styles.input}
+                            onPress={() => {
+                              this.setState({
+                                showTime: true,
+                              });
+                            }}>
+                            <Text style={styles.fvi}>
+                              <Moment element={Text} format={'MMMM Do YYYY'}>
+                                {this.state.expiry}
+                              </Moment>
+                            </Text>
+                          </TouchableOpacity>
+                          {this.state.showTime ? (
+                            <DateTimePicker
+                              testID="dateTimePicker"
+                              value={this.state.expiry}
+                              mode={'date'}
+                              is24Hour={false}
+                              display="default"
+                              onChange={this.handleDate}
+                            />
+                          ) : null}
                         </View>
                       ) : null}
+                      {this.state.type === 3 &&
+                      this.state.category === 'Food' ? (
+                        <View style={styles.DateGroup}>
+                          <View style={styles.inputGroupRow2}>
+                            <Text style={styles.inputGroupText}>To</Text>
+                            <TouchableOpacity
+                              style={styles.input}
+                              onPress={() => {
+                                this.setState({
+                                  showTime1: true,
+                                });
+                              }}>
+                              <Text style={styles.fvi}>
+                                <Moment element={Text} format={'h:mm:ss a'}>
+                                  {this.state.from}
+                                </Moment>
+                              </Text>
+                            </TouchableOpacity>
+                            {this.state.showTime1 ? (
+                              <DateTimePicker
+                                testID="dateTimePicker"
+                                value={this.state.from}
+                                mode={'time'}
+                                is24Hour={false}
+                                display="default"
+                                onChange={this.handleFrom}
+                              />
+                            ) : null}
+                          </View>
+                          <View style={styles.inputGroupRow2}>
+                            <Text style={styles.inputGroupText}>From</Text>
+                            <TouchableOpacity
+                              style={styles.input}
+                              onPress={() => {
+                                this.setState({
+                                  showTime2: true,
+                                });
+                              }}>
+                              <Text style={styles.fvi}>
+                                <Moment element={Text} format={'h:mm:ss a'}>
+                                  {this.state.to}
+                                </Moment>
+                              </Text>
+                            </TouchableOpacity>
+                            {this.state.showTime2 ? (
+                              <DateTimePicker
+                                testID="dateTimePicker"
+                                value={this.state.to}
+                                mode={'time'}
+                                is24Hour={false}
+                                display="default"
+                                onChange={this.handleTo}
+                              />
+                            ) : null}
+                          </View>
+                        </View>
+                      ) : null}
+                      <View style={styles.inputGroup}>
+                        <Text style={styles.inputGroupText}>
+                          What do you have ?
+                        </Text>
+                        <TextInput
+                          style={styles.input}
+                          autoCapitalize="none"
+                          maxLength={40}
+                          onChangeText={(wyh) => this.setState({wyh})}
+                          value={this.state.wyh}></TextInput>
+                      </View>
+                      <View style={styles.inputGroup}>
+                        <Text style={styles.inputGroupText}>
+                          Describe what you have
+                        </Text>
+                        <TextInput
+                          style={styles.inputArea}
+                          autoCapitalize="none"
+                          multiline={true}
+                          maxLength={400}
+                          onChangeText={(desc) => this.setState({desc})}
+                          value={this.state.desc}></TextInput>
+                      </View>
+                      {this.state.type === 1 ? (
+                        <View style={styles.inputGroup}>
+                          <Text style={styles.inputGroupText}>
+                            What do you want to exchange with ?
+                          </Text>
+                          <TextInput
+                            style={styles.input}
+                            autoCapitalize="none"
+                            maxLength={40}
+                            onChangeText={(wye) => this.setState({wye})}
+                            value={this.state.wye}></TextInput>
+                        </View>
+                      ) : null}
+
                       {this.state.loadingLocation ? (
                         <View
                           style={{
@@ -941,7 +1055,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#15202B',
+    backgroundColor: '#31363C',
   },
   header: {
     width: '100%',
@@ -949,7 +1063,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 60,
-    backgroundColor: '#192734',
+    backgroundColor: '#1B1F22',
     elevation: 3,
     justifyContent: 'space-between',
   },
@@ -1068,5 +1182,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
+  },
+  fvi: {
+    fontSize: 14,
+    fontFamily: 'Muli-Regular',
+    color: '#464646',
+  },
+  inputGroupRow2: {
+    width: '45%',
   },
 });

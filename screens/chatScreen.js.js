@@ -935,6 +935,20 @@ export default class ChatScreen extends React.PureComponent {
     );
   };
 
+  handleClear = async () => {
+    this.setState({
+      menu: false,
+    });
+    var data = {
+      id: this.state.chat._id,
+      user: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/clearChat', data);
+    if (res.data !== null) {
+      this.handleInit();
+    }
+  };
+
   render() {
     var i = 0;
     var stars = [];
@@ -1163,129 +1177,145 @@ export default class ChatScreen extends React.PureComponent {
                     }}
                     renderItem={({item, index}) => {
                       if (
-                        item.format !== 'deal-done' &&
-                        item.format !== 'accept' &&
-                        item.format !== 'reject' &&
-                        item.format !== 'meeting'
+                        Math.floor(
+                          (new Date(
+                            this.state.chat[
+                              'clear' +
+                                (this.state.chat.participants.indexOf(
+                                  auth().currentUser.email,
+                                ) +
+                                  1)
+                            ],
+                          ).getTime() -
+                            new Date(item.date).getTime()) /
+                            1000,
+                        ) < 0
                       ) {
-                        return (
-                          <Message
-                            key={index}
-                            location={this.props.route.params.location}
-                            navigation={this.props.navigation}
-                            loading={false}
-                            handleDocumentView={(url, type) =>
-                              this.handleDocumentView(url, type)
-                            }
-                            type={item.id === auth().currentUser.email}
-                            message={item.message}
-                            format={item.format}
-                            url={item.url}
-                            name={item.name}
-                            date={item.date}
-                          />
-                        );
-                      } else if (item.format === 'accept') {
-                        return (
-                          <View
-                            key={index}
-                            style={{
-                              marginVertical: 5,
-                              width: '100%',
-                              alignItems: 'center',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              backgroundColor: colors.secondary,
-                              paddingVertical: 12,
-                            }}>
-                            <Ionicons
-                              name="ios-megaphone"
-                              size={16}
-                              color="#acadaa"
+                        if (
+                          item.format !== 'deal-done' &&
+                          item.format !== 'accept' &&
+                          item.format !== 'reject' &&
+                          item.format !== 'meeting'
+                        ) {
+                          return (
+                            <Message
+                              key={index}
+                              location={this.props.route.params.location}
+                              navigation={this.props.navigation}
+                              loading={false}
+                              handleDocumentView={(url, type) =>
+                                this.handleDocumentView(url, type)
+                              }
+                              type={item.id === auth().currentUser.email}
+                              message={item.message}
+                              format={item.format}
+                              url={item.url}
+                              name={item.name}
+                              date={item.date}
                             />
-                            <Text style={styles.dealstatusMessage}>
-                              Request accepted on{' '}
-                              <Moment element={Text} format="MMMM Do YYYY">
-                                {item.date}
-                              </Moment>
-                            </Text>
-                          </View>
-                        );
-                      } else if (item.format === 'reject') {
-                        return (
-                          <View
-                            key={index}
-                            style={{
-                              marginVertical: 5,
-                              width: '100%',
-                              alignItems: 'center',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              backgroundColor: colors.secondary,
-                              paddingVertical: 12,
-                            }}>
-                            <Ionicons
-                              name="ios-megaphone"
-                              size={16}
-                              color="#acadaa"
-                            />
-                            <Text style={styles.dealstatusMessage}>
-                              Request rejected on{' '}
-                              <Moment element={Text} format="MMMM Do YYYY">
-                                {item.date}
-                              </Moment>
-                            </Text>
-                          </View>
-                        );
-                      } else if (item.format === 'meeting') {
-                        return (
-                          <View
-                            key={index}
-                            style={{
-                              marginVertical: 5,
-                              width: '100%',
-                              alignItems: 'center',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              backgroundColor: colors.secondary,
-                              paddingVertical: 12,
-                            }}>
-                            <Ionicons
-                              name="ios-megaphone"
-                              size={16}
-                              color="#acadaa"
-                            />
-                            <Text style={styles.dealstatusMessage}>
-                              New Meeting set
-                            </Text>
-                          </View>
-                        );
-                      } else if (item.format === 'deal-done') {
-                        return (
-                          <View
-                            key={index}
-                            style={{
-                              marginVertical: 5,
-                              width: '100%',
-                              alignItems: 'center',
-                              flexDirection: 'row',
-                              justifyContent: 'center',
-                              backgroundColor: colors.secondary,
-                              paddingVertical: 12,
-                            }}>
-                            <Ionicons
-                              name="ios-megaphone"
-                              size={16}
-                              color="#acadaa"
-                            />
-                            <Text style={styles.dealstatusMessage}>
-                              Deal accomplished on{' '}
-                              <Moment element={Text} format="MMMM Do YYYY">
-                                {item.date}
-                              </Moment>
-                            </Text>
-                          </View>
-                        );
+                          );
+                        } else if (item.format === 'accept') {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                marginVertical: 5,
+                                width: '100%',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                backgroundColor: colors.secondary,
+                                paddingVertical: 12,
+                              }}>
+                              <Ionicons
+                                name="ios-megaphone"
+                                size={16}
+                                color="#acadaa"
+                              />
+                              <Text style={styles.dealstatusMessage}>
+                                Request accepted on{' '}
+                                <Moment element={Text} format="MMMM Do YYYY">
+                                  {item.date}
+                                </Moment>
+                              </Text>
+                            </View>
+                          );
+                        } else if (item.format === 'reject') {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                marginVertical: 5,
+                                width: '100%',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                backgroundColor: colors.secondary,
+                                paddingVertical: 12,
+                              }}>
+                              <Ionicons
+                                name="ios-megaphone"
+                                size={16}
+                                color="#acadaa"
+                              />
+                              <Text style={styles.dealstatusMessage}>
+                                Request rejected on{' '}
+                                <Moment element={Text} format="MMMM Do YYYY">
+                                  {item.date}
+                                </Moment>
+                              </Text>
+                            </View>
+                          );
+                        } else if (item.format === 'meeting') {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                marginVertical: 5,
+                                width: '100%',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                backgroundColor: colors.secondary,
+                                paddingVertical: 12,
+                              }}>
+                              <Ionicons
+                                name="ios-megaphone"
+                                size={16}
+                                color="#acadaa"
+                              />
+                              <Text style={styles.dealstatusMessage}>
+                                New Meeting set
+                              </Text>
+                            </View>
+                          );
+                        } else if (item.format === 'deal-done') {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                marginVertical: 5,
+                                width: '100%',
+                                alignItems: 'center',
+                                flexDirection: 'row',
+                                justifyContent: 'center',
+                                backgroundColor: colors.secondary,
+                                paddingVertical: 12,
+                              }}>
+                              <Ionicons
+                                name="ios-megaphone"
+                                size={16}
+                                color="#acadaa"
+                              />
+                              <Text style={styles.dealstatusMessage}>
+                                Deal accomplished on{' '}
+                                <Moment element={Text} format="MMMM Do YYYY">
+                                  {item.date}
+                                </Moment>
+                              </Text>
+                            </View>
+                          );
+                        }
                       }
                     }}
                   />
@@ -1487,9 +1517,17 @@ export default class ChatScreen extends React.PureComponent {
               </View>
             )}
             <Modal isVisible={this.state.menu}>
-              <View
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu: false,
+                  });
+                }}
                 style={{
                   alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'center',
+                  flex: 1,
                 }}>
                 <View
                   style={{
@@ -1547,11 +1585,7 @@ export default class ChatScreen extends React.PureComponent {
                     )}
                   </View>
                   <TouchableOpacity
-                    onPress={() =>
-                      this.setState({
-                        menu: false,
-                      })
-                    }
+                    onPress={this.handleClear}
                     style={{
                       width: '100%',
                       flexDirection: 'row',
@@ -1565,11 +1599,11 @@ export default class ChatScreen extends React.PureComponent {
                         color: colors.white,
                         fontSize: 16,
                       }}>
-                      Cancel
+                      Clear Conversation
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </TouchableOpacity>
             </Modal>
             <Modal isVisible={this.state.attach}>
               <View

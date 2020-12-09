@@ -27,8 +27,8 @@ import link from '../fetchPath';
 import colors from '../appTheme';
 import ImageView from 'react-native-image-viewing';
 import Card3 from './card3';
-
 const {width, height} = Dimensions.get('window');
+import CountDownTimer from 'react-native-countdown-timer-hooks';
 
 export default class HomeCard extends React.Component {
   constructor() {
@@ -54,6 +54,8 @@ export default class HomeCard extends React.Component {
       selectId: '',
       desc: '',
       viewmore: false,
+      showExpired: false,
+      showTimer: true,
     };
   }
 
@@ -67,9 +69,17 @@ export default class HomeCard extends React.Component {
     if (cardValue !== null && cardValue2 !== null) {
       var product = JSON.parse(cardValue);
       if (product.varient === 'Product') {
+        var d = Math.floor(
+          (new Date(product.to).getTime() - new Date().getTime()) / 1000,
+        );
+        var d2 = Math.floor(
+          (new Date(product.from).getTime() - new Date().getTime()) / 1000,
+        );
         this.setState({
           product: product,
           owner: JSON.parse(cardValue2),
+          showExpired: d < 0 ? true : false,
+          showTimer: d2 > 0 ? true : false,
           loadingProduct: false,
           loadingOwner: false,
           like: auth().currentUser
@@ -127,12 +137,20 @@ export default class HomeCard extends React.Component {
         if (res2.data !== null && res2.data.name) {
           this.storeData(this.props.item._id + 'product', product);
           this.storeData(this.props.item._id + 'owner', owner);
+          var d = Math.floor(
+            (new Date(product.to).getTime() - new Date().getTime()) / 1000,
+          );
+          var d2 = Math.floor(
+            (new Date(product.from).getTime() - new Date().getTime()) / 1000,
+          );
           this.setState({
             product: product,
             owner: owner,
             loadingProduct: false,
             loadingOwner: false,
             NF: false,
+            showExpired: d < 0 ? true : false,
+            showTimer: d2 > 0 ? true : false,
           });
         } else {
           this.storeData(this.props.item._id + 'product', {});
@@ -631,8 +649,27 @@ export default class HomeCard extends React.Component {
 
   handleRequest = () => {
     if (auth().currentUser) {
-      if (this.state.product.quantity > 0) {
+      if (
+        this.state.product.quantity > 0 &&
+        this.state.product.type !== 'give it for free'
+      ) {
         this.setState({request: !this.state.request});
+      } else if (
+        this.state.product.type === 'give it for free' &&
+        this.state.product.category === 'Food'
+      ) {
+        var d = Math.floor(
+          (new Date(this.state.product.to).getTime() - new Date().getTime()) /
+            1000,
+        );
+        if (d < 0) {
+          Snackbar.show({
+            text: 'Sorry, the item is no longer available!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
+        } else {
+          this.setState({request: !this.state.request});
+        }
       } else {
         Snackbar.show({
           text: 'Sorry, the transaction is already done for this product',
@@ -841,6 +878,12 @@ export default class HomeCard extends React.Component {
     re = response.json();
   };
 
+  imageFooter = () => {
+    return (
+      <Image source={require('../assets/images/icon.png')} style={styles.cr2} />
+    );
+  };
+
   render() {
     return (
       <>
@@ -904,6 +947,25 @@ export default class HomeCard extends React.Component {
                               ) : null}
                             </Text>
                           </TouchableOpacity>
+                          {this.state.showExpired &&
+                          this.state.product.category === 'Food' ? (
+                            <View
+                              style={{
+                                backgroundColor: '#d65a31',
+                                paddingHorizontal: 5,
+                                paddingVertical: 2,
+                                borderRadius: 2,
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                }}>
+                                Expired
+                              </Text>
+                            </View>
+                          ) : null}
                         </View>
                       ) : (
                         <View
@@ -964,7 +1026,11 @@ export default class HomeCard extends React.Component {
                     <View style={styles.middle}>
                       <View style={{width: '100%'}}>
                         <Text style={styles.type}>
-                          {this.state.product.type},{' '}
+                          {this.state.product.type} |{' '}
+                          {this.state.product.category === 'Books' &&
+                          this.state.product.subcategory
+                            ? this.state.product.subcategory + '| '
+                            : null}
                           {this.state.product.category}
                         </Text>
                         <View
@@ -1040,6 +1106,7 @@ export default class HomeCard extends React.Component {
                             </>
                           ) : null}
                         </View>
+
                         <Text style={styles.title}>
                           Ready to {this.state.product.type}{' '}
                           {this.state.product.what}{' '}
@@ -1047,43 +1114,106 @@ export default class HomeCard extends React.Component {
                             ? 'with ' + this.state.product.withh
                             : null}
                         </Text>
+                        {this.state.product.type === 'give it for free' &&
+                        this.state.product.category === 'Food' &&
+                        this.state.showExpired === false &&
+                        this.state.showTimer === true ? (
+                          <View
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                marginLeft: 5,
+                              }}>
+                              Available in
+                            </Text>
+                            <CountDownTimer
+                              timestamp={Math.floor(
+                                (new Date(this.state.product.from).getTime() -
+                                  new Date().getTime()) /
+                                  1000,
+                              )}
+                              timerCallback={() => {
+                                this.setState({
+                                  showTimer: false,
+                                });
+                              }}
+                              containerStyle={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: 35,
+                              }}
+                              textStyle={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                marginLeft: 5,
+                                color: '#d65a31',
+                              }}
+                            />
+                          </View>
+                        ) : null}
+                        {this.state.product.type === 'give it for free' &&
+                        this.state.product.category === 'Food' &&
+                        this.state.showExpired === false &&
+                        this.state.showTimer === false ? (
+                          <View
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                marginLeft: 5,
+                              }}>
+                              Available for
+                            </Text>
+                            <CountDownTimer
+                              timestamp={Math.floor(
+                                (new Date(this.state.product.to).getTime() -
+                                  new Date().getTime()) /
+                                  1000,
+                              )}
+                              timerCallback={() => {
+                                this.setState({
+                                  showExpired: true,
+                                });
+                              }}
+                              containerStyle={{
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                borderRadius: 35,
+                              }}
+                              textStyle={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                marginLeft: 5,
+                                color: '#d65a31',
+                              }}
+                            />
+                          </View>
+                        ) : null}
                         {this.state.viewmore ? (
                           <>
-                            {this.state.product.type === 'give it for free' ? (
-                              <>
-                                <Text style={styles.subHeader}>
-                                  Expiry Date
-                                </Text>
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                  }}>
-                                  <Ionicons
-                                    name="ios-calendar"
-                                    style={{
-                                      fontSize: 18,
-                                      color: colors.white,
-                                    }}
-                                  />
-                                  <Text
-                                    style={{
-                                      fontSize: 14,
-                                      fontFamily: 'Muli-Bold',
-                                      color: colors.white,
-                                      marginLeft: 5,
-                                    }}>
-                                    {this.state.product.expiry}
-                                  </Text>
-                                </View>
-                              </>
-                            ) : null}
-                            <Text style={styles.subHeader}>Description</Text>
+                            <Text style={styles.subHeader}>
+                              {this.state.category === 'Books'
+                                ? 'Description'
+                                : 'About this book'}
+                            </Text>
                             <Text style={styles.desc}>
                               {this.state.product.description}
                             </Text>
 
-                            {this.state.product.type === 'borrow' ? (
+                            {this.state.product.type === 'lend' ? (
                               <>
                                 <Text style={styles.subHeader}>
                                   Sharing Dates
@@ -1182,6 +1312,10 @@ export default class HomeCard extends React.Component {
                                     source={{uri: image.image}}
                                     style={styles.imageBox}
                                   />
+                                  <Image
+                                    source={require('../assets/images/icon.png')}
+                                    style={styles.cr}
+                                  />
                                 </TouchableOpacity>
                               );
                             })}
@@ -1198,6 +1332,10 @@ export default class HomeCard extends React.Component {
                             <Image
                               source={{uri: this.state.product.images[0].image}}
                               style={styles.imageBoxOne}
+                            />
+                            <Image
+                              source={require('../assets/images/icon.png')}
+                              style={styles.cr}
                             />
                           </TouchableOpacity>
                         )}
@@ -1904,6 +2042,7 @@ export default class HomeCard extends React.Component {
           doubleTapToZoomEnabled={true}
           presentationStyle="fullScreen"
           animationType="slide"
+          FooterComponent={this.imageFooter}
         />
       </>
     );
@@ -2028,11 +2167,13 @@ const styles = StyleSheet.create({
     width: 0.5 * width,
     height: 0.5 * width,
     borderRadius: 5,
+    position: 'relative',
   },
   imageBoxOne: {
     width: width - 60,
     height: width - 60,
     borderRadius: 5,
+    position: 'relative',
   },
   bottom: {
     flexDirection: 'row',
@@ -2197,5 +2338,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Muli-Regular',
     fontSize: 14,
     marginTop: 5,
+  },
+  cr: {
+    position: 'absolute',
+    width: 25,
+    height: 25,
+    bottom: 0,
+    right: 0,
+    opacity: 0.8,
+  },
+  cr2: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    bottom: 0,
+    right: 0,
+    opacity: 0.8,
   },
 });

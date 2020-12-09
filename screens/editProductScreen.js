@@ -30,6 +30,8 @@ import Geocoder from 'react-native-geocoding';
 import LoadingScreen from './loadingScreen';
 import axios from 'axios';
 import link from '../fetchPath';
+import Moment from 'react-moment';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const {width, height} = Dimensions.get('window');
 export default class EditProductScreen extends React.Component {
@@ -110,6 +112,31 @@ export default class EditProductScreen extends React.Component {
       ],
       quantity: 1,
       minDate: new Date(),
+      showMode: 'date',
+      showTime: false,
+      from: new Date(),
+      to: new Date(),
+      subcategory: 'Action and adventure',
+      bcategories: [
+        {label: 'Action and adventure', value: 'Action and adventure'},
+        {label: 'Biography', value: 'Biography'},
+        {label: 'College', value: 'College'},
+        {label: 'Comic', value: 'Comic'},
+        {label: 'Competitive exams', value: 'Competitive exams'},
+        {label: 'Cooking', value: 'Cooking'},
+        {label: 'Fiction', value: 'Fiction'},
+        {label: 'History', value: 'History'},
+        {label: 'Horror', value: 'Horror'},
+        {label: 'Novel & literature', value: 'Novel & literature'},
+        {label: 'Others', value: 'Others'},
+        {label: 'Pre school', value: 'Pre school'},
+        {label: 'Regional language', value: 'Regional language'},
+        {label: 'Religous', value: 'Religous'},
+        {label: 'Romance', value: 'Romance'},
+        {label: 'Sci-Fi', value: 'Sci-Fi'},
+        {label: 'Self help', value: 'Self help'},
+        {label: 'Suspense and thriller', value: 'Suspense and thriller'},
+      ],
     };
   }
 
@@ -165,7 +192,10 @@ export default class EditProductScreen extends React.Component {
         country: res2.data.country,
         code: res2.data.code,
         quantity: res2.data.quantity,
-        expiry: res2.data.expiry,
+        expiry: new Date(res2.data.expiry),
+        subcategory: res2.data.subcategory,
+        from: new Date(res2.data.from),
+        to: new Date(res2.data.to),
       });
       var minDate2 = res2.data.share_till ? res2.data.share_till : new Date();
       var maxDate2 = minDate2;
@@ -437,6 +467,9 @@ export default class EditProductScreen extends React.Component {
         id: this.props.route.params.id,
         type: this.state.type,
         expiry: this.state.expiry,
+        subcategory: this.state.subcategory,
+        from: this.state.from,
+        to: this.state.to,
       };
       var res = await axios.post(link + '/api/updateProduct', data);
       if (res.data !== null) {
@@ -485,6 +518,36 @@ export default class EditProductScreen extends React.Component {
       y = url;
     });
     return y;
+  };
+
+  handleDate = (event, selectedDate) => {
+    console.log(event, selectedDate);
+    this.setState({
+      expiry: selectedDate,
+      showTime: false,
+    });
+  };
+
+  handleTo = (e, date) => {
+    console.log('to');
+    date.setDate(this.state.expiry.getDate());
+    date.setMonth(this.state.expiry.getMonth());
+    date.setFullYear(this.state.expiry.getFullYear());
+    this.setState({
+      to: date,
+      showTime2: false,
+    });
+  };
+
+  handleFrom = (e, date) => {
+    console.log('from');
+    date.setDate(this.state.expiry.getDate());
+    date.setMonth(this.state.expiry.getMonth());
+    date.setFullYear(this.state.expiry.getFullYear());
+    this.setState({
+      from: date,
+      showTime1: false,
+    });
   };
 
   render() {
@@ -606,6 +669,170 @@ export default class EditProductScreen extends React.Component {
                               />
                             </View>
                           </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Category</Text>
+                            <View style={{width: '100%'}}>
+                              <SelectInput
+                                value={this.state.category}
+                                options={this.state.categories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    category: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{fontSize: 16, color: '#464646'}}
+                              />
+                            </View>
+                            {/* <View style={styles.inputGroup3}>
+                              <Text style={styles.inputGroupText}>
+                                Quantity
+                              </Text>
+                              <View style={{width: '100%'}}>
+                                <SelectInput
+                                  value={this.state.quantity}
+                                  options={this.state.quantities}
+                                  onCancelEditing={() =>
+                                    console.log('onCancel')
+                                  }
+                                  onSubmitEditing={(e) => {
+                                    this.setState({
+                                      quantity: e,
+                                    });
+                                  }}
+                                  style={styles.picker}
+                                  labelStyle={{fontSize: 16, color: '#464646'}}
+                                />
+                              </View>
+                            </View> */}
+                          </View>
+                          {this.state.category === 'Books' ? (
+                            <View
+                              style={{
+                                width: '90%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                              }}>
+                              <View style={styles.inputGroup2}>
+                                <Text style={styles.inputGroupText}>
+                                  Sub-Category
+                                </Text>
+                                <View style={{width: '100%'}}>
+                                  <SelectInput
+                                    value={this.state.subcategory}
+                                    options={this.state.bcategories}
+                                    onCancelEditing={() =>
+                                      console.log('onCancel')
+                                    }
+                                    onSubmitEditing={(e) => {
+                                      this.setState({
+                                        subcategory: e,
+                                      });
+                                    }}
+                                    style={styles.picker}
+                                    labelStyle={{
+                                      fontSize: 16,
+                                      color: '#464646',
+                                    }}
+                                  />
+                                </View>
+                              </View>
+                            </View>
+                          ) : null}
+                          {this.state.type === 'give it for free' &&
+                          this.state.category === 'Food' ? (
+                            <View style={styles.expiry}>
+                              <Text style={styles.inputGroupText}>
+                                Pickup Date
+                              </Text>
+                              <TouchableOpacity
+                                style={styles.input}
+                                onPress={() => {
+                                  this.setState({
+                                    showTime: true,
+                                  });
+                                }}>
+                                <Text style={styles.fvi}>
+                                  <Moment
+                                    element={Text}
+                                    format={'MMMM Do YYYY'}>
+                                    {this.state.expiry}
+                                  </Moment>
+                                </Text>
+                              </TouchableOpacity>
+                              {this.state.showTime ? (
+                                <DateTimePicker
+                                  value={this.state.expiry}
+                                  mode={'date'}
+                                  is24Hour={false}
+                                  display="default"
+                                  onChange={(e, date) => {
+                                    this.setState({
+                                      expiry: date,
+                                      showTime: false,
+                                    });
+                                  }}
+                                />
+                              ) : null}
+                            </View>
+                          ) : null}
+                          {this.state.type === 'give it for free' &&
+                          this.state.category === 'Food' ? (
+                            <View style={styles.DateGroup}>
+                              <View style={styles.inputGroupRow2}>
+                                <Text style={styles.inputGroupText}>From</Text>
+                                <TouchableOpacity
+                                  style={styles.input}
+                                  onPress={() => {
+                                    this.setState({
+                                      showTime1: true,
+                                    });
+                                  }}>
+                                  <Text style={styles.fvi}>
+                                    <Moment element={Text} format={'h:mm:ss a'}>
+                                      {this.state.from}
+                                    </Moment>
+                                  </Text>
+                                </TouchableOpacity>
+                                {this.state.showTime1 ? (
+                                  <DateTimePicker
+                                    value={this.state.from}
+                                    mode={'time'}
+                                    is24Hour={false}
+                                    display="default"
+                                    onChange={this.handleFrom}
+                                  />
+                                ) : null}
+                              </View>
+                              <View style={styles.inputGroupRow2}>
+                                <Text style={styles.inputGroupText}>To</Text>
+                                <TouchableOpacity
+                                  style={styles.input}
+                                  onPress={() => {
+                                    this.setState({
+                                      showTime2: true,
+                                    });
+                                  }}>
+                                  <Text style={styles.fvi}>
+                                    <Moment element={Text} format={'h:mm:ss a'}>
+                                      {this.state.to}
+                                    </Moment>
+                                  </Text>
+                                </TouchableOpacity>
+                                {this.state.showTime2 ? (
+                                  <DateTimePicker
+                                    value={this.state.to}
+                                    mode={'time'}
+                                    is24Hour={false}
+                                    display="default"
+                                    onChange={this.handleTo}
+                                  />
+                                ) : null}
+                              </View>
+                            </View>
+                          ) : null}
                           <View style={styles.inputGroup}>
                             <Text style={styles.inputGroupText}>
                               What do you have ?
@@ -748,91 +975,7 @@ export default class EditProductScreen extends React.Component {
                               </TouchableOpacity>
                             </>
                           ) : null}
-                          <View
-                            style={{
-                              width: '90%',
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                            }}>
-                            <View style={styles.inputGroup2}>
-                              <Text style={styles.inputGroupText}>
-                                Category
-                              </Text>
-                              <View style={{width: '100%'}}>
-                                <SelectInput
-                                  value={this.state.category}
-                                  options={this.state.categories}
-                                  onCancelEditing={() =>
-                                    console.log('onCancel')
-                                  }
-                                  onSubmitEditing={(e) => {
-                                    this.setState({
-                                      category: e,
-                                    });
-                                  }}
-                                  style={styles.picker}
-                                  labelStyle={{fontSize: 16, color: '#464646'}}
-                                />
-                              </View>
-                            </View>
-                            <View style={styles.inputGroup3}>
-                              <Text style={styles.inputGroupText}>
-                                Quantity
-                              </Text>
-                              <View style={{width: '100%'}}>
-                                <SelectInput
-                                  value={this.state.quantity}
-                                  options={this.state.quantities}
-                                  onCancelEditing={() =>
-                                    console.log('onCancel')
-                                  }
-                                  onSubmitEditing={(e) => {
-                                    this.setState({
-                                      quantity: e,
-                                    });
-                                  }}
-                                  style={styles.picker}
-                                  labelStyle={{fontSize: 16, color: '#464646'}}
-                                />
-                              </View>
-                            </View>
-                          </View>
-                          {this.state.type === 'give it for free' &&
-                          this.state.category === 'Food' ? (
-                            <View style={styles.expiry}>
-                              <Text style={styles.inputGroupText}>
-                                Food Expiry Date
-                              </Text>
-                              <DatePicker
-                                style={{width: width * 0.9, marginTop: 5}}
-                                date={this.state.expiry}
-                                mode="date"
-                                placeholder="select date"
-                                format="YYYY-MM-DD"
-                                confirmBtnText="Confirm"
-                                cancelBtnText="Cancel"
-                                customStyles={{
-                                  dateIcon: {
-                                    position: 'absolute',
-                                    right: 0,
-                                    marginLeft: 0,
-                                  },
-                                  dateInput: {
-                                    marginRight: 40,
-                                    backgroundColor: '#e5e5e5',
-                                    color: '192734',
-                                    borderRadius: 3,
-                                    borderWidth: 0,
-                                  },
-                                  // ... You can check the source to find the other keys.
-                                }}
-                                onDateChange={(date) => {
-                                  this.setState({expiry: date});
-                                }}
-                              />
-                            </View>
-                          ) : null}
+
                           {this.state.loadingLocation ? (
                             <View
                               style={{
@@ -896,59 +1039,57 @@ export default class EditProductScreen extends React.Component {
                               </TouchableOpacity>
                             </>
                           )}
-                          {this.state.type === 'exchange' ? (
+                          <View
+                            style={[
+                              styles.inputGroup,
+                              {marginTop: 20, marginBottom: 30},
+                            ]}>
+                            <Text style={styles.inputGroupText}>Images</Text>
                             <View
-                              style={[
-                                styles.inputGroup,
-                                {marginTop: 20, marginBottom: 30},
-                              ]}>
-                              <Text style={styles.inputGroupText}>Images</Text>
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  flexWrap: 'wrap',
-                                  marginTop: 5,
-                                }}>
-                                {this.state.images.length > 0 ? (
-                                  <>
-                                    {this.state.images.map((image) => {
-                                      return (
-                                        <View styles={{position: 'relative'}}>
-                                          <Image
-                                            source={{uri: image.uri}}
-                                            style={styles.imagePicker}
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                width: '100%',
+                                flexWrap: 'wrap',
+                                marginTop: 5,
+                              }}>
+                              {this.state.images.length > 0 ? (
+                                <>
+                                  {this.state.images.map((image) => {
+                                    return (
+                                      <View styles={{position: 'relative'}}>
+                                        <Image
+                                          source={{uri: image.uri}}
+                                          style={styles.imagePicker}
+                                        />
+                                        <TouchableOpacity
+                                          onPress={this.handlePicker}
+                                          style={styles.editLogo}>
+                                          <AntDesign
+                                            name="edit"
+                                            style={{
+                                              fontSize: 16,
+                                              color: '#e5e5e5',
+                                            }}
                                           />
-                                          <TouchableOpacity
-                                            onPress={this.handlePicker}
-                                            style={styles.editLogo}>
-                                            <AntDesign
-                                              name="edit"
-                                              style={{
-                                                fontSize: 16,
-                                                color: '#e5e5e5',
-                                              }}
-                                            />
-                                          </TouchableOpacity>
-                                        </View>
-                                      );
-                                    })}
-                                  </>
-                                ) : null}
-                                {this.state.images.length < 5 ? (
-                                  <TouchableOpacity
-                                    onPress={this.handlePicker}
-                                    style={styles.imagePicker}>
-                                    <AntDesign
-                                      name="plus"
-                                      style={styles.upload}
-                                    />
-                                  </TouchableOpacity>
-                                ) : null}
-                              </View>
+                                        </TouchableOpacity>
+                                      </View>
+                                    );
+                                  })}
+                                </>
+                              ) : null}
+                              {this.state.images.length < 5 ? (
+                                <TouchableOpacity
+                                  onPress={this.handlePicker}
+                                  style={styles.imagePicker}>
+                                  <AntDesign
+                                    name="plus"
+                                    style={styles.upload}
+                                  />
+                                </TouchableOpacity>
+                              ) : null}
                             </View>
-                          ) : null}
+                          </View>
                         </View>
                       </ScrollView>
                     </View>
@@ -1001,7 +1142,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   inputGroup2: {
-    width: '60%',
+    width: '100%',
     marginBottom: 15,
   },
   inputGroup3: {
@@ -1040,6 +1181,11 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  expiry: {
+    width: '90%',
+    marginBottom: 15,
     justifyContent: 'space-between',
   },
   inputGroupRow: {
@@ -1090,5 +1236,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 25,
+  },
+  fvi: {
+    fontSize: 14,
+    fontFamily: 'Muli-Regular',
+    color: '#464646',
+  },
+  inputGroupRow2: {
+    width: '45%',
   },
 });

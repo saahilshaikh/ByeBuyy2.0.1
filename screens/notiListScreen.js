@@ -43,7 +43,7 @@ export default class NotiListScreen extends React.Component {
       this.handleInit();
       setInterval(() => {
         this.handleInit();
-      }, 3000);
+      }, 15000);
     } else {
       this.setState({
         loading: false,
@@ -56,9 +56,7 @@ export default class NotiListScreen extends React.Component {
       id: auth().currentUser.email,
     };
     const res = await axios.post(link + '/api/user/singleNoti', data);
-    console.log('44', res.data);
     if (res.data !== null) {
-      this.storeData(auth().currentUser.email + 'notiList', res.data);
       console.log(res.data);
       var todayList = [];
       var weeklyList = [];
@@ -96,13 +94,15 @@ export default class NotiListScreen extends React.Component {
     this.setState({
       refreshing: true,
       notiList: [],
+      acnotiList: [],
+      loading: true,
     });
     var data = {
       id: auth().currentUser.email,
     };
     var res = await axios.post(link + '/api/user/singleNoti', data);
     if (res.data !== null) {
-      this.storeData(auth().currentUser.email + 'notiList', res.data);
+      this.props.handleNotiCount();
       var notiList = [];
       res.data.map((item) => {
         if (notiList.length < 10) {
@@ -228,6 +228,7 @@ export default class NotiListScreen extends React.Component {
                             id={item._id}
                             navigation={this.props.navigation}
                             location={this.state.location}
+                            handleRefresh={this.handleRefresh}
                           />
                         );
                       })}
@@ -243,6 +244,7 @@ export default class NotiListScreen extends React.Component {
                             id={item._id}
                             navigation={this.props.navigation}
                             location={this.state.location}
+                            handleRefresh={this.handleRefresh}
                           />
                         );
                       })}
@@ -258,6 +260,7 @@ export default class NotiListScreen extends React.Component {
                             id={item._id}
                             navigation={this.props.navigation}
                             location={this.state.location}
+                            handleRefresh={this.handleRefresh}
                           />
                         );
                       })}
@@ -273,6 +276,7 @@ export default class NotiListScreen extends React.Component {
                             id={item._id}
                             navigation={this.props.navigation}
                             location={this.state.location}
+                            handleRefresh={this.handleRefresh}
                           />
                         );
                       })}

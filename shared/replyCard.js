@@ -7,7 +7,6 @@ import {
   Image,
   Dimensions,
   TextInput,
-  ScrollView,
 } from 'react-native';
 import axios from 'axios';
 import link from '../fetchPath';
@@ -18,11 +17,10 @@ import colors from '../appTheme';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
-import ReplyCard from './replyCard';
 
 const {width, height} = Dimensions.get('window');
 
-export default class CommentCard extends React.Component {
+export default class ReplyCard extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -33,11 +31,9 @@ export default class CommentCard extends React.Component {
       desc: '',
       showReply: false,
       reply: '',
-      replies: [],
     };
   }
   async componentDidMount() {
-    console.log(this.props.item.reply);
     var data = {
       id: this.props.item.userEmail,
     };
@@ -45,15 +41,14 @@ export default class CommentCard extends React.Component {
     if (res.data !== null && res.data.name) {
       var comment = {
         name: res.data.name,
-        photo: res.data.photo,
         email: res.data.email,
+        photo: res.data.photo,
         comment: this.props.item.comment,
         date: this.props.item.date,
         active: res.data.active === true && res.data.logout === false,
       };
       this.setState({
         comment: comment,
-        replies: this.props.item.reply,
         loading: false,
         NF: false,
       });
@@ -67,31 +62,15 @@ export default class CommentCard extends React.Component {
   }
 
   handleDeleteComment = () => {
-    this.props.handleDeleteComment(this.props.item._id);
+    this.props.handleDeleteReply(this.props.item._id);
   };
 
   handleEdit = () => {
-    this.props.handleEditComment(this.props.item._id, this.state.desc);
+    this.props.handleEditReply(this.props.item._id, this.state.desc);
     this.setState({
       editModalVisible: false,
       desc: '',
     });
-  };
-
-  handleReply = () => {
-    this.props.handleReplyComment(this.props.item._id, this.state.reply);
-    this.setState({
-      showReply: false,
-      reply: '',
-    });
-  };
-
-  handleDeleteReply = (e) => {
-    this.props.handleDeleteReplyComment(this.props.item._id, e);
-  };
-
-  handleEditReply = (e, f) => {
-    this.props.handleEditReplyComment(this.props.item._id, e, f);
   };
 
   render() {
@@ -135,12 +114,7 @@ export default class CommentCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              alignItems: 'flex-end',
-            }}>
+          <>
             {this.state.NF ? null : (
               <View style={styles.commentView}>
                 <View style={{flexDirection: 'row'}}>
@@ -176,15 +150,6 @@ export default class CommentCard extends React.Component {
                         {this.state.comment.date}
                       </Moment>
                     </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.setState({
-                          showReply: true,
-                        });
-                      }}
-                      style={styles.replyButton}>
-                      <Text style={styles.replyButtonText}>Reply</Text>
-                    </TouchableOpacity>
                   </View>
                 </View>
                 {auth().currentUser ? (
@@ -206,20 +171,8 @@ export default class CommentCard extends React.Component {
                 ) : null}
               </View>
             )}
-            <ScrollView style={{width: '90%'}}>
-              {this.state.replies.map((rep) => {
-                return (
-                  <ReplyCard
-                    item={rep}
-                    handleEditReply={this.handleEditReply}
-                    handleDeleteReply={this.handleDeleteReply}
-                  />
-                );
-              })}
-            </ScrollView>
-          </View>
+          </>
         )}
-
         <Modal isVisible={this.state.isModalVisible}>
           <TouchableOpacity
             onPress={() =>
@@ -340,7 +293,7 @@ export default class CommentCard extends React.Component {
                   <TouchableOpacity
                     style={styles.editButton}
                     onPress={this.handleEdit}>
-                    <Text style={styles.editButtonText}>Update Comment</Text>
+                    <Text style={styles.editButtonText}>Update Reply</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -401,35 +354,33 @@ export default class CommentCard extends React.Component {
 
 const styles = StyleSheet.create({
   commentView: {
-    width: '100%',
+    width: '95%',
     marginVertical: 5,
-    padding: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
   },
   commentUserPhotoBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     position: 'relative',
   },
   commentUserPhoto: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
   },
   profileImageBox: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     backgroundColor: colors.grey,
-    borderRadius: 20,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
   imageText: {
     fontFamily: 'Muli-Bold',
-    fontSize: 16,
+    fontSize: 14,
     color: colors.darkText,
   },
   commentUserName: {

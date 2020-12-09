@@ -27,6 +27,7 @@ import link from '../fetchPath';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import colors from '../appTheme';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import CountDownTimer from 'react-native-countdown-timer-hooks';
 
 const {width, height} = Dimensions.get('window');
 
@@ -58,6 +59,8 @@ export default class ViewProductScreen extends React.Component {
       reportForm: false,
       like: false,
       save: false,
+      showExpired: false,
+      showTimer: true,
     };
   }
 
@@ -154,7 +157,7 @@ export default class ViewProductScreen extends React.Component {
         id: auth().currentUser.email,
       };
       var res3 = await axios.post(link + '/api/user/single', data3);
-      if (res3.data !== null) {
+      if (res3.data.varient === 'Product') {
         var currentUser = res3.data;
         currentUser.id = currentUser._id;
         var productList = [];
@@ -213,8 +216,27 @@ export default class ViewProductScreen extends React.Component {
 
   handleRequest = () => {
     if (auth().currentUser) {
-      if (this.state.product.quantity > 0) {
+      if (
+        this.state.product.quantity > 0 &&
+        this.state.product.type !== 'give it for free'
+      ) {
         this.setState({request: !this.state.request});
+      } else if (
+        this.state.product.type === 'give it for free' &&
+        this.state.product.category === 'Food'
+      ) {
+        var d = Math.floor(
+          (new Date(this.state.product.to).getTime() - new Date().getTime()) /
+            1000,
+        );
+        if (d < 0) {
+          Snackbar.show({
+            text: 'Sorry, the item is no longer available!',
+            duration: Snackbar.LENGTH_SHORT,
+          });
+        } else {
+          this.setState({request: !this.state.request});
+        }
       } else {
         Snackbar.show({
           text: 'Sorry, the transaction is already done for this product',
@@ -662,7 +684,7 @@ export default class ViewProductScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{width: '100%', alignItems: 'center', marginBottom: 10}}>
         {!this.state.loadingProduct && !this.state.loadingOwner ? (
           <>
             {this.state.NF === false ? (
@@ -709,6 +731,25 @@ export default class ViewProductScreen extends React.Component {
                           </Moment>
                         </Text>
                       </View>
+                      {this.state.showExpired &&
+                      this.state.product.category === 'Food' ? (
+                        <View
+                          style={{
+                            backgroundColor: '#d65a31',
+                            paddingHorizontal: 5,
+                            paddingVertical: 2,
+                            borderRadius: 2,
+                          }}>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                            }}>
+                            Expired
+                          </Text>
+                        </View>
+                      ) : null}
                     </View>
                     <TouchableOpacity
                       style={{
@@ -727,13 +768,23 @@ export default class ViewProductScreen extends React.Component {
                     </TouchableOpacity>
                   </View>
                   <View style={styles.middle}>
-                    <Text style={styles.type}>{this.state.product.type}</Text>
+                    <Text style={styles.type}>
+                      {this.state.product.type} |{' '}
+                      {this.state.product.category === 'Books' &&
+                      this.state.product.subcategory
+                        ? this.state.product.subcategory + '| '
+                        : null}
+                      {this.state.product.category}
+                    </Text>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                      <Ionicons
-                        name="ios-location-outline"
-                        size={14}
-                        color={colors.white}
-                        style={{marginRight: 5}}
+                      <Image
+                        source={{
+                          uri:
+                            'https://www.countryflags.io/' +
+                            this.state.product.code +
+                            '/flat/64.png',
+                        }}
+                        style={{width: 20, height: 15, marginRight: 5}}
                       />
                       <Text style={styles.location}>
                         {this.state.product.city +
@@ -748,6 +799,94 @@ export default class ViewProductScreen extends React.Component {
                         ? 'with ' + this.state.product.withh
                         : null}
                     </Text>
+                    {this.state.product.type === 'give it for free' &&
+                    this.state.product.category === 'Food' &&
+                    this.state.showExpired === false &&
+                    this.state.showTimer === true ? (
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Muli-Bold',
+                            color: colors.white,
+                            marginLeft: 5,
+                          }}>
+                          Available in
+                        </Text>
+                        <CountDownTimer
+                          timestamp={Math.floor(
+                            (new Date(this.state.product.from).getTime() -
+                              new Date().getTime()) /
+                              1000,
+                          )}
+                          timerCallback={() => {
+                            this.setState({
+                              showTimer: false,
+                            });
+                          }}
+                          containerStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 35,
+                          }}
+                          textStyle={{
+                            fontSize: 14,
+                            fontFamily: 'Muli-Bold',
+                            color: colors.white,
+                            marginLeft: 5,
+                            color: '#d65a31',
+                          }}
+                        />
+                      </View>
+                    ) : null}
+                    {this.state.product.type === 'give it for free' &&
+                    this.state.product.category === 'Food' &&
+                    this.state.showExpired === false &&
+                    this.state.showTimer === false ? (
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 14,
+                            fontFamily: 'Muli-Bold',
+                            color: colors.white,
+                            marginLeft: 5,
+                          }}>
+                          Available for
+                        </Text>
+                        <CountDownTimer
+                          timestamp={Math.floor(
+                            (new Date(this.state.product.to).getTime() -
+                              new Date().getTime()) /
+                              1000,
+                          )}
+                          timerCallback={() => {
+                            this.setState({
+                              showExpired: true,
+                            });
+                          }}
+                          containerStyle={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            borderRadius: 35,
+                          }}
+                          textStyle={{
+                            fontSize: 14,
+                            fontFamily: 'Muli-Bold',
+                            color: colors.white,
+                            marginLeft: 5,
+                            color: '#d65a31',
+                          }}
+                        />
+                      </View>
+                    ) : null}
                     <Text style={styles.subHeader}>Description</Text>
                     <Text style={styles.desc}>
                       {this.state.product.description}
@@ -1089,7 +1228,7 @@ export default class ViewProductScreen extends React.Component {
             </>
           ) : null}
         </View>
-        {this.renderHeader()}
+        <ScrollView style={{width: '100%'}}>{this.renderHeader()}</ScrollView>
         <Modal isVisible={this.state.request}>
           <View
             style={{

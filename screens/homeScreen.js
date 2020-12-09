@@ -67,12 +67,14 @@ export default class HomeScreen extends React.Component {
   }
 
   async componentDidMount() {
-    this.handleNotiCount();
-    this.handleChatCount();
-    this.inter = setInterval(() => {
+    if (auth().currentUser) {
       this.handleNotiCount();
       this.handleChatCount();
-    }, 5000);
+      this.inter = setInterval(() => {
+        this.handleNotiCount();
+        this.handleChatCount();
+      }, 20000);
+    }
     fcmService.registerAppWithFCM();
     fcmService.register(
       this.onRegister,
@@ -86,6 +88,10 @@ export default class HomeScreen extends React.Component {
 
   handleNotiCount = async () => {
     if (auth().currentUser) {
+      console.log('NOTI COUNT');
+      this.setState({
+        tab3Count: 0,
+      });
       var data = {
         id: auth().currentUser.email,
       };
@@ -183,19 +189,19 @@ export default class HomeScreen extends React.Component {
       country: '',
     };
     if (e.data.type === 'Product') {
-      this.props.navigation.navigate('viewProduct', {
+      this.props.navigation.push('viewProduct', {
         id: e.data.id,
         location: location,
       });
     } else if (e.data.type === 'Request') {
-      this.props.navigation.navigate('viewRequest', {
+      this.props.navigation.push('viewRequest', {
         id: e.data.id,
         location: location,
       });
     } else if (e.data.type === 'Chat') {
-      this.props.navigation.navigate('Chat', {id: e.id, location: location});
+      this.props.navigation.push('Chat', {id: e.data.id, location: location});
     } else if (e.data.type === 'Follow') {
-      this.props.navigation.navigate('viewProfile', {
+      this.props.navigation.push('viewProfile', {
         id: e.data.id,
         location: location,
       });
@@ -714,6 +720,7 @@ export default class HomeScreen extends React.Component {
                       <NotiListScreen
                         location={this.state.location}
                         navigation={this.props.navigation}
+                        handleNotiCount={this.handleNotiCount}
                       />
                     ) : null}
                     {this.state.tab === 'Profile' ? (

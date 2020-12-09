@@ -24,37 +24,11 @@ export default class NotiCard extends React.Component {
       loading: true,
       user: [],
       hide: false,
+      read: false,
     };
   }
   async componentDidMount() {
-    const notiCardValue = await AsyncStorage.getItem(
-      this.props.id + 'notiCard',
-    );
-    const notiCardValue2 = await AsyncStorage.getItem(
-      this.props.id + 'notiCardU',
-    );
-    if (notiCardValue !== null && notiCardValue2 !== null) {
-      console.log('Found local noti card');
-      var value = JSON.parse(notiCardValue);
-      var value2 = JSON.parse(notiCardValue2);
-      if (value.user !== auth().currentUser.email && value2.name) {
-        this.setState({
-          data: JSON.parse(notiCardValue),
-          loading: false,
-          user: JSON.parse(notiCardValue2),
-          hide: false,
-        });
-      } else {
-        this.setState({
-          loading: false,
-          hide: true,
-        });
-      }
-      this.handleInit();
-    } else {
-      console.log('No local noti card found');
-      this.handleInit();
-    }
+    this.handleInit();
   }
 
   handleInit = async () => {
@@ -68,29 +42,14 @@ export default class NotiCard extends React.Component {
     var res2 = await axios.post(link + '/api/user/single', data2);
     if (res.data !== null && res2.data !== null) {
       if (res.data.user !== auth().currentUser.email && res2.data.name) {
-        var data3 = {
-          id: this.props.id,
-        };
-        if (res.data.read === false) {
-          var res3 = await axios.post(
-            link + '/api/notifications/update',
-            data3,
-          );
-          if (res3.data.type === 'success') {
-            console.log('Update Noti Card');
-          }
-        }
-        this.storeData(this.props.id + 'notiCard', res.data);
-        this.storeData(this.props.id + 'notiCardU', res2.data);
         this.setState({
           data: res.data,
           loading: false,
           user: res2.data,
           hide: false,
+          read: res.data.read,
         });
       } else {
-        this.storeData(this.props.id + 'notiCard', {});
-        this.storeData(this.props.id + 'notiCardU', {});
         this.setState({
           loading: false,
           hide: true,
@@ -109,13 +68,30 @@ export default class NotiCard extends React.Component {
     }
   };
 
+  handleOpen = async () => {
+    var data = {
+      id: this.props.id,
+    };
+    this.setState({
+      read: true,
+    });
+
+    if (this.state.data.read === false) {
+      this.props.handleRefresh();
+      var res3 = await axios.post(link + '/api/notifications/update', data);
+      if (res3.data.type === 'success') {
+        console.log('Update Noti Card');
+      }
+    }
+  };
+
   render() {
     return (
       <>
         {this.state.loading ? (
           <View
             style={{
-              width: '95%',
+              width: '100%',
               paddingVertical: 10,
               paddingHorizontal: 15,
               alignItems: 'center',
@@ -153,14 +129,14 @@ export default class NotiCard extends React.Component {
         ) : (
           <>
             {this.state.hide === false ? (
-              <View style={styles.item}>
+              <View style={this.state.read ? styles.itemRead : styles.item}>
                 <TouchableOpacity
-                  onPress={() =>
+                  onPress={() => {
                     this.props.navigation.navigate('viewProfile', {
                       id: this.state.user._id,
                       location: {},
-                    })
-                  }
+                    });
+                  }}
                   style={styles.profileBox}>
                   {this.state.user.photo ? (
                     <Image
@@ -178,12 +154,13 @@ export default class NotiCard extends React.Component {
                 </TouchableOpacity>
                 {this.state.data.type === 'Product' ? (
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      this.handleOpen();
                       this.props.navigation.navigate('viewProduct', {
                         id: this.state.data.id,
                         location: this.props.location,
-                      })
-                    }
+                      });
+                    }}
                     style={{width: '85%'}}>
                     {this.state.data.action === 'Like' ? (
                       <Text style={styles.title}>
@@ -209,12 +186,13 @@ export default class NotiCard extends React.Component {
                 ) : null}
                 {this.state.data.type === 'Request' ? (
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      this.handleOpen();
                       this.props.navigation.navigate('viewRequest', {
                         id: this.state.data.id,
                         location: this.props.location,
-                      })
-                    }
+                      });
+                    }}
                     style={{width: '85%'}}>
                     {this.state.data.action === 'Like' ? (
                       <Text style={styles.title}>
@@ -240,12 +218,13 @@ export default class NotiCard extends React.Component {
                 ) : null}
                 {this.state.data.type === 'Chat' ? (
                   <TouchableOpacity
-                    onPress={() =>
+                    onPress={() => {
+                      this.handleOpen();
                       this.props.navigation.navigate('Chat', {
                         id: this.state.data.id,
                         location: this.props.location,
-                      })
-                    }
+                      });
+                    }}
                     style={{width: '85%'}}>
                     {this.state.data.action === 'message' ? (
                       <Text style={styles.title}>
@@ -304,7 +283,18 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 10,
+
     backgroundColor: colors.secondary,
+    marginVertical: 5,
+    borderRadius: 10,
+    elevation: 3,
+    paddingHorizontal: 15,
+  },
+  itemRead: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: 10,
+    backgroundColor: colors.darkText,
     marginVertical: 5,
     borderRadius: 10,
     elevation: 3,

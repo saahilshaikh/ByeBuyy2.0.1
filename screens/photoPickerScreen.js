@@ -302,10 +302,7 @@ export default class PhotoPickerScreen extends React.Component {
                   <Text style={styles.pickerText}>Select from gallery</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                style={{width: '100%', paddingVertical: 10}}>
+              <ScrollView style={{width: '100%', paddingVertical: 10}}>
                 <View
                   style={{
                     width: '100%',
@@ -429,10 +426,11 @@ const styles = StyleSheet.create({
     borderColor: '#d65a31',
     borderRadius: 5,
     position: 'relative',
+    marginBottom: 5,
   },
   photo: {
-    width: 100,
-    height: 100,
+    width: width * 0.4,
+    height: width * 0.4,
     borderRadius: 5,
   },
 });

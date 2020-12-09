@@ -30,6 +30,27 @@ export default class ShowPostsScreen extends React.Component {
       loadmore: true,
       loadingMore: false,
       locationType: 'All locations',
+      activeSub: 'All',
+      bcategories: [
+        {name: 'Action and adventure', value: 'Action and adventure'},
+        {name: 'Biography', value: 'Biography'},
+        {name: 'College', value: 'College'},
+        {name: 'Comic', value: 'Comic'},
+        {name: 'Competitive exams', value: 'Competitive exams'},
+        {name: 'Cooking', value: 'Cooking'},
+        {name: 'Fiction', value: 'Fiction'},
+        {name: 'History', value: 'History'},
+        {name: 'Horror', value: 'Horror'},
+        {name: 'Novel & literature', value: 'Novel & literature'},
+        {name: 'Others', value: 'Others'},
+        {name: 'Pre school', value: 'Pre school'},
+        {name: 'Regional language', value: 'Regional language'},
+        {name: 'Religous', value: 'Religous'},
+        {name: 'Romance', value: 'Romance'},
+        {name: 'Sci-Fi', value: 'Sci-Fi'},
+        {name: 'Self help', value: 'Self help'},
+        {name: 'Suspense and thriller', value: 'Suspense and thriller'},
+      ],
     };
   }
 
@@ -229,6 +250,12 @@ export default class ShowPostsScreen extends React.Component {
     }
   };
 
+  handleSubCategory = (e) => {
+    this.setState({
+      activeSub: e,
+    });
+  };
+
   renderHeader = () => {
     return (
       <View style={{width: '100%'}}>
@@ -269,7 +296,7 @@ export default class ShowPostsScreen extends React.Component {
           </TouchableOpacity>
         </View>
         {!this.state.categoriesLoading ? (
-          <View style={{width: '100%', marginBottom: 15}}>
+          <View style={{width: '100%', marginBottom: 10}}>
             <ScrollView
               horizontal={true}
               style={{width: '100%', paddingLeft: 5}}
@@ -308,6 +335,45 @@ export default class ShowPostsScreen extends React.Component {
               })}
             </ScrollView>
           </View>
+        ) : null}
+        {this.state.activeCat === 'Books' ? (
+          <ScrollView
+            horizontal={true}
+            style={{width: '100%', paddingLeft: 5}}
+            showsHorizontalScrollIndicator={false}>
+            {this.state.activeSub === 'All' ? (
+              <TouchableOpacity
+                onPress={() => this.handleSubCategory('All')}
+                style={styles.acsubcategory}>
+                <Text style={styles.acsubcategoryText}>All</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                onPress={() => this.handleSubCategory('All')}
+                style={styles.subcategory}>
+                <Text style={styles.subcategoryText}>All</Text>
+              </TouchableOpacity>
+            )}
+            {this.state.bcategories.map((item) => {
+              return (
+                <View key={item._id}>
+                  {this.state.activeSub === item.name ? (
+                    <TouchableOpacity
+                      onPress={() => this.handleSubCategory(item.name)}
+                      style={styles.acsubcategory}>
+                      <Text style={styles.acsubcategoryText}>{item.name}</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => this.handleSubCategory(item.name)}
+                      style={styles.subcategory}>
+                      <Text style={styles.subcategoryText}>{item.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              );
+            })}
+          </ScrollView>
         ) : null}
       </View>
     );
@@ -376,15 +442,33 @@ export default class ShowPostsScreen extends React.Component {
             initialNumToRender={2}
             onEndReachedThreshold={30}
             renderItem={({item}) => (
-              <Card
-                key={item.id}
-                item={item}
-                handleCardImageClick={(e, f) =>
-                  this.props.handleCardImageClick(e, f)
-                }
-                location={this.state.location}
-                navigation={this.props.navigation}
-              />
+              <>
+                {this.state.activeSub === 'All' ? (
+                  <Card
+                    key={item._id}
+                    item={item}
+                    handleCardImageClick={(e, f) =>
+                      this.props.handleCardImageClick(e, f)
+                    }
+                    location={this.state.location}
+                    navigation={this.props.navigation}
+                  />
+                ) : (
+                  <>
+                    {item.subcategory === this.state.activeSub ? (
+                      <Card
+                        key={item.id}
+                        item={item}
+                        handleCardImageClick={(e, f) =>
+                          this.props.handleCardImageClick(e, f)
+                        }
+                        location={this.state.location}
+                        navigation={this.props.navigation}
+                      />
+                    ) : null}
+                  </>
+                )}
+              </>
             )}
           />
         ) : (
@@ -452,5 +536,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.baseline,
     fontFamily: 'Muli-Bold',
+  },
+  subcategory: {
+    marginHorizontal: 5,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  acsubcategory: {
+    marginHorizontal: 5,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    marginBottom: 5,
+  },
+  subcategoryText: {
+    fontSize: 14,
+    color: colors.grey,
+    fontFamily: 'Muli-Bold',
+  },
+  acsubcategoryText: {
+    fontSize: 14,
+    color: colors.baseline,
+    fontFamily: 'Muli-Bold',
+    textDecorationLine: 'underline',
   },
 });

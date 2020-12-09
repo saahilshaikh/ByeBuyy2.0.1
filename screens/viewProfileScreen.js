@@ -230,6 +230,11 @@ export default class ViewProfileScreen extends React.Component {
     }
   };
 
+  handleShowOthers = () => {
+    var data = this.state.sameList;
+    this.props.navigation.push('viewOtherUsers', {data: data});
+  };
+
   render() {
     return (
       <SafeAreaView
@@ -353,7 +358,9 @@ export default class ViewProfileScreen extends React.Component {
                   ) : null}
                 </View>
                 {this.state.sameList && this.state.sameList.length > 0 ? (
-                  <View style={{width: '90%'}}>
+                  <TouchableOpacity
+                    onPress={this.handleShowOthers}
+                    style={{width: '90%'}}>
                     <Text style={styles.followedText}>
                       Followed by{' '}
                       <ShowSimilar
@@ -367,7 +374,7 @@ export default class ViewProfileScreen extends React.Component {
                             : this.state.sameList.length - 1 + ' other')
                         : null}
                     </Text>
-                  </View>
+                  </TouchableOpacity>
                 ) : null}
               </View>
               <View style={styles.profileStats}>

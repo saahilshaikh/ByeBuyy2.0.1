@@ -205,13 +205,35 @@ export default class ChatCard extends React.Component {
                   <View>
                     <Text style={styles.chatName}>{this.state.user.name}</Text>
                     {this.state.chat.messages.length > 0 ? (
-                      <Text style={styles.chatMessage}>
-                        {
-                          this.state.chat.messages[
-                            this.state.chat.messages.length - 1
-                          ].message
-                        }
-                      </Text>
+                      <>
+                        {Math.floor(
+                          (new Date(
+                            this.state.chat[
+                              'clear' +
+                                (this.state.chat.participants.indexOf(
+                                  auth().currentUser.email,
+                                ) +
+                                  1)
+                            ],
+                          ).getTime() -
+                            new Date(
+                              this.state.chat.messages[
+                                this.state.chat.messages.length - 1
+                              ].date,
+                            ).getTime()) /
+                            1000,
+                        ) < 0 ? (
+                          <Text style={styles.chatMessage}>
+                            {
+                              this.state.chat.messages[
+                                this.state.chat.messages.length - 1
+                              ].message
+                            }
+                          </Text>
+                        ) : (
+                          <Text style={styles.chatMessage}></Text>
+                        )}
+                      </>
                     ) : null}
                   </View>
                 </View>

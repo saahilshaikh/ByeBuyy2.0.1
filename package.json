@@ -37,6 +37,7 @@
     "react-moment": "^0.9.7",
     "react-native": "0.63.2",
     "react-native-background-timer": "^2.4.1",
+    "react-native-countdown-timer-hooks": "^1.0.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-document-picker": "^3.5.4",
     "react-native-fbsdk": "^2.0.0",

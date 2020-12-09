@@ -65,9 +65,7 @@ export default class ViewCommentScreen extends React.Component {
     product.id = product._id;
     var comments = [];
     product.comments.map((item) => {
-      if (comments.length < 10) {
-        comments.push(item);
-      }
+      comments.push(item);
     });
     if (res.data !== null) {
       this.setState({
@@ -95,6 +93,41 @@ export default class ViewCommentScreen extends React.Component {
           currentUser: currentUser,
         });
       }
+    }
+  };
+
+  handleRefresh = async () => {
+    this.setState({
+      refreshing: true,
+      comments: [],
+    });
+    var id = this.props.route.params.id;
+    var data = {
+      id: id,
+    };
+    var res = await axios.post(link + '/api/product/single', data);
+    var product = res.data;
+    product.id = product._id;
+    var comments = [];
+    product.comments.map((item) => {
+      if (comments.length < 10) {
+        comments.push(item);
+      }
+    });
+    if (res.data !== null) {
+      this.setState({
+        comments: comments,
+        product: product,
+        loading: false,
+        refreshing: false,
+      });
+    } else {
+      this.setState({
+        comments: [],
+        product: [],
+        loading: false,
+        NF: true,
+      });
     }
   };
 
@@ -331,6 +364,81 @@ export default class ViewCommentScreen extends React.Component {
     );
   };
 
+  handleDeleteComment = async (e) => {
+    var data = {
+      id: e,
+      productId: this.props.route.params.id,
+    };
+    var res = await axios.post(link + '/api/product/deleteComment', data);
+    if (res.data !== null) {
+      if (res.data.type === 'success') {
+        this.handleRefresh();
+      }
+    }
+  };
+
+  handleEditComment = async (id, comment) => {
+    var data = {
+      id: id,
+      productId: this.props.route.params.id,
+      comment: comment,
+    };
+    var res = await axios.post(link + '/api/product/updateComment', data);
+    if (res.data !== null) {
+      if (res.data.type === 'success') {
+        this.handleRefresh();
+      }
+    }
+  };
+
+  handleReplyComment = async (id, reply) => {
+    var data = {
+      id: id,
+      productId: this.props.route.params.id,
+      reply: reply,
+      email: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/product/replyComment', data);
+    if (res.data !== null) {
+      if (res.data.type === 'success') {
+        this.handleRefresh();
+      }
+    }
+  };
+
+  handleDeleteReplyComment = async (e, f) => {
+    var data = {
+      id: e,
+      productId: this.props.route.params.id,
+      replyId: f,
+    };
+    console.log(data);
+    var res = await axios.post(link + '/api/product/deleteReply', data);
+    if (res.data !== null) {
+      console.log('asdaasad');
+      if (res.data.type === 'success') {
+        this.handleRefresh();
+      }
+    }
+  };
+
+  handleEditReplyComment = async (e, f, r) => {
+    var data = {
+      id: e,
+      productId: this.props.route.params.id,
+      replyId: f,
+      rep: r,
+    };
+    console.log(data);
+    var res = await axios.post(link + '/api/product/updateReply', data);
+    if (res.data !== null) {
+      console.log('asdaasad');
+      if (res.data.type === 'success') {
+        this.handleRefresh();
+      }
+    }
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
@@ -399,7 +507,15 @@ export default class ViewCommentScreen extends React.Component {
                 />
               }
               renderItem={({item}) => (
-                <CommentCard item={item} navigation={this.props.navigation} />
+                <CommentCard
+                  item={item}
+                  navigation={this.props.navigation}
+                  handleDeleteComment={this.handleDeleteComment}
+                  handleEditComment={this.handleEditComment}
+                  handleReplyComment={this.handleReplyComment}
+                  handleDeleteReplyComment={this.handleDeleteReplyComment}
+                  handleEditReplyComment={this.handleEditReplyComment}
+                />
               )}
             />
           </View>
