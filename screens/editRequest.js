@@ -316,6 +316,7 @@ export default class EditRequest extends React.Component {
               success: true,
             },
             () => {
+              props.route.params.handleRefresh();
               setTimeout(function () {
                 props.navigation.pop();
               }, 2000);

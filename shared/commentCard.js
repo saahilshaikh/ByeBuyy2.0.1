@@ -34,6 +34,7 @@ export default class CommentCard extends React.Component {
       showReply: false,
       reply: '',
       replies: [],
+      user: {},
     };
   }
   async componentDidMount() {
@@ -56,6 +57,7 @@ export default class CommentCard extends React.Component {
         replies: this.props.item.reply,
         loading: false,
         NF: false,
+        user: res.data,
       });
     } else {
       this.setState({
@@ -79,7 +81,11 @@ export default class CommentCard extends React.Component {
   };
 
   handleReply = () => {
-    this.props.handleReplyComment(this.props.item._id, this.state.reply);
+    this.props.handleReplyComment(
+      this.props.item._id,
+      this.state.reply,
+      this.state.user,
+    );
     this.setState({
       showReply: false,
       reply: '',

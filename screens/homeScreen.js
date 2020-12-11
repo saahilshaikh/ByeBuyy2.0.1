@@ -189,15 +189,31 @@ export default class HomeScreen extends React.Component {
       country: '',
     };
     if (e.data.type === 'Product') {
-      this.props.navigation.push('viewProduct', {
-        id: e.data.id,
-        location: location,
-      });
+      console.log(e);
+      if (e.data.action === 'Comment') {
+        this.props.navigation.push('viewComment', {
+          id: e.data.id,
+          location: location,
+        });
+      } else {
+        this.props.navigation.push('viewProduct', {
+          id: e.data.id,
+          location: location,
+        });
+      }
     } else if (e.data.type === 'Request') {
-      this.props.navigation.push('viewRequest', {
-        id: e.data.id,
-        location: location,
-      });
+      console.log(e);
+      if (e.data.action === 'Comment') {
+        this.props.navigation.push('viewComment', {
+          id: e.data.id,
+          location: location,
+        });
+      } else {
+        this.props.navigation.push('viewRequest', {
+          id: e.data.id,
+          location: location,
+        });
+      }
     } else if (e.data.type === 'Chat') {
       this.props.navigation.push('Chat', {id: e.data.id, location: location});
     } else if (e.data.type === 'Follow') {

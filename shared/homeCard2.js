@@ -43,37 +43,38 @@ export default class HomeCard2 extends React.Component {
   }
 
   async componentDidMount() {
-    const cardValue = await AsyncStorage.getItem(
-      this.props.item._id + 'product',
-    );
-    const cardValue2 = await AsyncStorage.getItem(
-      this.props.item._id + 'owner',
-    );
-    if (cardValue !== null && cardValue2 !== null) {
-      console.log('Card2 local found');
-      var product = JSON.parse(cardValue);
-      if (product.varient === 'Request') {
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-        });
-      } else {
-        this.setState({
-          product: [],
-          owner: [],
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: true,
-        });
-      }
-      this.handleInit();
-    } else {
-      console.log('Card2 local not found');
-      this.handleInit();
-    }
+    // const cardValue = await AsyncStorage.getItem(
+    //   this.props.item._id + 'product',
+    // );
+    // const cardValue2 = await AsyncStorage.getItem(
+    //   this.props.item._id + 'owner',
+    // );
+    // if (cardValue !== null && cardValue2 !== null) {
+    //   console.log('Card2 local found');
+    //   var product = JSON.parse(cardValue);
+    //   if (product.varient === 'Request') {
+    //     this.setState({
+    //       product: product,
+    //       owner: JSON.parse(cardValue2),
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: false,
+    //     });
+    //   } else {
+    //     this.setState({
+    //       product: [],
+    //       owner: [],
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: true,
+    //     });
+    //   }
+    //   this.handleInit();
+    // } else {
+    //   console.log('Card2 local not found');
+    //   this.handleInit();
+    // }
+    this.handleInit2();
   }
 
   componentWillUnmount() {
@@ -426,6 +427,7 @@ export default class HomeCard2 extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
+          this.handleInit2();
           if (
             this.state.like &&
             auth().currentUser.email !== this.state.owner.email

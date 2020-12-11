@@ -60,46 +60,46 @@ export default class HomeCard extends React.Component {
   }
 
   async componentDidMount() {
-    const cardValue = await AsyncStorage.getItem(
-      this.props.item._id + 'product',
-    );
-    const cardValue2 = await AsyncStorage.getItem(
-      this.props.item._id + 'owner',
-    );
-    if (cardValue !== null && cardValue2 !== null) {
-      var product = JSON.parse(cardValue);
-      if (product.varient === 'Product') {
-        var d = Math.floor(
-          (new Date(product.to).getTime() - new Date().getTime()) / 1000,
-        );
-        var d2 = Math.floor(
-          (new Date(product.from).getTime() - new Date().getTime()) / 1000,
-        );
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          showExpired: d < 0 ? true : false,
-          showTimer: d2 > 0 ? true : false,
-          loadingProduct: false,
-          loadingOwner: false,
-          like: auth().currentUser
-            ? product.likes.includes(auth().currentUser.email)
-            : false,
-          NF: false,
-        });
-      } else {
-        this.setState({
-          product: [],
-          owner: [],
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: true,
-        });
-      }
-      this.handleInit2();
-    } else {
-      this.handleInit();
-    }
+    // const cardValue = await AsyncStorage.getItem(
+    //   this.props.item._id + 'product',
+    // );
+    // const cardValue2 = await AsyncStorage.getItem(
+    //   this.props.item._id + 'owner',
+    // );
+    // if (cardValue !== null && cardValue2 !== null) {
+    //   var product = JSON.parse(cardValue);
+    //   if (product.varient === 'Product') {
+    //     var d = Math.floor(
+    //       (new Date(product.to).getTime() - new Date().getTime()) / 1000,
+    //     );
+    //     var d2 = Math.floor(
+    //       (new Date(product.from).getTime() - new Date().getTime()) / 1000,
+    //     );
+    //     this.setState({
+    //       product: product,
+    //       owner: JSON.parse(cardValue2),
+    //       showExpired: d < 0 ? true : false,
+    //       showTimer: d2 > 0 ? true : false,
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       like: auth().currentUser
+    //         ? product.likes.includes(auth().currentUser.email)
+    //         : false,
+    //       NF: false,
+    //     });
+    //   } else {
+    //     this.setState({
+    //       product: [],
+    //       owner: [],
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: true,
+    //     });
+    //   }
+    //   this.handleInit2();
+    // } else {
+    this.handleInit2();
+    // }
   }
 
   componentWillUnmount() {
@@ -135,8 +135,6 @@ export default class HomeCard extends React.Component {
           product.distance = d;
         }
         if (res2.data !== null && res2.data.name) {
-          this.storeData(this.props.item._id + 'product', product);
-          this.storeData(this.props.item._id + 'owner', owner);
           var d = Math.floor(
             (new Date(product.to).getTime() - new Date().getTime()) / 1000,
           );
@@ -153,8 +151,6 @@ export default class HomeCard extends React.Component {
             showTimer: d2 > 0 ? true : false,
           });
         } else {
-          this.storeData(this.props.item._id + 'product', {});
-          this.storeData(this.props.item._id + 'owner', {});
           this.setState({
             product: [],
             owner: [],
@@ -190,8 +186,6 @@ export default class HomeCard extends React.Component {
           }
         }
       } else {
-        this.storeData(this.props.item._id + 'product', {});
-        this.storeData(this.props.item._id + 'owner', {});
         this.setState({
           product: [],
           owner: [],
@@ -229,8 +223,6 @@ export default class HomeCard extends React.Component {
           NF: false,
         });
       } else {
-        this.storeData(this.props.item._id + 'product', {});
-        this.storeData(this.props.item._id + 'owner', {});
         this.setState({
           product: [],
           owner: [],
@@ -504,6 +496,7 @@ export default class HomeCard extends React.Component {
       var res = await axios.post(link + '/api/product/toggleLike', data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
+          this.handleInit2();
           if (
             this.state.like &&
             auth().currentUser.email !== this.state.owner.email
@@ -1026,10 +1019,13 @@ export default class HomeCard extends React.Component {
                     <View style={styles.middle}>
                       <View style={{width: '100%'}}>
                         <Text style={styles.type}>
-                          {this.state.product.type} |{' '}
+                          {this.state.product.type.toLowerCase() === 'donate'
+                            ? 'Free'
+                            : this.state.product.type}{' '}
+                          |{' '}
                           {this.state.product.category === 'Books' &&
                           this.state.product.subcategory
-                            ? this.state.product.subcategory + '| '
+                            ? this.state.product.subcategory + ' | '
                             : null}
                           {this.state.product.category}
                         </Text>
@@ -1114,7 +1110,7 @@ export default class HomeCard extends React.Component {
                             ? 'with ' + this.state.product.withh
                             : null}
                         </Text>
-                        {this.state.product.type === 'give it for free' &&
+                        {this.state.product.type.toLowerCase() === 'donate' &&
                         this.state.product.category === 'Food' &&
                         this.state.showExpired === false &&
                         this.state.showTimer === true ? (
@@ -1122,6 +1118,8 @@ export default class HomeCard extends React.Component {
                             style={{
                               width: '100%',
                               flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              marginVertical: 5,
                             }}>
                             <Text
                               style={{
@@ -1153,12 +1151,12 @@ export default class HomeCard extends React.Component {
                                 fontFamily: 'Muli-Bold',
                                 color: colors.white,
                                 marginLeft: 5,
-                                color: '#d65a31',
+                                color: colors.grey,
                               }}
                             />
                           </View>
                         ) : null}
-                        {this.state.product.type === 'give it for free' &&
+                        {this.state.product.type.toLowerCase() === 'donate' &&
                         this.state.product.category === 'Food' &&
                         this.state.showExpired === false &&
                         this.state.showTimer === false ? (

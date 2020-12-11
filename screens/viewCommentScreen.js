@@ -48,6 +48,8 @@ export default class ViewCommentScreen extends React.Component {
       selection: {start: 0, end: 0},
       pos: null,
       search: '',
+      owner: [],
+      NF: false,
     };
   }
 
@@ -61,18 +63,32 @@ export default class ViewCommentScreen extends React.Component {
       id: id,
     };
     var res = await axios.post(link + '/api/product/single', data);
-    var product = res.data;
-    product.id = product._id;
-    var comments = [];
-    product.comments.map((item) => {
-      comments.push(item);
-    });
-    if (res.data !== null) {
-      this.setState({
-        comments: comments,
-        product: product,
-        loading: false,
+    if (res.data.varient) {
+      var product = res.data;
+      product.id = product._id;
+      var comments = [];
+      product.comments.map((item) => {
+        comments.push(item);
       });
+      var data2 = {
+        id: product.owner,
+      };
+      var res2 = await axios.post(link + '/api/user/single', data2);
+      if (res.data !== null && res2.data !== null) {
+        this.setState({
+          comments: comments,
+          product: product,
+          owner: res2.data,
+          loading: false,
+        });
+      } else {
+        this.setState({
+          comments: [],
+          product: [],
+          loading: false,
+          NF: true,
+        });
+      }
     } else {
       this.setState({
         comments: [],
@@ -82,10 +98,10 @@ export default class ViewCommentScreen extends React.Component {
       });
     }
     if (auth().currentUser) {
-      var data2 = {
+      var data3 = {
         id: auth().currentUser.email,
       };
-      var res3 = await axios.post(link + '/api/user/single', data2);
+      var res3 = await axios.post(link + '/api/user/single', data3);
       if (res3.data !== null) {
         var currentUser = res3.data;
         currentUser.id = currentUser._id;
@@ -151,14 +167,16 @@ export default class ViewCommentScreen extends React.Component {
         comment: comment,
       };
       var res = await axios.post(link + '/api/product/comment', data);
-      if (res.data) {
+      if (res.data.type === 'success') {
+        this.handleInit();
         this.setState(
           {
             commenting: false,
           },
           () => {
-            this.sendCommentActivity();
-            this.handleInit();
+            if (this.state.product.owner !== auth().currentUser.email) {
+              this.sendCommentActivity();
+            }
           },
         );
       }
@@ -193,7 +211,7 @@ export default class ViewCommentScreen extends React.Component {
     const message = {
       registration_ids: [this.state.owner.pushToken],
       notification: {
-        title: this.state.currentUser.name + ' liked your product',
+        title: this.state.currentUser.name + ' commented on your product',
         body: '',
         vibrate: 1,
         sound: 1,
@@ -204,6 +222,7 @@ export default class ViewCommentScreen extends React.Component {
       data: {
         type: e,
         id: f,
+        action: 'Comment',
         date: new Date(),
       },
     };
@@ -391,7 +410,8 @@ export default class ViewCommentScreen extends React.Component {
     }
   };
 
-  handleReplyComment = async (id, reply) => {
+  handleReplyComment = async (id, reply, user) => {
+    console.log(user);
     var data = {
       id: id,
       productId: this.props.route.params.id,
@@ -399,11 +419,74 @@ export default class ViewCommentScreen extends React.Component {
       email: auth().currentUser.email,
     };
     var res = await axios.post(link + '/api/product/replyComment', data);
-    if (res.data !== null) {
-      if (res.data.type === 'success') {
-        this.handleRefresh();
+    if (res.data.type === 'success') {
+      this.handleRefresh();
+      if (user.email !== auth().currentUser.email) {
+        this.sendReplyActivity(user);
       }
     }
+  };
+
+  sendReplyActivity = async (user) => {
+    console.log(user);
+    var data = {
+      id: this.state.product.id,
+      action: 'Reply',
+      type: this.state.product.varient,
+      email1: user.email,
+      email2: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/notifications/check', data);
+    if (res.data.length === 0) {
+      console.log('Adding Activity');
+      this.sendReplyPushNotification(
+        this.state.product.varient,
+        this.state.product.id,
+        user,
+      );
+      var res2 = await axios.post(link + '/api/notifications/add', data);
+      if (res2.data !== null) {
+        console.log(res.data);
+      }
+    } else {
+      console.log('Noti already');
+    }
+  };
+
+  sendReplyPushNotification = async (e, f, user) => {
+    const FIREBASE_API_KEY =
+      'AAAA-x7BxpY:APA91bGm_UWNpbo0o6aOfVkEaIqRLZAhdh0oCjs-RCxA2qsrYy3LjTzSRzVeoBycvhXT2w2qRZEL2e7nmKa3-kgBRCfUZEyffWlpU8fhOhwaELLC0RpNvUtM6GAdcdC8jhhfaWxq6req';
+    const message = {
+      registration_ids: [user.pushToken],
+      notification: {
+        title: this.state.currentUser.name + ' replied to your comment',
+        body: '',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: false,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        type: e,
+        id: f,
+        action: 'Comment',
+        date: new Date(),
+      },
+    };
+    var body = JSON.stringify(message);
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: body,
+    });
+    re = response.json();
+    console.log('174', re);
   };
 
   handleDeleteReplyComment = async (e, f) => {

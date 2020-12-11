@@ -60,45 +60,45 @@ export default class Card extends React.Component {
   }
 
   async componentDidMount() {
-    const cardValue = await AsyncStorage.getItem(
-      this.props.item._id + 'product',
-    );
-    const cardValue2 = await AsyncStorage.getItem(
-      this.props.item._id + 'owner',
-    );
-    if (cardValue !== null && cardValue2 !== null) {
-      console.log('Card local found');
-      var product = JSON.parse(cardValue);
-      if (product.varient === 'Product') {
-        var d = Math.floor(
-          (new Date(product.to).getTime() - new Date().getTime()) / 1000,
-        );
-        var d2 = Math.floor(
-          (new Date(product.from).getTime() - new Date().getTime()) / 1000,
-        );
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-          showExpired: d < 0 ? true : false,
-          showTimer: d2 > 0 ? true : false,
-        });
-      } else {
-        this.setState({
-          product: [],
-          owner: [],
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: true,
-        });
-      }
-      this.handleInit();
-    } else {
-      console.log('Card local not found');
-      this.handleInit();
-    }
+    // const cardValue = await AsyncStorage.getItem(
+    //   this.props.item._id + 'product',
+    // );
+    // const cardValue2 = await AsyncStorage.getItem(
+    //   this.props.item._id + 'owner',
+    // );
+    // if (cardValue !== null && cardValue2 !== null) {
+    //   console.log('Card local found');
+    //   var product = JSON.parse(cardValue);
+    //   if (product.varient === 'Product') {
+    //     var d = Math.floor(
+    //       (new Date(product.to).getTime() - new Date().getTime()) / 1000,
+    //     );
+    //     var d2 = Math.floor(
+    //       (new Date(product.from).getTime() - new Date().getTime()) / 1000,
+    //     );
+    //     this.setState({
+    //       product: product,
+    //       owner: JSON.parse(cardValue2),
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: false,
+    //       showExpired: d < 0 ? true : false,
+    //       showTimer: d2 > 0 ? true : false,
+    //     });
+    //   } else {
+    //     this.setState({
+    //       product: [],
+    //       owner: [],
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: true,
+    //     });
+    //   }
+    //   this.handleInit();
+    // } else {
+    //   console.log('Card local not found');
+    this.handleInit();
+    // }
   }
 
   componentWillUnmount() {
@@ -143,8 +143,7 @@ export default class Card extends React.Component {
               this.storeData(this.props.item._id + 'product', product);
               this.storeData(this.props.item._id + 'owner', owner);
               var d = Math.floor(
-                (new Date(product.expiry).getTime() - new Date().getTime()) /
-                  1000,
+                (new Date(product.to).getTime() - new Date().getTime()) / 1000,
               );
               var d2 = Math.floor(
                 (new Date(product.from).getTime() - new Date().getTime()) /
@@ -354,6 +353,7 @@ export default class Card extends React.Component {
       var res = await axios.post(link + '/api/product/toggleLike', data);
       console.log(res.data);
       if (res.data !== null) {
+        this.handleInit();
         if (this.props.handleRefresh) {
           this.props.handleRefresh();
         }
@@ -806,7 +806,24 @@ export default class Card extends React.Component {
             <>
               {this.state.NF === false ? (
                 <View style={{width: '100%', alignItems: 'center'}}>
-                  <View style={styles.item}>
+                  <View
+                    style={
+                      this.state.product.quantity === 0 ||
+                      (this.state.product.type.toLowerCase() === 'donate' &&
+                        this.state.product.category === 'Food' &&
+                        (Math.floor(
+                          (new Date(this.state.product.from).getTime() -
+                            new Date().getTime()) /
+                            1000,
+                        ) > 0 ||
+                          Math.floor(
+                            (new Date(this.state.product.to).getTime() -
+                              new Date().getTime()) /
+                              1000,
+                          ) < 0))
+                        ? styles.itemInActive
+                        : styles.item
+                    }>
                     <View style={styles.top}>
                       {!this.state.loadingOwner ? (
                         <View style={styles.profile}>
@@ -869,6 +886,7 @@ export default class Card extends React.Component {
                                 paddingHorizontal: 5,
                                 paddingVertical: 2,
                                 borderRadius: 2,
+                                marginLeft: 5,
                               }}>
                               <Text
                                 style={{
@@ -940,10 +958,13 @@ export default class Card extends React.Component {
                     <View style={styles.middle}>
                       <View style={{width: '100%'}}>
                         <Text style={styles.type}>
-                          {this.state.product.type} |{' '}
+                          {this.state.product.type.toLowerCase() === 'donate'
+                            ? 'Free'
+                            : this.state.product.type}{' '}
+                          |{' '}
                           {this.state.product.category === 'Books' &&
                           this.state.product.subcategory
-                            ? this.state.product.subcategory + '| '
+                            ? this.state.product.subcategory + ' | '
                             : null}
                           {this.state.product.category}
                         </Text>
@@ -1027,7 +1048,7 @@ export default class Card extends React.Component {
                             ? 'with ' + this.state.product.withh
                             : null}
                         </Text>
-                        {this.state.product.type === 'give it for free' &&
+                        {this.state.product.type.toLowerCase() === 'donate' &&
                         this.state.product.category === 'Food' &&
                         this.state.showExpired === false &&
                         this.state.showTimer === true ? (
@@ -1035,6 +1056,8 @@ export default class Card extends React.Component {
                             style={{
                               width: '100%',
                               flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              marginVertical: 5,
                             }}>
                             <Text
                               style={{
@@ -1066,12 +1089,12 @@ export default class Card extends React.Component {
                                 fontFamily: 'Muli-Bold',
                                 color: colors.white,
                                 marginLeft: 5,
-                                color: '#d65a31',
+                                color: colors.grey,
                               }}
                             />
                           </View>
                         ) : null}
-                        {this.state.product.type === 'give it for free' &&
+                        {this.state.product.type.toLowerCase() === 'donate' &&
                         this.state.product.category === 'Food' &&
                         this.state.showExpired === false &&
                         this.state.showTimer === false ? (
@@ -1079,6 +1102,8 @@ export default class Card extends React.Component {
                             style={{
                               width: '100%',
                               flexDirection: 'row',
+                              justifyContent: 'space-between',
+                              marginVertical: 5,
                             }}>
                             <Text
                               style={{
@@ -1118,7 +1143,7 @@ export default class Card extends React.Component {
                         {this.state.viewmore ? (
                           <>
                             <Text style={styles.subHeader}>
-                              {this.state.category === 'Books'
+                              {this.state.product.category !== 'Books'
                                 ? 'Description'
                                 : 'About this book'}
                             </Text>
@@ -1155,7 +1180,13 @@ export default class Card extends React.Component {
                                         color: colors.white,
                                         marginLeft: 5,
                                       }}>
-                                      {this.state.product.share_from}
+                                      <Moment element={Text} format="L">
+                                        {
+                                          new Date(
+                                            this.state.product.share_from,
+                                          )
+                                        }
+                                      </Moment>
                                     </Text>
                                   </View>
                                   <Text
@@ -1186,7 +1217,13 @@ export default class Card extends React.Component {
                                         color: colors.white,
                                         marginLeft: 5,
                                       }}>
-                                      {this.state.product.share_till}
+                                      <Moment element={Text} format="L">
+                                        {
+                                          new Date(
+                                            this.state.product.share_till,
+                                          )
+                                        }
+                                      </Moment>
                                     </Text>
                                   </View>
                                 </View>
@@ -1224,32 +1261,39 @@ export default class Card extends React.Component {
                                     source={{uri: image.image}}
                                     style={styles.imageBox}
                                   />
-                                  <Image
-                                    source={require('../assets/images/icon.png')}
-                                    style={styles.cr}
-                                  />
                                 </TouchableOpacity>
                               );
                             })}
                           </>
                         ) : (
-                          <TouchableOpacity
-                            onPress={() =>
-                              this.handleCardImageClick(
-                                this.state.product.images,
-                                this.state.product.images[0].index,
-                              )
-                            }
-                            style={styles.imageBoxOne}>
-                            <Image
-                              source={{uri: this.state.product.images[0].image}}
-                              style={styles.imageBoxOne}
-                            />
-                            <Image
-                              source={require('../assets/images/icon.png')}
-                              style={styles.cr}
-                            />
-                          </TouchableOpacity>
+                          <>
+                            {this.state.product.images.length === 0 &&
+                            this.state.product.category === 'Food' ? (
+                              <Image
+                                source={{
+                                  uri:
+                                    'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
+                                }}
+                                style={styles.imageBoxOne}
+                              />
+                            ) : (
+                              <TouchableOpacity
+                                onPress={() =>
+                                  this.handleCardImageClick(
+                                    this.state.product.images,
+                                    this.state.product.images[0].index,
+                                  )
+                                }
+                                style={styles.imageBoxOne}>
+                                <Image
+                                  source={{
+                                    uri: this.state.product.images[0].image,
+                                  }}
+                                  style={styles.imageBoxOne}
+                                />
+                              </TouchableOpacity>
+                            )}
+                          </>
                         )}
                       </ScrollView>
                     </View>
@@ -1581,6 +1625,7 @@ export default class Card extends React.Component {
                           });
                           this.props.navigation.navigate('EditItem', {
                             id: this.state.product.id,
+                            handleRefresh: this.handleInit,
                           });
                         }}
                         style={{
@@ -1954,7 +1999,6 @@ export default class Card extends React.Component {
           doubleTapToZoomEnabled={true}
           presentationStyle="fullScreen"
           animationType="slide"
-          FooterComponent={this.imageFooter}
         />
       </>
     );
@@ -1963,7 +2007,6 @@ export default class Card extends React.Component {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 15,
     width: '95%',
     alignItems: 'center',
     backgroundColor: '#1B1F22',
@@ -1971,12 +2014,25 @@ const styles = StyleSheet.create({
     elevation: 3,
     borderRadius: 10,
     marginBottom: 10,
+    position: 'relative',
+  },
+  itemInActive: {
+    width: '95%',
+    alignItems: 'center',
+    backgroundColor: '#464646',
+    justifyContent: 'space-between',
+    elevation: 3,
+    borderRadius: 10,
+    marginBottom: 10,
+    position: 'relative',
   },
   top: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
     justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingTop: 15,
   },
   profile: {
     flexDirection: 'row',
@@ -2057,6 +2113,7 @@ const styles = StyleSheet.create({
   },
   middle: {
     width: '100%',
+    paddingHorizontal: 15,
   },
   type: {
     color: colors.grey,
@@ -2092,6 +2149,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     justifyContent: 'space-between',
+    paddingHorizontal: 15,
+    paddingBottom: 15,
   },
   reportheader: {
     color: colors.white,
@@ -2251,20 +2310,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
   },
-  cr: {
+  overlay: {
     position: 'absolute',
-    width: 25,
-    height: 25,
-    bottom: 0,
-    right: 0,
-    opacity: 0.8,
-  },
-  cr2: {
-    position: 'absolute',
-    width: 40,
-    height: 40,
-    bottom: 0,
-    right: 0,
-    opacity: 0.8,
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#000',
+    borderRadius: 7,
+    opacity: 0.5,
   },
 });

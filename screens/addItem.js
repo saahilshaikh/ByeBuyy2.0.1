@@ -74,7 +74,7 @@ export default class AddItem extends React.Component {
         {label: 'Select a type', value: 0},
         {label: 'Exchange', value: 1},
         {label: 'Lend', value: 2},
-        {label: 'Give it for free', value: 3},
+        {label: 'Donate', value: 3},
       ],
       quantities: [
         {
@@ -138,7 +138,7 @@ export default class AddItem extends React.Component {
         {label: 'Others', value: 'Others'},
         {label: 'Pre school', value: 'Pre school'},
         {label: 'Regional language', value: 'Regional language'},
-        {label: 'Religous', value: 'Religous'},
+        {label: 'Religious', value: 'Religious'},
         {label: 'Romance', value: 'Romance'},
         {label: 'Sci-Fi', value: 'Sci-Fi'},
         {label: 'Self help', value: 'Self help'},
@@ -375,7 +375,10 @@ export default class AddItem extends React.Component {
       this.setState({
         loading: false,
       });
-    } else if (this.state.images.length === 0) {
+    } else if (
+      this.state.images.length === 0 &&
+      this.state.category !== 'Food'
+    ) {
       Snackbar.show({
         text: 'Please add a image',
         duration: Snackbar.LENGTH_SHORT,
@@ -458,7 +461,7 @@ export default class AddItem extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'give it for free',
+          type: 'donate',
           withh: '',
           quantity: this.state.quantity,
           share_from: '',
@@ -498,9 +501,9 @@ export default class AddItem extends React.Component {
     if (this.state.type === 1) {
       topic = 'Ready to exchange ' + this.state.wyh + ' with ' + this.state.wye;
     } else if (this.state.type === 2) {
-      topic = 'Ready to borrow ' + this.state.wyh;
+      topic = 'Ready to lend ' + this.state.wyh;
     } else {
-      topic = 'Ready to give it for free ' + this.state.wyh;
+      topic = 'Ready to donate ' + this.state.wyh;
     }
     var y;
     var storageRef = storage().ref(
@@ -674,8 +677,6 @@ export default class AddItem extends React.Component {
                                 mode="date"
                                 placeholder="select date"
                                 format="YYYY-MM-DD"
-                                minDate={this.state.minDate}
-                                maxDate={this.state.minDate}
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
                                 customStyles={{
@@ -708,8 +709,6 @@ export default class AddItem extends React.Component {
                                 mode="date"
                                 placeholder="select date"
                                 format="YYYY-MM-DD"
-                                minDate={this.state.minDate2}
-                                maxDate={this.state.maxDate2}
                                 confirmBtnText="Confirm"
                                 cancelBtnText="Cancel"
                                 customStyles={{

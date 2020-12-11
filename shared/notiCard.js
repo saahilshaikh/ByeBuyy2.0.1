@@ -156,15 +156,26 @@ export default class NotiCard extends React.Component {
                   <TouchableOpacity
                     onPress={() => {
                       this.handleOpen();
-                      this.props.navigation.navigate('viewProduct', {
-                        id: this.state.data.id,
-                        location: this.props.location,
-                      });
+                      this.state.data.action === 'Comment' ||
+                      this.state.data.action === 'Reply'
+                        ? this.props.navigation.navigate('viewComment', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          })
+                        : this.props.navigation.navigate('viewProduct', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          });
                     }}
                     style={{width: '85%'}}>
                     {this.state.data.action === 'Like' ? (
                       <Text style={styles.title}>
                         {this.state.user.name} liked your product
+                      </Text>
+                    ) : null}
+                    {this.state.data.action === 'Reply' ? (
+                      <Text style={styles.title}>
+                        {this.state.user.name} replied to your comment
                       </Text>
                     ) : null}
                     {this.state.data.action === 'Comment' ? (
@@ -188,10 +199,16 @@ export default class NotiCard extends React.Component {
                   <TouchableOpacity
                     onPress={() => {
                       this.handleOpen();
-                      this.props.navigation.navigate('viewRequest', {
-                        id: this.state.data.id,
-                        location: this.props.location,
-                      });
+                      this.state.data.action === 'Comment' ||
+                      this.state.data.action === 'Reply'
+                        ? this.props.navigation.navigate('viewComment', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          })
+                        : this.props.navigation.navigate('viewRequest', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          });
                     }}
                     style={{width: '85%'}}>
                     {this.state.data.action === 'Like' ? (
@@ -202,6 +219,11 @@ export default class NotiCard extends React.Component {
                     {this.state.data.action === 'Comment' ? (
                       <Text style={styles.title}>
                         {this.state.user.name} commented on your request
+                      </Text>
+                    ) : null}
+                    {this.state.data.action === 'Reply' ? (
+                      <Text style={styles.title}>
+                        {this.state.user.name} replied to your comment
                       </Text>
                     ) : null}
                     {this.state.data.action === 'Tag' ? (

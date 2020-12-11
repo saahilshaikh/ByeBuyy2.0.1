@@ -96,13 +96,13 @@ export default class ViewProductScreen extends React.Component {
         product.id = product._id;
         product.tag = '';
         if ((res.data !== null) & (res2.data !== null)) {
-          this.storeData(this.props.route.params.screen + 'product', product);
-          this.storeData(this.props.route.params.screend + 'owner', owner);
           this.setState({
             product: product,
             owner: owner,
             loadingProduct: false,
             loadingOwner: false,
+            like: product.likes.includes(auth().currentUser.email),
+            save: product.saves.includes(auth().currentUser.email),
           });
         }
       } else {
@@ -133,13 +133,13 @@ export default class ViewProductScreen extends React.Component {
         var product = res.data;
         product.id = product._id;
         if ((res.data !== null) & (res2.data !== null)) {
-          this.storeData(id + 'product', product);
-          this.storeData(id + 'owner', owner);
           this.setState({
             product: product,
             owner: owner,
             loadingProduct: false,
             loadingOwner: false,
+            like: product.likes.includes(auth().currentUser.email),
+            save: product.saves.includes(auth().currentUser.email),
           });
         }
       } else {
@@ -170,12 +170,6 @@ export default class ViewProductScreen extends React.Component {
         this.setState({
           currentUser: currentUser,
           productList: productList,
-          like: auth().currentUser
-            ? product.likes.includes(auth().currentUser.email)
-            : false,
-          save: auth().currentUser
-            ? product.saves.includes(auth().currentUser.email)
-            : false,
         });
       }
     }
@@ -277,6 +271,7 @@ export default class ViewProductScreen extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
+          this.handleInit();
           if (
             this.state.like &&
             auth().currentUser.email !== this.state.owner.email
@@ -769,10 +764,13 @@ export default class ViewProductScreen extends React.Component {
                   </View>
                   <View style={styles.middle}>
                     <Text style={styles.type}>
-                      {this.state.product.type} |{' '}
+                      {this.state.product.type.toLowerCase() === 'donate'
+                        ? 'Free'
+                        : this.state.product.type}{' '}
+                      |{' '}
                       {this.state.product.category === 'Books' &&
                       this.state.product.subcategory
-                        ? this.state.product.subcategory + '| '
+                        ? this.state.product.subcategory + ' | '
                         : null}
                       {this.state.product.category}
                     </Text>
@@ -799,7 +797,7 @@ export default class ViewProductScreen extends React.Component {
                         ? 'with ' + this.state.product.withh
                         : null}
                     </Text>
-                    {this.state.product.type === 'give it for free' &&
+                    {this.state.product.type.toLowerCase() === 'donate' &&
                     this.state.product.category === 'Food' &&
                     this.state.showExpired === false &&
                     this.state.showTimer === true ? (
@@ -807,6 +805,8 @@ export default class ViewProductScreen extends React.Component {
                         style={{
                           width: '100%',
                           flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 5,
                         }}>
                         <Text
                           style={{
@@ -838,12 +838,12 @@ export default class ViewProductScreen extends React.Component {
                             fontFamily: 'Muli-Bold',
                             color: colors.white,
                             marginLeft: 5,
-                            color: '#d65a31',
+                            color: colors.grey,
                           }}
                         />
                       </View>
                     ) : null}
-                    {this.state.product.type === 'give it for free' &&
+                    {this.state.product.type.toLowerCase() === 'donate' &&
                     this.state.product.category === 'Food' &&
                     this.state.showExpired === false &&
                     this.state.showTimer === false ? (
@@ -851,6 +851,8 @@ export default class ViewProductScreen extends React.Component {
                         style={{
                           width: '100%',
                           flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          marginVertical: 5,
                         }}>
                         <Text
                           style={{
@@ -887,7 +889,11 @@ export default class ViewProductScreen extends React.Component {
                         />
                       </View>
                     ) : null}
-                    <Text style={styles.subHeader}>Description</Text>
+                    <Text style={styles.subHeader}>
+                      {this.state.product.category !== 'Books'
+                        ? 'Description'
+                        : 'About this book'}
+                    </Text>
                     <Text style={styles.desc}>
                       {this.state.product.description}
                     </Text>

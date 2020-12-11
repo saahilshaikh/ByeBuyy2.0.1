@@ -62,8 +62,8 @@ export default class EditProductScreen extends React.Component {
       types: [
         {label: 'Select a type', value: ''},
         {label: 'Exchange', value: 'exchange'},
-        {label: 'Borrow', value: 'borrow'},
-        {label: 'Give it for free', value: 'give it for free'},
+        {label: 'Lend', value: 'lend'},
+        {label: 'Donate', value: 'donate'},
       ],
       country: '',
       code: '',
@@ -131,7 +131,7 @@ export default class EditProductScreen extends React.Component {
         {label: 'Others', value: 'Others'},
         {label: 'Pre school', value: 'Pre school'},
         {label: 'Regional language', value: 'Regional language'},
-        {label: 'Religous', value: 'Religous'},
+        {label: 'Religious', value: 'Religious'},
         {label: 'Romance', value: 'Romance'},
         {label: 'Sci-Fi', value: 'Sci-Fi'},
         {label: 'Self help', value: 'Self help'},
@@ -209,9 +209,9 @@ export default class EditProductScreen extends React.Component {
           topic:
             'Ready to exchange ' + res2.data.what + ' with ' + res2.data.withh,
         });
-      } else if (res2.data.type === 'borrow') {
+      } else if (res2.data.type === 'lend') {
         this.setState({
-          topic: 'Ready to borrow ' + res2.data.what,
+          topic: 'Ready to lend ' + res2.data.what,
         });
       }
     }
@@ -376,7 +376,7 @@ export default class EditProductScreen extends React.Component {
       });
     } else if (
       this.state.sfd === '' &&
-      this.state.type === 'borrow' &&
+      this.state.type === 'lend' &&
       this.state.giveaway === false
     ) {
       Snackbar.show({
@@ -388,7 +388,7 @@ export default class EditProductScreen extends React.Component {
       });
     } else if (
       this.state.std === '' &&
-      this.state.type === 'borrow' &&
+      this.state.type === 'lend' &&
       this.state.giveaway === false
     ) {
       Snackbar.show({
@@ -422,7 +422,10 @@ export default class EditProductScreen extends React.Component {
       this.setState({
         loading: false,
       });
-    } else if (this.state.images.length === 0) {
+    } else if (
+      this.state.images.length === 0 &&
+      this.state.category !== 'Food'
+    ) {
       Snackbar.show({
         text: 'Please add a image',
         duration: Snackbar.LENGTH_SHORT,
@@ -481,6 +484,7 @@ export default class EditProductScreen extends React.Component {
               success: true,
             },
             () => {
+              props.route.params.handleRefresh();
               setTimeout(function () {
                 props.navigation.pop();
               }, 2000);
@@ -741,7 +745,7 @@ export default class EditProductScreen extends React.Component {
                               </View>
                             </View>
                           ) : null}
-                          {this.state.type === 'give it for free' &&
+                          {this.state.type === 'donate' &&
                           this.state.category === 'Food' ? (
                             <View style={styles.expiry}>
                               <Text style={styles.inputGroupText}>
@@ -778,7 +782,7 @@ export default class EditProductScreen extends React.Component {
                               ) : null}
                             </View>
                           ) : null}
-                          {this.state.type === 'give it for free' &&
+                          {this.state.type === 'donate' &&
                           this.state.category === 'Food' ? (
                             <View style={styles.DateGroup}>
                               <View style={styles.inputGroupRow2}>
@@ -870,7 +874,7 @@ export default class EditProductScreen extends React.Component {
                             </View>
                           ) : null}
 
-                          {this.state.type === 'borrow' ? (
+                          {this.state.type === 'lend' ? (
                             <>
                               {this.state.giveaway === false ? (
                                 <View style={styles.DateGroup}>
@@ -884,8 +888,6 @@ export default class EditProductScreen extends React.Component {
                                       mode="date"
                                       placeholder="select date"
                                       format="YYYY-MM-DD"
-                                      minDate={this.state.minDate}
-                                      maxDate={this.state.minDate}
                                       confirmBtnText="Confirm"
                                       cancelBtnText="Cancel"
                                       customStyles={{
@@ -918,8 +920,6 @@ export default class EditProductScreen extends React.Component {
                                       mode="date"
                                       placeholder="select date"
                                       format="YYYY-MM-DD"
-                                      minDate={this.state.minDate2}
-                                      maxDate={this.state.maxDate2}
                                       confirmBtnText="Confirm"
                                       cancelBtnText="Cancel"
                                       customStyles={{

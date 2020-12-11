@@ -10,8 +10,8 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-import HomeCard from '../shared/homeCard';
-import HomeCard2 from '../shared/homeCard2';
+import Card from '../shared/card';
+import Card2 from '../shared/card2';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
@@ -88,7 +88,7 @@ export default class ProductListScreen extends React.Component {
         {name: 'Others', value: 'Others'},
         {name: 'Pre school', value: 'Pre school'},
         {name: 'Regional language', value: 'Regional language'},
-        {name: 'Religous', value: 'Religous'},
+        {name: 'Religious', value: 'Religious'},
         {name: 'Romance', value: 'Romance'},
         {name: 'Sci-Fi', value: 'Sci-Fi'},
         {name: 'Self help', value: 'Self help'},
@@ -364,7 +364,6 @@ export default class ProductListScreen extends React.Component {
     this.moveToFront(e);
     this.setState({
       activeCat: e,
-      initialLoading: true,
       products: [],
       showProducts: [],
       refreshing: false,
@@ -383,7 +382,6 @@ export default class ProductListScreen extends React.Component {
       });
       if (res.data) {
         this.setState({
-          initialLoading: false,
           products: res.data,
           showProducts: res.data,
         });
@@ -714,7 +712,7 @@ export default class ProductListScreen extends React.Component {
                     {item.varient === 'Product' ? (
                       <>
                         {this.state.activeSub === 'All' ? (
-                          <HomeCard
+                          <Card
                             handleCardClick={(e) => this.handleCardClick(e)}
                             handleCardImageClick={(e, f) =>
                               this.handleCardImageClick(e, f)
@@ -726,7 +724,7 @@ export default class ProductListScreen extends React.Component {
                         ) : (
                           <>
                             {item.subcategory === this.state.activeSub ? (
-                              <HomeCard
+                              <Card
                                 handleCardClick={(e) => this.handleCardClick(e)}
                                 handleCardImageClick={(e, f) =>
                                   this.handleCardImageClick(e, f)
@@ -743,7 +741,7 @@ export default class ProductListScreen extends React.Component {
                     {item.varient === 'Request' ? (
                       <>
                         {this.state.activeSub === 'All' ? (
-                          <HomeCard2
+                          <Card2
                             handleCardClick={(e) => this.handleCardClick(e)}
                             handleCardImageClick={(e, f) =>
                               this.handleCardImageClick(e, f)
@@ -755,7 +753,7 @@ export default class ProductListScreen extends React.Component {
                         ) : (
                           <>
                             {item.subcategory === this.state.activeSub ? (
-                              <HomeCard2
+                              <Card2
                                 handleCardClick={(e) => this.handleCardClick(e)}
                                 handleCardImageClick={(e, f) =>
                                   this.handleCardImageClick(e, f)

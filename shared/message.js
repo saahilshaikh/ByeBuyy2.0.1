@@ -16,7 +16,7 @@ import MiniCard from './mincard';
 import MiniCard2 from './minicard2';
 import colors from '../appTheme';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 const Message = (props) => {
   return (
     <View
@@ -43,6 +43,7 @@ const Message = (props) => {
             borderBottomLeftRadius: props.type ? 5 : 0,
           }}>
           <Text
+            selectable={true}
             style={{
               fontSize: 16,
               marginBottom: 5,
@@ -53,20 +54,29 @@ const Message = (props) => {
           </Text>
           {props.format === 'post-product' ? (
             <View style={styles.post}>
-              <MiniCard location={props.location} id={props.url} navigation={props.navigation} />
+              <MiniCard
+                location={props.location}
+                id={props.url}
+                navigation={props.navigation}
+              />
             </View>
           ) : null}
           {props.format === 'post-request' ? (
             <View style={styles.post}>
-              <MiniCard2 location={props.location} id={props.url} navigation={props.navigation} />
+              <MiniCard2
+                location={props.location}
+                id={props.url}
+                navigation={props.navigation}
+              />
             </View>
           ) : null}
           {props.format === 'attach-photo' ? (
-            <TouchableOpacity onPress={() => props.handleDocumentView(props.url, props.format)}
-              style={{ width: 200, maxHeight: 200, marginBottom: 10 }}>
+            <TouchableOpacity
+              onPress={() => props.handleDocumentView(props.url, props.format)}
+              style={{width: 200, maxHeight: 200, marginBottom: 10}}>
               <Image
-                source={{ uri: props.url }}
-                style={{ width: '100%', height: '100%', borderRadius: 3 }}
+                source={{uri: props.url}}
+                style={{width: '100%', height: '100%', borderRadius: 3}}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -82,7 +92,11 @@ const Message = (props) => {
                 borderRadius: 5,
                 marginBottom: 10,
               }}>
-              <Ionicons name="document-text" size={24} color={colors.darkText} />
+              <Ionicons
+                name="document-text"
+                size={24}
+                color={colors.darkText}
+              />
               <Text
                 style={{
                   fontSize: 14,
@@ -118,37 +132,34 @@ const Message = (props) => {
               </Text>
             </TouchableOpacity>
           ) : null}
-          {
-            props.loading
-              ?
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontFamily: 'Muli-Regular',
-                  color: props.type ? colors.white : colors.secondary,
-                }}>
-                <Ionicons
-                  name="ios-time-outline"
-                  size={10}
-                  style={{ color: colors.white, marginRight: 10 }}
-                />
-                {" "}
-                <Moment element={Text} format="MMMM Do YYYY, h:mm a">
-                  {new Date()}
-                </Moment>
-              </Text>
-              :
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontFamily: 'Muli-Regular',
-                  color: props.type ? colors.white : colors.secondary,
-                }}>
-                <Moment element={Text} format="MMMM Do YYYY, h:mm a">
-                  {props.date}
-                </Moment>
-              </Text>
-          }
+          {props.loading ? (
+            <Text
+              style={{
+                fontSize: 10,
+                fontFamily: 'Muli-Regular',
+                color: props.type ? colors.white : colors.secondary,
+              }}>
+              <Ionicons
+                name="ios-time-outline"
+                size={10}
+                style={{color: colors.white, marginRight: 10}}
+              />{' '}
+              <Moment element={Text} format="MMMM Do YYYY, h:mm a">
+                {new Date()}
+              </Moment>
+            </Text>
+          ) : (
+            <Text
+              style={{
+                fontSize: 10,
+                fontFamily: 'Muli-Regular',
+                color: props.type ? colors.white : colors.secondary,
+              }}>
+              <Moment element={Text} format="MMMM Do YYYY, h:mm a">
+                {props.date}
+              </Moment>
+            </Text>
+          )}
         </View>
         <View
           style={{

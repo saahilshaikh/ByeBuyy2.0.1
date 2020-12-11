@@ -296,6 +296,7 @@ export default class Card2 extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
+          this.handleInit();
           if (this.props.handleRefresh) {
             this.props.handleRefresh();
           }
@@ -947,6 +948,7 @@ export default class Card2 extends React.Component {
                           });
                           this.props.navigation.navigate('EditRequest', {
                             id: this.state.product.id,
+                            handleRefresh: this.handleInit,
                           });
                         }}
                         style={{

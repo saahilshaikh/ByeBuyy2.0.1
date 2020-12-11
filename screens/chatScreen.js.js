@@ -244,9 +244,8 @@ export default class ChatScreen extends React.PureComponent {
     });
     console.log('Gallery Click');
     ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
+      width: 1500,
+      height: 1500,
       multiple: false,
       mediaType: 'photo',
     })
@@ -384,7 +383,8 @@ export default class ChatScreen extends React.PureComponent {
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
-      if (res.data !== null) {
+      if (res.data.type === 'success') {
+        await this.handleInit();
         this.setState({
           sending: false,
           prevMessage: '',
@@ -427,7 +427,8 @@ export default class ChatScreen extends React.PureComponent {
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
-      if (res.data !== null) {
+      if (res.data.type === 'success') {
+        await this.handleInit();
         this.setState({
           sending: false,
           prevMessage: '',
@@ -490,7 +491,8 @@ export default class ChatScreen extends React.PureComponent {
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
-      if (res.data !== null) {
+      if (res.data.type === 'success') {
+        await this.handleInit();
         this.setState({
           sending: false,
           prevMessage: '',
@@ -553,7 +555,8 @@ export default class ChatScreen extends React.PureComponent {
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
-      if (res.data !== null) {
+      if (res.data.type === 'success') {
+        await this.handleInit();
         this.setState({
           sending: false,
           prevMessage: '',

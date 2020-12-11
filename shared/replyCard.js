@@ -31,6 +31,7 @@ export default class ReplyCard extends React.Component {
       desc: '',
       showReply: false,
       reply: '',
+      user: [],
     };
   }
   async componentDidMount() {
@@ -46,6 +47,7 @@ export default class ReplyCard extends React.Component {
         comment: this.props.item.comment,
         date: this.props.item.date,
         active: res.data.active === true && res.data.logout === false,
+        user: res.data,
       };
       this.setState({
         comment: comment,
