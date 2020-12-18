@@ -33,6 +33,7 @@ import colors from '../appTheme';
 const {width, height} = Dimensions.get('window');
 
 export default class ViewCommentScreen extends React.Component {
+  inter = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -55,6 +56,16 @@ export default class ViewCommentScreen extends React.Component {
 
   componentDidMount() {
     this.handleInit();
+    // inter = setInterval(() => {
+    //   this.handleInit();
+    // }, 10000);
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.inter);
+    this.setState = (state, callback) => {
+      return;
+    };
   }
 
   handleInit = async () => {
@@ -76,7 +87,7 @@ export default class ViewCommentScreen extends React.Component {
       var res2 = await axios.post(link + '/api/user/single', data2);
       if (res.data !== null && res2.data !== null) {
         this.setState({
-          comments: comments,
+          comments: comments.reverse(),
           product: product,
           owner: res2.data,
           loading: false,
@@ -132,7 +143,7 @@ export default class ViewCommentScreen extends React.Component {
     });
     if (res.data !== null) {
       this.setState({
-        comments: comments,
+        comments: comments.reverse(),
         product: product,
         loading: false,
         refreshing: false,
@@ -150,7 +161,7 @@ export default class ViewCommentScreen extends React.Component {
   handleComment = async () => {
     var com = this.state.comment;
     Keyboard.dismiss();
-    if (this.state.comment === '') {
+    if (com.replace(/ /g, '').length === 0) {
       Snackbar.show({
         text: 'Please type a comment',
         duration: Snackbar.LENGTH_SHORT,
@@ -168,7 +179,10 @@ export default class ViewCommentScreen extends React.Component {
       };
       var res = await axios.post(link + '/api/product/comment', data);
       if (res.data.type === 'success') {
-        this.handleInit();
+        this.handleRefresh();
+        if (this.props.route.params.handleInit) {
+          this.props.route.params.handleInit();
+        }
         this.setState(
           {
             commenting: false,
@@ -315,35 +329,37 @@ export default class ViewCommentScreen extends React.Component {
   };
 
   handleChange = async (e) => {
-    this.setState({
-      comment: e,
-    });
-    e = e + ' ';
-    if (e === '') {
+    if (e !== ' ') {
       this.setState({
-        tags: [],
-        pos: null,
+        comment: e,
       });
-    }
-    if (e[this.state.selection.start] === '@') {
-      console.log('yes');
-      this.setState({
-        pos: this.state.selection.start,
-      });
-    }
-    if (this.state.pos !== null) {
-      console.log(this.state.pos);
-      var search = e.substring(
-        this.state.pos + 1,
-        e.indexOf(' ', this.state.pos + 1),
-      );
-      console.log('Search:', search);
-      var res = await axios.get(link + '/api/userUname/' + search);
-      console.log(res.data);
-      this.setState({
-        tags: res.data,
-        search: search,
-      });
+      e = e + ' ';
+      if (e === '') {
+        this.setState({
+          tags: [],
+          pos: null,
+        });
+      }
+      if (e[this.state.selection.start] === '@') {
+        console.log('yes');
+        this.setState({
+          pos: this.state.selection.start,
+        });
+      }
+      if (this.state.pos !== null) {
+        console.log(this.state.pos);
+        var search = e.substring(
+          this.state.pos + 1,
+          e.indexOf(' ', this.state.pos + 1),
+        );
+        console.log('Search:', search);
+        var res = await axios.get(link + '/api/userUname/' + search);
+        console.log(res.data);
+        this.setState({
+          tags: res.data,
+          search: search,
+        });
+      }
     }
   };
 

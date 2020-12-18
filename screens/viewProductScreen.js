@@ -623,48 +623,25 @@ export default class ViewProductScreen extends React.Component {
     console.log('174', re);
   };
 
-  handleReport = (e) => {
-    console.log(e);
+  handleReport = async (e) => {
     this.setState({
       reportForm: false,
+      reportSuccess: true,
     });
-    // if (!this.state.currentUser.reports.includes(this.state.product.id)) {
-    //     firestore().collection('testusers').doc(this.state.currentUser.id).get().then(user => {
-    //         var reports = user.data().reports;
-    //         var report = {
-    //             category: e,
-    //             id: this.state.product.id,
-    //             date: new Date()
-    //         }
-    //         reports.push(report);
-    //         firestore().collection('testusers').doc(this.state.currentUser.id).update({
-    //             reports: reports
-    //         })
-    //             .then(() => {
-    //                 firestore().collection('testproducts').doc(this.state.product.id).get().then(product => {
-    //                     var reports = product.data().reports;
-    //                     var report = {
-    //                         category: e,
-    //                         email: this.state.currentUser.email,
-    //                         date: new Date()
-    //                     }
-    //                     reports.push(report);
-    //                     firestore().collection('testproducts').doc(this.state.product.id).update({
-    //                         reports: reports
-    //                     })
-    //                         .then(() => {
-    //                             this.props.navigation.pop()
-    //                         })
-    //                 })
-    //             })
-    //     })
-    // }
-    // else {
-    //     Snackbar.show({
-    //         text: 'Already reported',
-    //         duration: Snackbar.LENGTH_SHORT
-    //     })
-    // }
+    setTimeout(() => {
+      this.setState({
+        reportSuccess: false,
+        NF: true,
+      });
+    }, 1500);
+    var data = {
+      id: this.state.product.id,
+      email: auth().currentUser.email,
+      report: e,
+    };
+    var res = await axios.post(link + '/api/product/report', data);
+    if (res.data !== null) {
+    }
   };
 
   handeGoBack = () => {

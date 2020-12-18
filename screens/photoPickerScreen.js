@@ -114,8 +114,6 @@ export default class PhotoPickerScreen extends React.Component {
       ImagePicker.openCamera({
         width: 2000,
         height: 2000,
-        cropping: true,
-        cropperStatusBarColor: '#192734',
       })
         .then((image) => {
           var i = this.state.images.length + 1;
@@ -144,8 +142,8 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Gallery Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openPicker({
-        width: 1500,
-        height: 1500,
+        width: 2000,
+        height: 2000,
         multiple: true,
         mediaType: 'photo',
       })

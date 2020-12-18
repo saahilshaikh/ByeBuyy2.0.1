@@ -14,6 +14,7 @@ import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 import AsyncStorage from '@react-native-community/async-storage';
+import Modal from 'react-native-modal';
 
 const {width, height} = Dimensions.get('window');
 
@@ -27,44 +28,61 @@ export default class ChatCard extends React.Component {
       loading: true,
       NF: false,
       unread: 0,
+      menu: false,
+      menu2: false,
     };
   }
 
   async componentDidMount() {
     if (auth().currentUser) {
-      var id = null;
-      this.props.item.participants.map((e) => {
-        if (e !== auth().currentUser.email) {
-          id = e;
-        }
-      });
-      var chatcardValue = await AsyncStorage.getItem(
-        this.props.item.id + 'chat',
-      );
-      var chatcardValue2 = await AsyncStorage.getItem(
-        this.props.item.id + 'user',
-      );
-      if (
-        chatcardValue !== null &&
-        chatcardValue2 !== null &&
-        JSON.parse(chatcardValue2).name
-      ) {
-        console.log('Found local chat card');
-        this.setState({
-          chat: JSON.parse(chatcardValue),
-          user: JSON.parse(chatcardValue2),
-          loading: false,
-          NF: false,
-        });
-      } else {
-        console.log('No local chat card found');
-        this.setState({
-          chat: [],
-          user: [],
-          loading: false,
-          NF: true,
-        });
-      }
+      // var id = null;
+      // this.props.item.participants.map((e) => {
+      //   if (e !== auth().currentUser.email) {
+      //     id = e;
+      //   }
+      // });
+      // var chatcardValue = await AsyncStorage.getItem(
+      //   this.props.item.id + 'chat',
+      // );
+      // var chatcardValue2 = await AsyncStorage.getItem(
+      //   this.props.item.id + 'user',
+      // );
+      // var show = true;
+      // var c = JSON.parse(chatcardValue);
+      // if (
+      //   c.messages.length === 0 ||
+      //   Math.floor(
+      //     (new Date(
+      //       c['clear' + (c.participants.indexOf(auth().currentUser.email) + 1)],
+      //     ).getTime() -
+      //       new Date(c.messages[c.messages.length - 1].date).getTime()) /
+      //       1000,
+      //   ) > 0
+      // ) {
+      //   show = false;
+      // }
+      // if (
+      //   chatcardValue !== null &&
+      //   chatcardValue2 !== null &&
+      //   JSON.parse(chatcardValue2).name &&
+      //   show
+      // ) {
+      //   console.log('Found local chat card');
+      //   this.setState({
+      //     chat: JSON.parse(chatcardValue),
+      //     user: JSON.parse(chatcardValue2),
+      //     loading: false,
+      //     NF: false,
+      //   });
+      // } else {
+      //   console.log('No local chat card found');
+      //   this.setState({
+      //     chat: [],
+      //     user: [],
+      //     loading: false,
+      //     NF: true,
+      //   });
+      // }
       this.handleInit();
       this.inter = setInterval(() => {
         this.handleInit();
@@ -93,26 +111,67 @@ export default class ChatCard extends React.Component {
         id: this.props.item.id,
       };
       var res = await axios.post(link + '/api/chat', data);
-      var data2 = {
-        id: id,
-      };
-      var res2 = await axios.post(link + '/api/user/single', data2);
-      if (res.data !== null && res2.data !== null && res2.data.name) {
-        var uncount = 0;
-        res.data.messages.map((m) => {
-          if (m.read !== true && m.id !== auth().currentUser.email) {
-            uncount += 1;
+      if (res.data.participants) {
+        var data2 = {
+          id: id,
+        };
+        var res2 = await axios.post(link + '/api/user/single', data2);
+        if (res.data !== null && res2.data !== null && res2.data.name) {
+          var uncount = 0;
+          res.data.messages.map((m) => {
+            if (m.read !== true && m.id !== auth().currentUser.email) {
+              uncount += 1;
+            }
+          });
+          var show = true;
+          if (
+            res.data.messages.length === 0 ||
+            Math.floor(
+              (new Date(
+                res.data[
+                  'clear' +
+                    (res.data.participants.indexOf(auth().currentUser.email) +
+                      1)
+                ],
+              ).getTime() -
+                new Date(
+                  res.data.messages[res.data.messages.length - 1].date,
+                ).getTime()) /
+                1000,
+            ) > 0
+          ) {
+            show = false;
           }
-        });
-        this.storeData(this.props.item.id + 'chat', res.data);
-        this.storeData(this.props.item.id + 'user', res2.data);
-        this.setState({
-          chat: res.data,
-          user: res2.data,
-          loading: false,
-          unread: uncount,
-          NF: false,
-        });
+          if (show) {
+            this.storeData(this.props.item.id + 'chat', res.data);
+            this.storeData(this.props.item.id + 'user', res2.data);
+            this.setState({
+              chat: res.data,
+              user: res2.data,
+              loading: false,
+              unread: uncount,
+              NF: false,
+            });
+          } else {
+            this.setState({
+              chat: [],
+              user: [],
+              loading: false,
+              unread: 0,
+              NF: true,
+            });
+          }
+        } else {
+          this.storeData(this.props.item.id + 'chat', {});
+          this.storeData(this.props.item.id + 'user', {});
+          this.setState({
+            chat: [],
+            user: [],
+            loading: false,
+            unread: 0,
+            NF: true,
+          });
+        }
       } else {
         this.storeData(this.props.item.id + 'chat', {});
         this.storeData(this.props.item.id + 'user', {});
@@ -129,6 +188,20 @@ export default class ChatCard extends React.Component {
     }
   };
 
+  handleClear = async () => {
+    this.setState({
+      menu2: false,
+    });
+    var data = {
+      id: this.state.chat._id,
+      user: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/clearChat', data);
+    if (res.data !== null) {
+      this.handleInit();
+    }
+  };
+
   storeData = async (label, value) => {
     try {
       const jsonValue = JSON.stringify(value);
@@ -137,6 +210,14 @@ export default class ChatCard extends React.Component {
       // saving error
       console.log('Error Storing File');
     }
+  };
+
+  handleOpen = () => {
+    this.props.handleRefreshCount();
+    this.props.navigation.push('Chat', {
+      id: this.state.chat._id,
+      location: this.props.location,
+    });
   };
 
   render() {
@@ -182,12 +263,10 @@ export default class ChatCard extends React.Component {
           <>
             {this.state.NF ? null : (
               <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.push('Chat', {
-                    id: this.state.chat._id,
-                    location: this.props.location,
-                  })
-                }
+                onPress={this.handleOpen}
+                onLongPress={() => {
+                  this.setState({menu: true});
+                }}
                 style={styles.chat}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <View style={styles.chatProfileImageBox}>
@@ -222,13 +301,20 @@ export default class ChatCard extends React.Component {
                               ].date,
                             ).getTime()) /
                             1000,
-                        ) < 0 ? (
+                        ) < 0 &&
+                        !this.state.chat.messages[
+                          this.state.chat.messages.length - 1
+                        ].hide.includes(auth().currentUser.email) ? (
                           <Text style={styles.chatMessage}>
-                            {
-                              this.state.chat.messages[
-                                this.state.chat.messages.length - 1
-                              ].message
-                            }
+                            {this.state.chat.messages[
+                              this.state.chat.messages.length - 1
+                            ].message.length > 10
+                              ? this.state.chat.messages[
+                                  this.state.chat.messages.length - 1
+                                ].message.substring(0, 30) + '...'
+                              : this.state.chat.messages[
+                                  this.state.chat.messages.length - 1
+                                ].message}
                           </Text>
                         ) : (
                           <Text style={styles.chatMessage}></Text>
@@ -257,6 +343,120 @@ export default class ChatCard extends React.Component {
             )}
           </>
         )}
+        <Modal isVisible={this.state.menu}>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({
+                menu: false,
+              });
+            }}
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: colors.secondary,
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu: false,
+                    menu2: true,
+                  });
+                }}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 20,
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'Muli-Bold',
+                    color: colors.white,
+                    fontSize: 16,
+                  }}>
+                  Clear conversation
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+        <Modal isVisible={this.state.menu2}>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({
+                menu2: false,
+              });
+            }}
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: colors.secondary,
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={this.handleClear}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 20,
+                  justifyContent: 'center',
+                  borderBottomColor: colors.grey,
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'Muli-Bold',
+                    color: colors.white,
+                    fontSize: 16,
+                    textAlign: 'center',
+                  }}>
+                  Yes, clear Conversation
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu2: false,
+                  });
+                }}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 20,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'Muli-Bold',
+                    color: colors.white,
+                    fontSize: 16,
+                    textAlign: 'center',
+                  }}>
+                  No, dont clear conversation
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
       </View>
     );
   }
@@ -306,7 +506,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: -5,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Muli-Bold',
     color: colors.white,
     backgroundColor: colors.baseline,

@@ -1,6 +1,6 @@
 {
   "name": "ByeBuyy",
-  "version": "0.0.1",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -14,7 +14,7 @@
     "@react-native-community/art": "^1.2.0",
     "@react-native-community/async-storage": "^1.12.1",
     "@react-native-community/cameraroll": "^4.0.1",
-    "@react-native-community/clipboard": "^1.5.0",
+    "@react-native-community/clipboard": "^1.5.1",
     "@react-native-community/datetimepicker": "^3.0.3",
     "@react-native-community/google-signin": "^4.0.3",
     "@react-native-community/masked-view": "^0.1.10",
@@ -46,8 +46,9 @@
     "react-native-geocoding": "^0.4.0",
     "react-native-geolocation-service": "^5.0.0",
     "react-native-gesture-handler": "^1.8.0",
-    "react-native-image-crop-picker": "^0.33.4",
+    "react-native-image-crop-picker": "^0.34.0",
     "react-native-image-pan-zoom": "^2.1.12",
+    "react-native-image-picker": "^3.1.1",
     "react-native-image-progress": "^1.1.1",
     "react-native-image-viewing": "^0.2.0",
     "react-native-indicator": "^1.2.2",

@@ -82,6 +82,7 @@ export default class ProductListScreen extends React.Component {
         {name: 'Competitive exams', value: 'Competitive exams'},
         {name: 'Cooking', value: 'Cooking'},
         {name: 'Fiction', value: 'Fiction'},
+        {name: 'Non-Fiction', value: 'Non-Fiction'},
         {name: 'History', value: 'History'},
         {name: 'Horror', value: 'Horror'},
         {name: 'Novel & literature', value: 'Novel & literature'},
@@ -369,6 +370,7 @@ export default class ProductListScreen extends React.Component {
       refreshing: false,
       loadmore: true,
       activeSub: 'All',
+      loadingMore: true,
     });
     if (e === 'All') {
       var data = {
@@ -384,6 +386,7 @@ export default class ProductListScreen extends React.Component {
         this.setState({
           products: res.data,
           showProducts: res.data,
+          loadingMore: false,
         });
       }
     } else {
@@ -398,6 +401,7 @@ export default class ProductListScreen extends React.Component {
           initialLoading: false,
           products: res.data,
           showProducts: res.data,
+          loadingMore: false,
         });
       }
     }
@@ -603,30 +607,34 @@ export default class ProductListScreen extends React.Component {
 
   renderListEmpty = () => {
     return (
-      <View
-        style={{
-          width: '100%',
-          flex: 1,
-          alignItems: 'center',
-        }}>
-        <LottieView
-          source={require('../assets/16656-empty-state.json')}
-          autoPlay={true}
-          loop={false}
-          style={{
-            width: 300,
-            height: 250,
-          }}
-        />
-        <Text
-          style={{
-            fontFamily: 'Muli-Bold',
-            color: colors.grey,
-            fontSize: 20,
-          }}>
-          Nothing Found
-        </Text>
-      </View>
+      <>
+        {this.state.loadingMore ? null : (
+          <View
+            style={{
+              width: '100%',
+              flex: 1,
+              alignItems: 'center',
+            }}>
+            <LottieView
+              source={require('../assets/16656-empty-state.json')}
+              autoPlay={true}
+              loop={false}
+              style={{
+                width: 300,
+                height: 250,
+              }}
+            />
+            <Text
+              style={{
+                fontFamily: 'Muli-Bold',
+                color: colors.grey,
+                fontSize: 20,
+              }}>
+              Nothing Found
+            </Text>
+          </View>
+        )}
+      </>
     );
   };
 

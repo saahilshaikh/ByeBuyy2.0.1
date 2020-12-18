@@ -11,6 +11,8 @@ import {
   TextInput,
   Keyboard,
   FlatList,
+  Alert,
+  Platform,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -31,6 +33,10 @@ import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 import AsyncStorage from '@react-native-community/async-storage';
+import RNFetchBlob from 'rn-fetch-blob';
+import {CameraRoll} from '@react-native-community/cameraroll';
+import Clipboard from '@react-native-community/clipboard';
+import MiniCard from '../shared/mincard';
 
 var RNFS = require('react-native-fs');
 
@@ -74,6 +80,8 @@ export default class ChatScreen extends React.PureComponent {
       rateComment: '',
       currentUser: [],
       block: false,
+      menu2: false,
+      menu3: false,
     };
   }
 
@@ -98,10 +106,10 @@ export default class ChatScreen extends React.PureComponent {
       } else {
         console.log('local chat not found');
       }
-      this.handleInit();
+      this.handleInit2();
       this.inter = setInterval(() => {
         this.handleInit();
-      }, 1000);
+      }, 3000);
     } else {
       clearInterval(this.inter);
     }
@@ -113,6 +121,63 @@ export default class ChatScreen extends React.PureComponent {
       return;
     };
   }
+
+  handleInit2 = async () => {
+    if (auth().currentUser) {
+      var data = {
+        id: this.props.route.params.id,
+        email: auth().currentUser.email,
+      };
+      var res = await axios.post(link + '/api/chat/updateMessages', data);
+      if (res.data !== null) {
+        var userId = null;
+        res.data.participants.map((e) => {
+          if (e !== auth().currentUser.email) {
+            userId = e;
+          }
+        });
+        var data2 = {
+          id: userId,
+        };
+        var res2 = await axios.post(link + '/api/user/single', data2);
+        if (res2.data !== null && res2.data.name) {
+          this.storeData(this.props.route.params.id + 'chat', res.data);
+          this.storeData(this.props.route.params.id + 'user', res2.data);
+          this.flatList.scrollToEnd({animated: true});
+          this.setState({
+            user: res2.data,
+            chat: res.data,
+            loading: false,
+            block: res.data.blocked.includes(auth().currentUser.email),
+            showDeal: res.data.deals.length > 0,
+          });
+        } else {
+          this.storeData(this.props.route.params.id + 'chat', {});
+          this.storeData(this.props.route.params.id + 'user', {});
+          this.setState({
+            loading: false,
+            NF: !false,
+          });
+        }
+      } else {
+        this.storeData(this.props.route.params.id + 'chat', {});
+        this.storeData(this.props.route.params.id + 'user', {});
+        this.setState({
+          loading: false,
+          NF: !false,
+        });
+      }
+      var data3 = {
+        id: auth().currentUser.email,
+      };
+      var res3 = await axios.post(link + '/api/user/single', data3);
+      if (res3.data !== null) {
+        this.setState({
+          currentUser: res3.data,
+        });
+      }
+    }
+  };
 
   handleInit = async () => {
     if (auth().currentUser) {
@@ -170,6 +235,43 @@ export default class ChatScreen extends React.PureComponent {
     }
   };
 
+  copyText = (e) => {
+    Clipboard.setString(e);
+    Snackbar.show({
+      text: 'Copied to Clipboard',
+      duration: Snackbar.LENGTH_SHORT,
+    });
+  };
+
+  saveToGallery = (e, f) => {
+    var pdf_url = e;
+    let PictureDir = RNFetchBlob.fs.dirs.DownloadDir;
+    var date = new Date();
+    let options = {
+      fileCache: true,
+      addAndroidDownloads: {
+        //Related to the Android only
+        useDownloadManager: true,
+        notification: true,
+        path:
+          PictureDir +
+          '/byebuyy_' +
+          Math.floor(date.getTime() + date.getSeconds() / 2) +
+          f,
+        description: 'ByeBuyy File',
+      },
+    };
+    RNFetchBlob.config(options)
+      .fetch('GET', pdf_url)
+      .then((res) => {
+        // console.log('res -> ', JSON.stringify(res));
+        Snackbar.show({
+          text: 'Saved to Downloads',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      });
+  };
+
   storeData = async (label, value) => {
     try {
       const jsonValue = JSON.stringify(value);
@@ -222,9 +324,8 @@ export default class ChatScreen extends React.PureComponent {
     });
     console.log('Camera Click');
     ImagePicker.openCamera({
-      width: 1000,
-      height: 1000,
-      cropping: true,
+      width: 1500,
+      height: 1500,
     })
       .then((img) => {
         console.log(img);
@@ -272,9 +373,12 @@ export default class ChatScreen extends React.PureComponent {
         var fileName = item.path;
         var str = fileName.split('react-native-image-crop-picker/');
         var name = str[str.length - 1];
-        if (item.size > 5242880) {
+        if (item.size > 15242880) {
+          this.setState({
+            attach: false,
+          });
           Snackbar.show({
-            text: 'Video size is larger than 5mb!',
+            text: 'Video size is larger than 15mb!',
             duration: Snackbar.LENGTH_SHORT,
           });
         } else {
@@ -320,7 +424,6 @@ export default class ChatScreen extends React.PureComponent {
   };
 
   handleMessage = (message) => {
-    console.log(message);
     this.setState({
       message,
     });
@@ -328,8 +431,15 @@ export default class ChatScreen extends React.PureComponent {
 
   handleSend = (e) => {
     if (e === 1) {
-      this.handleSendSimpleMessage();
-      this.sendPushNotification('Chat', this.state.chat._id, 'message');
+      if (this.state.message.replace(/ /g, '').length === 0) {
+        Snackbar.show({
+          text: 'Please type a proper message',
+          duration: Snackbar.LENGTH_SHORT,
+        });
+      } else {
+        this.handleSendSimpleMessage();
+        this.sendPushNotification('Chat', this.state.chat._id, 'message');
+      }
     } else if (e === 2) {
       this.handleSendImage();
       this.sendPushNotification('Chat', this.state.chat._id, 'photo');
@@ -384,22 +494,26 @@ export default class ChatScreen extends React.PureComponent {
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
       if (res.data.type === 'success') {
-        await this.handleInit();
-        this.setState({
-          sending: false,
-          prevMessage: '',
-          prevFormat: '',
-          prevUrl: '',
-          prevName: '',
-        });
+        this.setState(
+          {
+            sending: false,
+            prevMessage: '',
+            prevFormat: '',
+            prevUrl: '',
+            prevName: '',
+          },
+          async () => {
+            await this.handleInit();
+            this.flatList.scrollToEnd({animated: true});
+          },
+        );
         var data2 = {
           email2: auth().currentUser.email,
           email1: this.state.user.email,
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
-        if (res2.data !== null) {
-          console.log(res2.data);
+        if (res2.data.type === 'success') {
           console.log('Ordered Chat');
         }
       }
@@ -411,7 +525,7 @@ export default class ChatScreen extends React.PureComponent {
     if (this.state.sending === false) {
       this.setState({
         sending: true,
-        prevMessage: 'Have a look',
+        prevMessage: 'Image',
         prevFormat: 'attach-photo',
         prevUrl: this.state.image,
         prevName: '',
@@ -421,28 +535,33 @@ export default class ChatScreen extends React.PureComponent {
       var data = {
         name: '',
         url: url,
-        message: 'Have a look',
+        message: 'Image',
         id: auth().currentUser.email,
         format: 'attach-photo',
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
       if (res.data.type === 'success') {
-        await this.handleInit();
-        this.setState({
-          sending: false,
-          prevMessage: '',
-          prevFormat: '',
-          prevUrl: '',
-          prevName: '',
-        });
+        this.setState(
+          {
+            sending: false,
+            prevMessage: '',
+            prevFormat: '',
+            prevUrl: '',
+            prevName: '',
+          },
+          async () => {
+            await this.handleInit();
+            this.flatList.scrollToEnd({animated: true});
+          },
+        );
         var data2 = {
           email2: auth().currentUser.email,
           email1: this.state.user.email,
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
-        if (res2.data !== null) {
+        if (res2.data.type === 'success') {
           console.log('Ordered Chat');
         }
       }
@@ -475,7 +594,7 @@ export default class ChatScreen extends React.PureComponent {
       var name = this.state.name;
       this.setState({
         sending: true,
-        prevMessage: 'Have a look',
+        prevMessage: 'Video',
         prevFormat: 'attach-video',
         prevUrl: this.state.video,
         prevName: this.state.name,
@@ -485,28 +604,33 @@ export default class ChatScreen extends React.PureComponent {
       var data = {
         name: name,
         url: url,
-        message: 'Have a look',
+        message: 'Video',
         id: auth().currentUser.email,
         format: 'attach-video',
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
       if (res.data.type === 'success') {
-        await this.handleInit();
-        this.setState({
-          sending: false,
-          prevMessage: '',
-          prevFormat: '',
-          prevUrl: '',
-          prevName: '',
-        });
+        this.setState(
+          {
+            sending: false,
+            prevMessage: '',
+            prevFormat: '',
+            prevUrl: '',
+            prevName: '',
+          },
+          async () => {
+            await this.handleInit();
+            this.flatList.scrollToEnd({animated: true});
+          },
+        );
         var data2 = {
           email2: auth().currentUser.email,
           email1: this.state.user.email,
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
-        if (res2.data !== null) {
+        if (res2.data.type === 'success') {
           console.log('Ordered Chat');
         }
       }
@@ -539,7 +663,7 @@ export default class ChatScreen extends React.PureComponent {
       var name = this.state.name;
       this.setState({
         sending: true,
-        prevMessage: 'Have a look',
+        prevMessage: 'Doc',
         prevFormat: 'attach-doc',
         prevUrl: this.state.pdf,
         prevName: this.state.name,
@@ -549,28 +673,33 @@ export default class ChatScreen extends React.PureComponent {
       var data = {
         name: name,
         url: url,
-        message: 'Have a look',
+        message: 'Doc',
         id: auth().currentUser.email,
         format: 'attach-doc',
         chatId: this.state.chat._id,
       };
       var res = await axios.post(link + '/api/sendMesssage', data);
       if (res.data.type === 'success') {
-        await this.handleInit();
-        this.setState({
-          sending: false,
-          prevMessage: '',
-          prevFormat: '',
-          prevUrl: '',
-          prevName: '',
-        });
+        this.setState(
+          {
+            sending: false,
+            prevMessage: '',
+            prevFormat: '',
+            prevUrl: '',
+            prevName: '',
+          },
+          async () => {
+            await this.handleInit();
+            this.flatList.scrollToEnd({animated: true});
+          },
+        );
         var data2 = {
           email2: auth().currentUser.email,
           email1: this.state.user.email,
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
-        if (res2.data !== null) {
+        if (res2.data.type === 'success') {
           console.log('Ordered Chat');
         }
       }
@@ -616,7 +745,7 @@ export default class ChatScreen extends React.PureComponent {
         id: this.state.chat._id,
       };
       var res2 = await axios.post(link + '/api/orderChat', data2);
-      if (res2.data !== null) {
+      if (res2.data.type === 'success') {
         console.log('Ordered Chat');
       }
     }
@@ -939,9 +1068,6 @@ export default class ChatScreen extends React.PureComponent {
   };
 
   handleClear = async () => {
-    this.setState({
-      menu: false,
-    });
     var data = {
       id: this.state.chat._id,
       user: auth().currentUser.email,
@@ -949,6 +1075,20 @@ export default class ChatScreen extends React.PureComponent {
     var res = await axios.post(link + '/api/clearChat', data);
     if (res.data !== null) {
       this.handleInit();
+    }
+  };
+
+  handleHide = async (e) => {
+    var data = {
+      id: this.state.chat._id,
+      user: auth().currentUser.email,
+      messageId: e,
+    };
+    var res = await axios.post(link + '/api/hideChatMessage', data);
+    if (res.data !== null) {
+      this.setState({
+        chat: chat,
+      });
     }
   };
 
@@ -1166,10 +1306,6 @@ export default class ChatScreen extends React.PureComponent {
                     ListFooterComponent={this.renderFooter}
                     initialNumToRender={500}
                     ref={(ref) => (this.flatList = ref)}
-                    onContentSizeChange={() =>
-                      this.flatList.scrollToEnd({animated: true})
-                    }
-                    onLayout={() => this.flatList.scrollToEnd({animated: true})}
                     style={{width: '100%', flex: 1}}
                     data={this.state.chat.messages}
                     windowSize={10}
@@ -1198,7 +1334,10 @@ export default class ChatScreen extends React.PureComponent {
                           item.format !== 'deal-done' &&
                           item.format !== 'accept' &&
                           item.format !== 'reject' &&
-                          item.format !== 'meeting'
+                          item.format !== 'meeting' &&
+                          item.hide
+                            ? !item.hide.includes(auth().currentUser.email)
+                            : true
                         ) {
                           return (
                             <Message
@@ -1215,6 +1354,11 @@ export default class ChatScreen extends React.PureComponent {
                               url={item.url}
                               name={item.name}
                               date={item.date}
+                              read={item.read}
+                              saveToGallery={this.saveToGallery}
+                              copyText={this.copyText}
+                              item={item}
+                              handleHide={this.handleHide}
                             />
                           );
                         } else if (item.format === 'accept') {
@@ -1566,7 +1710,12 @@ export default class ChatScreen extends React.PureComponent {
                       </TouchableOpacity>
                     ) : (
                       <TouchableOpacity
-                        onPress={this.handleBlock}
+                        onPress={() => {
+                          this.setState({
+                            menu3: true,
+                            menu: false,
+                          });
+                        }}
                         style={{
                           width: '100%',
                           flexDirection: 'row',
@@ -1588,7 +1737,12 @@ export default class ChatScreen extends React.PureComponent {
                     )}
                   </View>
                   <TouchableOpacity
-                    onPress={this.handleClear}
+                    onPress={() => {
+                      this.setState({
+                        menu2: true,
+                        menu: false,
+                      });
+                    }}
                     style={{
                       width: '100%',
                       flexDirection: 'row',
@@ -1601,8 +1755,161 @@ export default class ChatScreen extends React.PureComponent {
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
                         fontSize: 16,
+                        textAlign: 'center',
                       }}>
                       Clear Conversation
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+            <Modal isVisible={this.state.menu2}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu2: false,
+                  });
+                }}
+                style={{
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'center',
+                  flex: 1,
+                }}>
+                <View
+                  style={{
+                    width: '80%',
+                    backgroundColor: colors.secondary,
+                    borderRadius: 10,
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState(
+                        {
+                          menu2: false,
+                        },
+                        () => {
+                          this.handleClear();
+                        },
+                      );
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 20,
+                      justifyContent: 'center',
+                      borderBottomColor: colors.grey,
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 16,
+                        textAlign: 'center',
+                      }}>
+                      Yes, clear conversation
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({
+                        menu2: false,
+                      });
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 20,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 16,
+                        textAlign: 'center',
+                      }}>
+                      No, dont clear conversation
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
+            <Modal isVisible={this.state.menu3}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu3: false,
+                  });
+                }}
+                style={{
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'center',
+                  flex: 1,
+                }}>
+                <View
+                  style={{
+                    width: '80%',
+                    backgroundColor: colors.secondary,
+                    borderRadius: 10,
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState(
+                        {
+                          menu3: false,
+                        },
+                        () => {
+                          this.handleBlock();
+                        },
+                      );
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 20,
+                      justifyContent: 'center',
+                      borderBottomColor: colors.grey,
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 16,
+                        textAlign: 'center',
+                      }}>
+                      Yes, block user
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState({
+                        menu3: false,
+                      });
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 20,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 16,
+                        textAlign: 'center',
+                      }}>
+                      No, dont block user
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -1879,12 +2186,9 @@ export default class ChatScreen extends React.PureComponent {
                                     alignItems: 'center',
                                     paddingVertical: 10,
                                   }}>
-                                  <Card3
-                                    key={this.state.chat.deals[0].id2}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
-                                    id={this.state.chat.deals[0].id2}
+                                  <MiniCard
+                                    key={this.state.chat.deals[0].id1}
+                                    id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
                                   <View style={{marginVertical: 10}}>
@@ -1895,11 +2199,8 @@ export default class ChatScreen extends React.PureComponent {
                                       style={{transform: [{rotate: '90deg'}]}}
                                     />
                                   </View>
-                                  <Card3
+                                  <MiniCard
                                     key={this.state.chat.deals[0].id1}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
                                     id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
@@ -1931,11 +2232,8 @@ export default class ChatScreen extends React.PureComponent {
                                       style={{transform: [{rotate: '-90deg'}]}}
                                     />
                                   </View>
-                                  <Card3
+                                  <MiniCard
                                     key={this.state.chat.deals[0].id1}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
                                     id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
@@ -2339,7 +2637,10 @@ export default class ChatScreen extends React.PureComponent {
                               color: colors.white,
                               fontSize: 16,
                             }}>
-                            Reject deal
+                            {this.state.chat.deals[0].initiate ===
+                            auth().currentUser.email
+                              ? 'Cancel Request'
+                              : 'Reject deal'}
                           </Text>
                         </TouchableOpacity>
                       </View>

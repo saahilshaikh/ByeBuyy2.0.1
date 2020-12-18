@@ -125,6 +125,7 @@ export default class EditProductScreen extends React.Component {
         {label: 'Competitive exams', value: 'Competitive exams'},
         {label: 'Cooking', value: 'Cooking'},
         {label: 'Fiction', value: 'Fiction'},
+        {label: 'Non-Fiction', value: 'Non-Fiction'},
         {label: 'History', value: 'History'},
         {label: 'Horror', value: 'Horror'},
         {label: 'Novel & literature', value: 'Novel & literature'},
@@ -353,6 +354,8 @@ export default class EditProductScreen extends React.Component {
   };
 
   handleSubmit = async () => {
+    var diff = (new Date(this.state.to) - new Date(this.state.from)) / 3600000;
+    console.log('Diff', diff * 60);
     console.log('Running Edit Item');
     var props = this.props;
     this.setState({
@@ -421,6 +424,11 @@ export default class EditProductScreen extends React.Component {
       });
       this.setState({
         loading: false,
+      });
+    } else if (diff * 60 < 0) {
+      Snackbar.show({
+        text: 'Please, set a lower time for From ',
+        duration: Snackbar.LENGTH_SHORT,
       });
     } else if (
       this.state.images.length === 0 &&
@@ -533,14 +541,21 @@ export default class EditProductScreen extends React.Component {
   };
 
   handleTo = (e, date) => {
-    console.log('to');
-    date.setDate(this.state.expiry.getDate());
-    date.setMonth(this.state.expiry.getMonth());
-    date.setFullYear(this.state.expiry.getFullYear());
-    this.setState({
-      to: date,
-      showTime2: false,
-    });
+    var diff = (new Date(date) - new Date(this.state.from)) / 3600000;
+    if (diff * 60 > 0) {
+      date.setDate(this.state.expiry.getDate());
+      date.setMonth(this.state.expiry.getMonth());
+      date.setFullYear(this.state.expiry.getFullYear());
+      this.setState({
+        to: date,
+        showTime2: false,
+      });
+    } else {
+      Snackbar.show({
+        text: 'Set a time higher than From Available Time',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
   };
 
   handleFrom = (e, date) => {
@@ -844,7 +859,7 @@ export default class EditProductScreen extends React.Component {
                             <TextInput
                               style={styles.input}
                               autoCapitalize="none"
-                              maxLength={40}
+                              maxLength={100}
                               onChangeText={(wyh) => this.setState({wyh})}
                               value={this.state.wyh}></TextInput>
                           </View>
@@ -868,7 +883,7 @@ export default class EditProductScreen extends React.Component {
                               <TextInput
                                 style={styles.input}
                                 autoCapitalize="none"
-                                maxLength={40}
+                                maxLength={100}
                                 onChangeText={(wye) => this.setState({wye})}
                                 value={this.state.wye}></TextInput>
                             </View>
@@ -887,7 +902,7 @@ export default class EditProductScreen extends React.Component {
                                       date={this.state.sfd}
                                       mode="date"
                                       placeholder="select date"
-                                      format="YYYY-MM-DD"
+                                      format="DD-MM-YYYY"
                                       confirmBtnText="Confirm"
                                       cancelBtnText="Cancel"
                                       customStyles={{
@@ -919,7 +934,7 @@ export default class EditProductScreen extends React.Component {
                                       date={this.state.std}
                                       mode="date"
                                       placeholder="select date"
-                                      format="YYYY-MM-DD"
+                                      format="DD-MM-YYYY"
                                       confirmBtnText="Confirm"
                                       cancelBtnText="Cancel"
                                       customStyles={{

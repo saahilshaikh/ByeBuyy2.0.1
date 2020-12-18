@@ -19,6 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
 import ReplyCard from './replyCard';
+import Snackbar from 'react-native-snackbar';
 
 const {width, height} = Dimensions.get('window');
 
@@ -54,7 +55,7 @@ export default class CommentCard extends React.Component {
       };
       this.setState({
         comment: comment,
-        replies: this.props.item.reply,
+        replies: this.props.item.reply.reverse(),
         loading: false,
         NF: false,
         user: res.data,
@@ -73,23 +74,37 @@ export default class CommentCard extends React.Component {
   };
 
   handleEdit = () => {
-    this.props.handleEditComment(this.props.item._id, this.state.desc);
-    this.setState({
-      editModalVisible: false,
-      desc: '',
-    });
+    if (this.state.desc !== '' && this.state.desc !== ' ') {
+      this.props.handleEditComment(this.props.item._id, this.state.desc);
+      this.setState({
+        editModalVisible: false,
+        desc: '',
+      });
+    } else {
+      Snackbar.show({
+        text: 'Please add a comment',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
   };
 
   handleReply = () => {
-    this.props.handleReplyComment(
-      this.props.item._id,
-      this.state.reply,
-      this.state.user,
-    );
-    this.setState({
-      showReply: false,
-      reply: '',
-    });
+    if (this.state.reply.replace(/ /g, '').length === 0) {
+      this.props.handleReplyComment(
+        this.props.item._id,
+        this.state.reply,
+        this.state.user,
+      );
+      this.setState({
+        showReply: false,
+        reply: '',
+      });
+    } else {
+      Snackbar.show({
+        text: 'Please add a reply',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
   };
 
   handleDeleteReply = (e) => {

@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions, Image, BackHandler } from 'react-native';
+import {View, StyleSheet, Dimensions, Image, BackHandler} from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
 import Pdf from 'react-native-pdf';
 import VideoPlayer from 'react-native-video-controls';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 class ViewScreen extends React.Component {
   componentDidMount() {
@@ -28,28 +28,29 @@ class ViewScreen extends React.Component {
             onSwipeDown={() => this.props.navigation.pop()}
             cropHeight={height}
             imageWidth={width}
-            imageHeight={width}>
+            imageHeight={height}>
             <Image
-              style={{ width: '100%', height: '100%' }}
+              style={{width: '100%', height: '100%'}}
               source={{
                 uri: this.props.route.params.documentData,
               }}
+              resizeMode="center"
             />
           </ImageZoom>
         ) : null}
         {this.props.route.params.documenttype.includes('attach-video') ? (
-          <View style={{ width: width, height: '100%' }}>
+          <View style={{width: width, height: '100%'}}>
             <VideoPlayer
               onBack={() => this.props.navigation.pop()}
               disableFullscreen={true}
-              source={{ uri: this.props.route.params.documentData }}
+              source={{uri: this.props.route.params.documentData}}
             />
           </View>
         ) : null}
         {this.props.route.params.documenttype.includes('attach-doc') ? (
           <Pdf
-            source={{ uri: this.props.route.params.documentData, cache: true }}
-            style={{ width: width, height: height }}
+            source={{uri: this.props.route.params.documentData, cache: true}}
+            style={{width: width, height: height}}
           />
         ) : null}
       </View>

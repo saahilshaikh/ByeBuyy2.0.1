@@ -68,11 +68,18 @@ export default class ReplyCard extends React.Component {
   };
 
   handleEdit = () => {
-    this.props.handleEditReply(this.props.item._id, this.state.desc);
-    this.setState({
-      editModalVisible: false,
-      desc: '',
-    });
+    if (this.state.desc !== '' && this.state.desc !== ' ') {
+      this.props.handleEditReply(this.props.item._id, this.state.desc);
+      this.setState({
+        editModalVisible: false,
+        desc: '',
+      });
+    } else {
+      Snackbar.show({
+        text: 'Please add a reply',
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    }
   };
 
   render() {

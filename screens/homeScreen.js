@@ -12,6 +12,8 @@ import {
   Animated,
   Easing,
   Dimensions,
+  Linking,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,7 +25,7 @@ import Geolocation from 'react-native-geolocation-service';
 import AskLocationPermissionScreen from './askLocationPermissionScreen';
 import LocationLoadingScreen from './locationLoadingScreen';
 import NetInfo from '@react-native-community/netinfo';
-import auth from '@react-native-firebase/auth';
+import auth, {firebase} from '@react-native-firebase/auth';
 import NoInternetScreen from './noInternetScreen';
 import messaging from '@react-native-firebase/messaging';
 import CustomDrawer from '../shared/customDrawer';
@@ -35,6 +37,8 @@ import link from '../fetchPath';
 import Geocoder from 'react-native-geocoding';
 import {fcmService} from '../shared/FCMService';
 import {localNotificationService} from '../shared/LocalNotificationService';
+import Modal from 'react-native-modal';
+import firestore from '@react-native-firebase/firestore';
 
 const {width, height} = Dimensions.get('window');
 
@@ -63,10 +67,40 @@ export default class HomeScreen extends React.Component {
       showHome: false,
       tab2Count: 0,
       tab3Count: 0,
+      update: false,
     };
   }
 
   async componentDidMount() {
+    firestore()
+      .collection('settings')
+      .onSnapshot((snap) => {
+        snap.forEach((doc) => {
+          console.log('75', Platform.OS);
+          if (Platform.OS === 'android') {
+            if (doc.data().android !== '2.1.0') {
+              this.setState({
+                update: true,
+                showLocationAccess: true,
+              });
+            } else {
+              this.setState({
+                update: false,
+              });
+            }
+          } else {
+            if (doc.data().ios !== '2.1.0') {
+              this.setState({
+                update: true,
+              });
+            } else {
+              this.setState({
+                update: false,
+              });
+            }
+          }
+        });
+      });
     if (auth().currentUser) {
       this.handleNotiCount();
       this.handleChatCount();
@@ -131,14 +165,18 @@ export default class HomeScreen extends React.Component {
             id: res.data[i].id,
           };
           var res2 = await axios.post(link + '/api/chat', data2);
+          var unread = false;
           if (res2.data !== null && res2.data.messages.length > 0) {
             res2.data.messages.map((m) => {
               if (m.read !== true && m.id !== auth().currentUser.email) {
-                count = count + 1;
-                this.setState({
-                  tab2Count: count,
-                });
+                unread = true;
               }
+            });
+          }
+          if (unread) {
+            count = count + 1;
+            this.setState({
+              tab2Count: count,
             });
           }
         }
@@ -730,6 +768,7 @@ export default class HomeScreen extends React.Component {
                       <ChatListScreen
                         location={this.state.location}
                         navigation={this.props.navigation}
+                        handleRefreshCount={this.handleChatCount}
                       />
                     ) : null}
                     {this.state.tab === 'Activity' ? (
@@ -789,6 +828,34 @@ export default class HomeScreen extends React.Component {
             )}
           </>
         )}
+        <Modal isVisible={this.state.update}>
+          <View
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: colors.secondary,
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <Text style={styles.updateHeader}>New Update Available</Text>
+              <TouchableOpacity
+                onPress={() => {
+                  Linking.openURL(
+                    'https://play.google.com/store/apps/details?id=com.byebuyy',
+                  );
+                }}
+                style={styles.updateButton}>
+                <Text style={styles.updateButtonText}>Update App</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
         <SafeAreaView></SafeAreaView>
       </>
     );
@@ -865,5 +932,26 @@ const styles = StyleSheet.create({
   logo: {
     width: '100%',
     height: '100%',
+  },
+  updateHeader: {
+    color: '#fff',
+    fontFamily: 'Muili-Bold',
+    fontSize: 18,
+    marginVertical: 10,
+  },
+  updateButton: {
+    backgroundColor: '#d65a31',
+    width: 250,
+    height: 50,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 10,
+    marginBottom: 20,
+  },
+  updateButtonText: {
+    color: '#fff',
+    fontFamily: 'Muili-Bold',
+    fontSize: 18,
   },
 });

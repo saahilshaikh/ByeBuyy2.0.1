@@ -53,7 +53,7 @@ export default class AddRequest extends React.Component {
       types: [
         {label: 'Select a type', value: 0},
         {label: 'Borrow', value: 2},
-        {label: 'Give it for free', value: 3},
+        {label: 'Donate', value: 3},
       ],
       quantity: 1,
       quantities: [
@@ -108,6 +108,7 @@ export default class AddRequest extends React.Component {
         {label: 'Competitive exams', value: 'Competitive exams'},
         {label: 'Cooking', value: 'Cooking'},
         {label: 'Fiction', value: 'Fiction'},
+        {label: 'Non-Fiction', value: 'Non-Fiction'},
         {label: 'History', value: 'History'},
         {label: 'Horror', value: 'Horror'},
         {label: 'Novel & literature', value: 'Novel & literature'},
@@ -349,7 +350,7 @@ export default class AddRequest extends React.Component {
           country: this.state.country,
           code: this.state.code,
           owner: auth().currentUser.email,
-          type: 'give it for free',
+          type: 'donate',
           withh: '',
           quantity: 1,
           share_from: '',
@@ -522,7 +523,9 @@ export default class AddRequest extends React.Component {
                       </View>
                       {this.state.category === 'Books' ? (
                         <View style={styles.inputGroup}>
-                          <Text style={styles.inputGroupText}>Category</Text>
+                          <Text style={styles.inputGroupText}>
+                            Sub-Category
+                          </Text>
                           <View style={{width: '100%'}}>
                             <SelectInput
                               value={this.state.subcategory}

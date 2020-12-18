@@ -31,34 +31,34 @@ export default class Card extends React.Component {
   }
 
   async componentDidMount() {
-    const cardValue = await AsyncStorage.getItem(this.props.id + 'product');
-    const cardValue2 = await AsyncStorage.getItem(this.props.id + 'owner');
-    if (cardValue !== null && cardValue2 !== null) {
-      //   console.log('mini card local found');
-      var data1 = JSON.parse(cardValue);
-      var data2 = JSON.parse(cardValue2);
-      if (data1.varient && data2.name) {
-        this.setState({
-          product: data1,
-          owner: data2,
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-        });
-      } else {
-        this.setState({
-          product: [],
-          owner: [],
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: true,
-        });
-      }
-      this.handleInit();
-    } else {
-      console.log('mini card local not found');
-      this.handleInit();
-    }
+    // const cardValue = await AsyncStorage.getItem(this.props.id + 'product');
+    // const cardValue2 = await AsyncStorage.getItem(this.props.id + 'owner');
+    // if (cardValue !== null && cardValue2 !== null) {
+    //   //   console.log('mini card local found');
+    //   var data1 = JSON.parse(cardValue);
+    //   var data2 = JSON.parse(cardValue2);
+    //   if (data1.varient && data2.name) {
+    //     this.setState({
+    //       product: data1,
+    //       owner: data2,
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: false,
+    //     });
+    //   } else {
+    //     this.setState({
+    //       product: [],
+    //       owner: [],
+    //       loadingProduct: false,
+    //       loadingOwner: false,
+    //       NF: true,
+    //     });
+    //   }
+    //   this.handleInit();
+    // } else {
+    //   console.log('mini card local not found');
+    this.handleInit();
+    // }
   }
 
   componentWillUnmount() {

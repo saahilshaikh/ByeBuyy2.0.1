@@ -26,6 +26,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 const {width, height} = Dimensions.get('window');
 
 export default class Card2 extends React.Component {
+  inter = null;
   constructor() {
     super();
     this.state = {
@@ -39,6 +40,7 @@ export default class Card2 extends React.Component {
       reportSuccess: false,
       like: false,
       save: false,
+      menu2: false,
     };
   }
 
@@ -59,6 +61,12 @@ export default class Card2 extends React.Component {
           loadingProduct: false,
           loadingOwner: false,
           NF: false,
+          like: auth().currentUser
+            ? product.likes.includes(auth().currentUser.email)
+            : false,
+          save: auth().currentUser
+            ? product.saves.includes(auth().currentUser.email)
+            : false,
         });
       } else {
         this.setState({
@@ -218,6 +226,7 @@ export default class Card2 extends React.Component {
             }
           }
         } else {
+          clearInterval(this.inter);
           this.storeData(this.props.item._id + 'product', {});
           this.storeData(this.props.item._id + 'owner', {});
           this.setState({
@@ -284,8 +293,18 @@ export default class Card2 extends React.Component {
   handleLike = async () => {
     var addLike = false;
     if (auth().currentUser) {
+      var product = this.state.product;
+      if (product.likes.includes(auth().currentUser.email)) {
+        product.likes = product.likes.filter(
+          (e) => e !== auth().currentUser.email,
+        );
+        console.log(product.likes);
+      } else {
+        product.likes.push(auth().currentUser.email);
+      }
       this.setState({
         like: !this.state.like,
+        product: product,
       });
       var data = {
         id: this.state.product.id,
@@ -296,7 +315,6 @@ export default class Card2 extends React.Component {
       console.log(res.data);
       if (res.data !== null) {
         if (res.data.type === 'success') {
-          this.handleInit();
           if (this.props.handleRefresh) {
             this.props.handleRefresh();
           }
@@ -435,8 +453,7 @@ export default class Card2 extends React.Component {
     console.log('174', re);
   };
 
-  handleReport = (e) => {
-    console.log(e);
+  handleReport = async (e) => {
     this.setState({
       reportForm: false,
       reportSuccess: true,
@@ -444,54 +461,16 @@ export default class Card2 extends React.Component {
     setTimeout(() => {
       this.setState({
         reportSuccess: false,
+        NF: true,
       });
     }, 1500);
-    if (!this.state.currentUser.reports.includes(this.state.product.id)) {
-      firestore()
-        .collection('testusers')
-        .doc(this.state.currentUser.id)
-        .get()
-        .then((user) => {
-          var reports = user.data().reports;
-          var report = {
-            category: e,
-            id: this.state.product.id,
-            date: new Date(),
-          };
-          reports.push(report);
-          firestore()
-            .collection('testusers')
-            .doc(this.state.currentUser.id)
-            .update({
-              reports: reports,
-            })
-            .then(() => {
-              firestore()
-                .collection('testproducts')
-                .doc(this.state.product.id)
-                .get()
-                .then((product) => {
-                  var reports = product.data().reports;
-                  var report = {
-                    category: e,
-                    email: this.state.currentUser.email,
-                    date: new Date(),
-                  };
-                  reports.push(report);
-                  firestore()
-                    .collection('testproducts')
-                    .doc(this.state.product.id)
-                    .update({
-                      reports: reports,
-                    });
-                });
-            });
-        });
-    } else {
-      Snackbar.show({
-        text: 'Already reported',
-        duration: Snackbar.LENGTH_SHORT,
-      });
+    var data = {
+      id: this.state.product.id,
+      email: auth().currentUser.email,
+      report: e,
+    };
+    var res = await axios.post(link + '/api/product/report', data);
+    if (res.data !== null) {
     }
   };
 
@@ -617,7 +596,12 @@ export default class Card2 extends React.Component {
                     </View>
                     <View style={styles.middle}>
                       <Text style={styles.type}>
-                        {this.state.product.type}, {this.state.product.category}
+                        {this.state.product.type} |{' '}
+                        {this.state.product.category === 'Books' &&
+                        this.state.product.subcategory
+                          ? this.state.product.subcategory + ' | '
+                          : null}
+                        {this.state.product.category}
                       </Text>
                       <View style={{flexDirection: 'row'}}>
                         <Image
@@ -733,6 +717,7 @@ export default class Card2 extends React.Component {
                           onPress={() =>
                             this.props.navigation.navigate('viewComment', {
                               id: this.state.product.id,
+                              handleInit: this.handleInit,
                             })
                           }
                           style={{
@@ -987,8 +972,8 @@ export default class Card2 extends React.Component {
                         onPress={() => {
                           this.setState({
                             isModalVisible: false,
+                            menu2: true,
                           });
-                          this.handleRemovePost(this.props.item.id);
                         }}
                         style={{
                           width: '100%',
@@ -1148,6 +1133,76 @@ export default class Card2 extends React.Component {
               </View>
             </View>
           </View>
+        </Modal>
+        <Modal isVisible={this.state.menu2}>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({
+                menu2: false,
+              });
+            }}
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                width: '80%',
+                backgroundColor: colors.secondary,
+                borderRadius: 10,
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu2: false,
+                  });
+                  this.handleRemovePost(this.props.item.id);
+                }}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 20,
+                  justifyContent: 'center',
+                  borderBottomColor: colors.grey,
+                  borderBottomWidth: StyleSheet.hairlineWidth,
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'Muli-Bold',
+                    color: colors.white,
+                    fontSize: 16,
+                  }}>
+                  Yes, remove Post
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    menu2: false,
+                  });
+                }}
+                style={{
+                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 20,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'Muli-Bold',
+                    color: colors.white,
+                    fontSize: 16,
+                  }}>
+                  No, dont remove Post
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
         </Modal>
       </>
     );

@@ -30,31 +30,34 @@ export default class ChatListScreen extends React.Component {
         long: '',
       },
       refreshing: false,
+      hideList: [],
+      showList: [],
+      showEmpty: false,
     };
   }
 
   async componentDidMount() {
     if (auth().currentUser) {
-      var chatListValue = await AsyncStorage.getItem(
-        auth().currentUser.email + 'chatList',
-      );
-      if (chatListValue !== null) {
-        console.log('Found local chat list');
-        this.setState({
-          chats: JSON.parse(chatListValue),
-          loading: false,
-        });
+      // var chatListValue = await AsyncStorage.getItem(
+      //   auth().currentUser.email + 'chatList',
+      // );
+      // if (chatListValue !== null) {
+      //   console.log('Found local chat list');
+      //   this.setState({
+      //     chats: JSON.parse(chatListValue),
+      //     loading: false,
+      //   });
+      //   this.handleInit();
+      // this.inter = setInterval(() => {
+      //   this.handleInit();
+      // }, 2000);
+      // } else {
+      //   console.log('No local chat list found');
+      this.handleInit();
+      this.inter = setInterval(() => {
         this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 2000);
-      } else {
-        console.log('No local chat list found');
-        this.handleInit();
-        this.inter = setInterval(() => {
-          this.handleInit();
-        }, 5000);
-      }
+      }, 2000);
+      // }
     }
   }
 
@@ -65,8 +68,13 @@ export default class ChatListScreen extends React.Component {
     };
   }
 
+  handleRefreshCount = () => {
+    this.props.handleRefreshCount();
+  };
+
   handleInit = async () => {
     if (auth().currentUser) {
+      this.props.handleRefreshCount();
       this.setState({
         location: this.props.location,
       });
@@ -79,6 +87,7 @@ export default class ChatListScreen extends React.Component {
         this.setState({
           chats: res.data,
           loading: false,
+          showEmpty: false,
         });
       }
     } else {
@@ -86,7 +95,43 @@ export default class ChatListScreen extends React.Component {
     }
   };
 
+  handleShowEmpty = (e) => {
+    console.log(e, 'adadas');
+    var hideList = this.state.hideList;
+    if (!hideList.includes(e)) {
+      hideList.push(e);
+    }
+    this.setState(
+      {
+        hideList: hideList,
+      },
+      () => {
+        console.log(hideList.length);
+        if (this.state.chats.length === this.state.hideList.length) {
+          this.setState({
+            showEmpty: true,
+          });
+        }
+      },
+    );
+  };
+
+  handleShowList = (e) => {
+    this.setState({
+      showEmpty: false,
+    });
+    console.log(e, 'adadas');
+    var showList = this.state.showList;
+    if (!showList.includes(e)) {
+      showList.push(e);
+    }
+    this.setState({
+      showList: showList,
+    });
+  };
+
   handleRefresh = async () => {
+    this.props.handleRefreshCount();
     this.setState({
       refreshing: true,
     });
@@ -168,7 +213,7 @@ export default class ChatListScreen extends React.Component {
                   }
                   ListEmptyComponent={this.renderListEmpty}
                   style={{width: '100%', flex: 1}}
-                  data={this.state.chats}
+                  data={this.state.showEmpty ? [] : this.state.chats}
                   keyExtractor={_renderMyKeyExtractor}
                   renderItem={({item}) => (
                     <View style={{width: '100%', alignItems: 'center'}}>
@@ -177,6 +222,7 @@ export default class ChatListScreen extends React.Component {
                         item={item}
                         key={item.id}
                         location={this.state.location}
+                        handleRefreshCount={this.props.handleRefreshCount}
                       />
                     </View>
                   )}

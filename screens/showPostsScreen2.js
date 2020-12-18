@@ -38,6 +38,7 @@ export default class ShowPostsScreen2 extends React.Component {
         {name: 'Competitive exams', value: 'Competitive exams'},
         {name: 'Cooking', value: 'Cooking'},
         {name: 'Fiction', value: 'Fiction'},
+        {name: 'Non-Fiction', value: 'Non-Fiction'},
         {name: 'History', value: 'History'},
         {name: 'Horror', value: 'Horror'},
         {name: 'Novel & literature', value: 'Novel & literature'},

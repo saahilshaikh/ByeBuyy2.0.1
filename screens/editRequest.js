@@ -46,7 +46,7 @@ export default class EditRequest extends React.Component {
       types: [
         {label: 'Select a type', value: ''},
         {label: 'Borrow', value: 'borrow'},
-        {label: 'Give it for free', value: 'give it for free'},
+        {label: 'Donate', value: 'donate'},
       ],
       neighbourhood: '',
       success: false,
@@ -99,6 +99,28 @@ export default class EditRequest extends React.Component {
           label: '10',
         },
       ],
+      subcategory: '',
+      bcategories: [
+        {label: 'Action and adventure', value: 'Action and adventure'},
+        {label: 'Biography', value: 'Biography'},
+        {label: 'College', value: 'College'},
+        {label: 'Comic', value: 'Comic'},
+        {label: 'Competitive exams', value: 'Competitive exams'},
+        {label: 'Cooking', value: 'Cooking'},
+        {label: 'Fiction', value: 'Fiction'},
+        {label: 'Non-Fiction', value: 'Non-Fiction'},
+        {label: 'History', value: 'History'},
+        {label: 'Horror', value: 'Horror'},
+        {label: 'Novel & literature', value: 'Novel & literature'},
+        {label: 'Others', value: 'Others'},
+        {label: 'Pre school', value: 'Pre school'},
+        {label: 'Regional language', value: 'Regional language'},
+        {label: 'Religous', value: 'Religous'},
+        {label: 'Romance', value: 'Romance'},
+        {label: 'Sci-Fi', value: 'Sci-Fi'},
+        {label: 'Self help', value: 'Self help'},
+        {label: 'Suspense and thriller', value: 'Suspense and thriller'},
+      ],
     };
   }
 
@@ -139,6 +161,7 @@ export default class EditRequest extends React.Component {
         category: res2.data.category,
         desc: res2.data.description,
         type: res2.data.type,
+        subcategory: res2.data.subcategory,
       });
     }
   }
@@ -305,6 +328,7 @@ export default class EditRequest extends React.Component {
         giveaway: false,
         id: this.props.route.params.id,
         type: this.state.type,
+        subcategory: this.state.subcategory,
       };
       var res = await axios.post(link + '/api/updateProduct', data);
       if (res.data !== null) {
@@ -484,6 +508,29 @@ export default class EditRequest extends React.Component {
                               />
                             </View>
                           </View>
+                          {this.state.category === 'Books' ? (
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>
+                                Sub-Category
+                              </Text>
+                              <View style={{width: '100%'}}>
+                                <SelectInput
+                                  value={this.state.subcategory}
+                                  options={this.state.bcategories}
+                                  onCancelEditing={() =>
+                                    console.log('onCancel')
+                                  }
+                                  onSubmitEditing={(e) => {
+                                    this.setState({
+                                      subcategory: e,
+                                    });
+                                  }}
+                                  style={styles.picker}
+                                  labelStyle={{fontSize: 16, color: '#464646'}}
+                                />
+                              </View>
+                            </View>
+                          ) : null}
                           {this.state.loadingLocation ? (
                             <View
                               style={{
