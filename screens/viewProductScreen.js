@@ -910,7 +910,7 @@ export default class ViewProductScreen extends React.Component {
                               color: colors.white,
                               marginHorizontal: 5,
                             }}>
-                            -
+                            To
                           </Text>
                           <View
                             style={{

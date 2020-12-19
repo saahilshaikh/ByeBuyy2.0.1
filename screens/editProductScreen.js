@@ -169,9 +169,9 @@ export default class EditProductScreen extends React.Component {
     if (res2.data !== null) {
       console.log('DOC: ', res2.data.share_till);
       var images = [];
-      res2.data.images.map((item) => {
+      res2.data.images.map((item, index) => {
         var newItem = {
-          key: item.index,
+          key: index,
           uri: item.image,
         };
         images.push(newItem);

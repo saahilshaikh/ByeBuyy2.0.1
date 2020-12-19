@@ -31,7 +31,7 @@ export default class PhotoPickerScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.handleShowGallery();
+    // this.handleShowGallery();
   }
 
   hasAndroidPermission = async () => {
