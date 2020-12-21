@@ -16,14 +16,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
-import {FloatingAction} from 'react-native-floating-action';
+import { FloatingAction } from 'react-native-floating-action';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 import link from '../fetchPath';
 import LottieView from 'lottie-react-native';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ProductListScreen extends React.Component {
   inter = null;
@@ -75,25 +75,25 @@ export default class ProductListScreen extends React.Component {
       showNew: false,
       locationType: 'All locations',
       bcategories: [
-        {name: 'Action and adventure', value: 'Action and adventure'},
-        {name: 'Biography', value: 'Biography'},
-        {name: 'College', value: 'College'},
-        {name: 'Comic', value: 'Comic'},
-        {name: 'Competitive exams', value: 'Competitive exams'},
-        {name: 'Cooking', value: 'Cooking'},
-        {name: 'Fiction', value: 'Fiction'},
-        {name: 'Non-Fiction', value: 'Non-Fiction'},
-        {name: 'History', value: 'History'},
-        {name: 'Horror', value: 'Horror'},
-        {name: 'Novel & literature', value: 'Novel & literature'},
-        {name: 'Others', value: 'Others'},
-        {name: 'Pre school', value: 'Pre school'},
-        {name: 'Regional language', value: 'Regional language'},
-        {name: 'Religious', value: 'Religious'},
-        {name: 'Romance', value: 'Romance'},
-        {name: 'Sci-Fi', value: 'Sci-Fi'},
-        {name: 'Self help', value: 'Self help'},
-        {name: 'Suspense and thriller', value: 'Suspense and thriller'},
+        { name: 'Action and adventure', value: 'Action and adventure' },
+        { name: 'Biography', value: 'Biography' },
+        { name: 'College', value: 'College' },
+        { name: 'Comic', value: 'Comic' },
+        { name: 'Competitive exams', value: 'Competitive exams' },
+        { name: 'Cooking', value: 'Cooking' },
+        { name: 'Fiction', value: 'Fiction' },
+        { name: 'Non-Fiction', value: 'Non-Fiction' },
+        { name: 'History', value: 'History' },
+        { name: 'Horror', value: 'Horror' },
+        { name: 'Novel & literature', value: 'Novel & literature' },
+        { name: 'Others', value: 'Others' },
+        { name: 'Pre school', value: 'Pre school' },
+        { name: 'Regional language', value: 'Regional language' },
+        { name: 'Religious', value: 'Religious' },
+        { name: 'Romance', value: 'Romance' },
+        { name: 'Sci-Fi', value: 'Sci-Fi' },
+        { name: 'Self help', value: 'Self help' },
+        { name: 'Suspense and thriller', value: 'Suspense and thriller' },
       ],
       activeSub: 'All',
     };
@@ -103,22 +103,22 @@ export default class ProductListScreen extends React.Component {
     this.setState({
       location: this.props.location,
     });
-    // const postsValue = await AsyncStorage.getItem('bbposts');
-    // const catValue = await AsyncStorage.getItem('bbcats');
-    // if (postsValue !== null && catValue !== null) {
-    //   console.log('Found local posts list');
-    //   this.setState({
-    //     initialLoading: false,
-    //     products: JSON.parse(postsValue),
-    //     showProducts: JSON.parse(postsValue),
-    //     categories: JSON.parse(catValue),
-    //     categoriesLoading: false,
-    //   });
-    //   this.handleInit();
-    // } else {
-    //   console.log('No local posts list found');
-    this.handleInit();
-    // }
+    const postsValue = await AsyncStorage.getItem('bbposts');
+    const catValue = await AsyncStorage.getItem('bbcats');
+    if (postsValue !== null && catValue !== null) {
+      console.log('Found local posts list');
+      this.setState({
+        initialLoading: false,
+        products: JSON.parse(postsValue),
+        showProducts: JSON.parse(postsValue),
+        categories: JSON.parse(catValue),
+        categoriesLoading: false,
+      });
+      this.handleRefresh();
+    } else {
+      console.log('No local posts list found');
+      this.handleInit();
+    }
     this.handleNew();
     this.inter = setInterval(() => {
       this.handleNew();
@@ -174,7 +174,7 @@ export default class ProductListScreen extends React.Component {
     var res = await axios.post(link + '/api/showProducts10/filter', data);
     var res2 = await axios.get(link + '/api/categories');
     if (res.data) {
-      // this.storeData('bbposts', res.data);
+      this.storeData('bbposts', res.data);
       this.setState({
         initialLoading: false,
         products: res.data,
@@ -182,7 +182,7 @@ export default class ProductListScreen extends React.Component {
       });
     }
     if (res2.data) {
-      // this.storeData('bbcats', res2.data);
+      this.storeData('bbcats', res2.data);
       this.setState({
         categories: res2.data,
         categoriesLoading: false,
@@ -213,7 +213,7 @@ export default class ProductListScreen extends React.Component {
     };
     var res = await axios.post(link + '/api/showProducts10/filter', data);
     if (res.data) {
-      // this.storeData('bbposts', res.data);
+      this.storeData('bbposts', res.data);
       this.setState({
         products: res.data,
         showProducts: res.data,
@@ -351,7 +351,7 @@ export default class ProductListScreen extends React.Component {
   };
 
   toggleModal = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   handleReachedEnd = () => {
@@ -468,7 +468,7 @@ export default class ProductListScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={{width: '100%'}}>
+      <View style={{ width: '100%' }}>
         <View
           style={{
             width: '100%',
@@ -522,10 +522,10 @@ export default class ProductListScreen extends React.Component {
           </TouchableOpacity>
         </View>
         {!this.state.categoriesLoading ? (
-          <View style={{width: '100%', marginBottom: 10}}>
+          <View style={{ width: '100%', marginBottom: 10 }}>
             <ScrollView
               horizontal={true}
-              style={{width: '100%', paddingLeft: 5}}
+              style={{ width: '100%', paddingLeft: 5 }}
               showsHorizontalScrollIndicator={false}>
               {this.state.activeCat === 'All' ? (
                 <TouchableOpacity
@@ -534,12 +534,12 @@ export default class ProductListScreen extends React.Component {
                   <Text style={styles.accategoryText}>All</Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  onPress={() => this.handleCategory('All')}
-                  style={styles.category}>
-                  <Text style={styles.categoryText}>All</Text>
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity
+                    onPress={() => this.handleCategory('All')}
+                    style={styles.category}>
+                    <Text style={styles.categoryText}>All</Text>
+                  </TouchableOpacity>
+                )}
               {this.state.categories.map((item) => {
                 return (
                   <View key={item._id}>
@@ -550,12 +550,12 @@ export default class ProductListScreen extends React.Component {
                         <Text style={styles.accategoryText}>{item.name}</Text>
                       </TouchableOpacity>
                     ) : (
-                      <TouchableOpacity
-                        onPress={() => this.handleCategory(item.name)}
-                        style={styles.category}>
-                        <Text style={styles.categoryText}>{item.name}</Text>
-                      </TouchableOpacity>
-                    )}
+                        <TouchableOpacity
+                          onPress={() => this.handleCategory(item.name)}
+                          style={styles.category}>
+                          <Text style={styles.categoryText}>{item.name}</Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 );
               })}
@@ -565,7 +565,7 @@ export default class ProductListScreen extends React.Component {
         {this.state.activeCat === 'Books' ? (
           <ScrollView
             horizontal={true}
-            style={{width: '100%', paddingLeft: 5}}
+            style={{ width: '100%', paddingLeft: 5 }}
             showsHorizontalScrollIndicator={false}>
             {this.state.activeSub === 'All' ? (
               <TouchableOpacity
@@ -574,12 +574,12 @@ export default class ProductListScreen extends React.Component {
                 <Text style={styles.acsubcategoryText}>All</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => this.handleSubCategory('All')}
-                style={styles.subcategory}>
-                <Text style={styles.subcategoryText}>All</Text>
-              </TouchableOpacity>
-            )}
+                <TouchableOpacity
+                  onPress={() => this.handleSubCategory('All')}
+                  style={styles.subcategory}>
+                  <Text style={styles.subcategoryText}>All</Text>
+                </TouchableOpacity>
+              )}
             {this.state.bcategories.map((item) => {
               return (
                 <View key={item._id}>
@@ -590,12 +590,12 @@ export default class ProductListScreen extends React.Component {
                       <Text style={styles.acsubcategoryText}>{item.name}</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      onPress={() => this.handleSubCategory(item.name)}
-                      style={styles.subcategory}>
-                      <Text style={styles.subcategoryText}>{item.name}</Text>
-                    </TouchableOpacity>
-                  )}
+                      <TouchableOpacity
+                        onPress={() => this.handleSubCategory(item.name)}
+                        style={styles.subcategory}>
+                        <Text style={styles.subcategoryText}>{item.name}</Text>
+                      </TouchableOpacity>
+                    )}
                 </View>
               );
             })}
@@ -640,10 +640,10 @@ export default class ProductListScreen extends React.Component {
 
   renderFooter = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {this.state.loadingMore ? (
-          <View style={{marginBottom: 10}}>
-            <View style={{width: 60, height: 60}}>
+          <View style={{ marginBottom: 10 }}>
+            <View style={{ width: 60, height: 60 }}>
               <LottieView
                 source={require('../assets/loading.json')}
                 autoPlay={true}
@@ -687,7 +687,7 @@ export default class ProductListScreen extends React.Component {
                   justifyContent: 'center',
                   marginBottom: 60,
                 }}>
-                <View style={{width: 120, height: 120}}>
+                <View style={{ width: 120, height: 120 }}>
                   <LottieView
                     source={require('../assets/loading.json')}
                     autoPlay={true}
@@ -697,91 +697,90 @@ export default class ProductListScreen extends React.Component {
               </View>
             </View>
           ) : (
-            <>
-              <FlatList
-                keyboardShouldPersistTaps={'handled'}
-                ListEmptyComponent={this.renderListEmpty}
-                ListFooterComponent={this.renderFooter}
-                ListHeaderComponent={this.renderHeader}
-                style={{width: '100%'}}
-                windowSize={3}
-                data={this.state.showProducts}
-                onEndReached={this.handleReachedEnd}
-                keyExtractor={keyExtractor}
-                onEndReachedThreshold={30}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.handleRefresh}
-                  />
-                }
-                renderItem={({item}) => (
-                  <>
-                    {item.varient === 'Product' ? (
-                      <>
-                        {this.state.activeSub === 'All' ? (
-                          <Card
-                            handleCardClick={(e) => this.handleCardClick(e)}
-                            handleCardImageClick={(e, f) =>
-                              this.handleCardImageClick(e, f)
-                            }
-                            item={item}
-                            location={this.state.location}
-                            navigation={this.props.navigation}
-                          />
-                        ) : (
-                          <>
-                            {item.subcategory === this.state.activeSub ? (
-                              <Card
-                                handleCardClick={(e) => this.handleCardClick(e)}
-                                handleCardImageClick={(e, f) =>
-                                  this.handleCardImageClick(e, f)
-                                }
-                                item={item}
-                                location={this.state.location}
-                                navigation={this.props.navigation}
-                              />
-                            ) : null}
-                          </>
-                        )}
-                      </>
-                    ) : null}
-                    {item.varient === 'Request' ? (
-                      <>
-                        {this.state.activeSub === 'All' ? (
-                          <Card2
-                            handleCardClick={(e) => this.handleCardClick(e)}
-                            handleCardImageClick={(e, f) =>
-                              this.handleCardImageClick(e, f)
-                            }
-                            item={item}
-                            location={this.state.location}
-                            navigation={this.props.navigation}
-                          />
-                        ) : (
-                          <>
-                            {item.subcategory === this.state.activeSub ? (
-                              <Card2
-                                handleCardClick={(e) => this.handleCardClick(e)}
-                                handleCardImageClick={(e, f) =>
-                                  this.handleCardImageClick(e, f)
-                                }
-                                item={item}
-                                location={this.state.location}
-                                navigation={this.props.navigation}
-                              />
-                            ) : null}
-                          </>
-                        )}
-                      </>
-                    ) : null}
-                  </>
-                )}
-              />
-            </>
-          )}
+              <>
+                <FlatList
+                  keyboardShouldPersistTaps={'handled'}
+                  ListEmptyComponent={this.renderListEmpty}
+                  ListFooterComponent={this.renderFooter}
+                  ListHeaderComponent={this.renderHeader}
+                  style={{ width: '100%' }}
+                  data={this.state.showProducts}
+                  onEndReached={this.handleReachedEnd}
+                  keyExtractor={keyExtractor}
+                  onEndReachedThreshold={30}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.handleRefresh}
+                    />
+                  }
+                  renderItem={({ item }) => (
+                    <>
+                      {item.varient === 'Product' ? (
+                        <>
+                          {this.state.activeSub === 'All' ? (
+                            <Card
+                              handleCardClick={(e) => this.handleCardClick(e)}
+                              handleCardImageClick={(e, f) =>
+                                this.handleCardImageClick(e, f)
+                              }
+                              item={item}
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
+                          ) : (
+                              <>
+                                {item.subcategory === this.state.activeSub ? (
+                                  <Card
+                                    handleCardClick={(e) => this.handleCardClick(e)}
+                                    handleCardImageClick={(e, f) =>
+                                      this.handleCardImageClick(e, f)
+                                    }
+                                    item={item}
+                                    location={this.state.location}
+                                    navigation={this.props.navigation}
+                                  />
+                                ) : null}
+                              </>
+                            )}
+                        </>
+                      ) : null}
+                      {item.varient === 'Request' ? (
+                        <>
+                          {this.state.activeSub === 'All' ? (
+                            <Card2
+                              handleCardClick={(e) => this.handleCardClick(e)}
+                              handleCardImageClick={(e, f) =>
+                                this.handleCardImageClick(e, f)
+                              }
+                              item={item}
+                              location={this.state.location}
+                              navigation={this.props.navigation}
+                            />
+                          ) : (
+                              <>
+                                {item.subcategory === this.state.activeSub ? (
+                                  <Card2
+                                    handleCardClick={(e) => this.handleCardClick(e)}
+                                    handleCardImageClick={(e, f) =>
+                                      this.handleCardImageClick(e, f)
+                                    }
+                                    item={item}
+                                    location={this.state.location}
+                                    navigation={this.props.navigation}
+                                  />
+                                ) : null}
+                              </>
+                            )}
+                        </>
+                      ) : null}
+                    </>
+                  )}
+                />
+              </>
+            )}
           {this.state.loadingProducts ? (
-            <View style={{marginTop: 10}}>
+            <View style={{ marginTop: 10 }}>
               <ActivityIndicator size="large" color={colors.baseline} />
             </View>
           ) : null}
@@ -814,7 +813,7 @@ export default class ProductListScreen extends React.Component {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 <TouchableOpacity
                   onPress={() => {
                     this.setState(

@@ -40,6 +40,7 @@
     "react-native-countdown-timer-hooks": "^1.0.3",
     "react-native-datepicker": "^1.7.2",
     "react-native-document-picker": "^3.5.4",
+    "react-native-fast-image": "^8.3.4",
     "react-native-fbsdk": "^2.0.0",
     "react-native-floating-action": "^1.21.0",
     "react-native-fs": "^2.16.6",

@@ -38,26 +38,26 @@ export default class ChatListScreen extends React.Component {
 
   async componentDidMount() {
     if (auth().currentUser) {
-      // var chatListValue = await AsyncStorage.getItem(
-      //   auth().currentUser.email + 'chatList',
-      // );
-      // if (chatListValue !== null) {
-      //   console.log('Found local chat list');
-      //   this.setState({
-      //     chats: JSON.parse(chatListValue),
-      //     loading: false,
-      //   });
-      //   this.handleInit();
-      // this.inter = setInterval(() => {
-      //   this.handleInit();
-      // }, 2000);
-      // } else {
-      //   console.log('No local chat list found');
-      this.handleInit();
-      this.inter = setInterval(() => {
+      var chatListValue = await AsyncStorage.getItem(
+        auth().currentUser.email + 'chatList',
+      );
+      if (chatListValue !== null) {
+        console.log('Found local chat list');
+        this.setState({
+          chats: JSON.parse(chatListValue),
+          loading: false,
+        });
         this.handleInit();
-      }, 2000);
-      // }
+        this.inter = setInterval(() => {
+          this.handleInit();
+        }, 2000);
+      } else {
+        console.log('No local chat list found');
+        this.handleInit();
+        this.inter = setInterval(() => {
+          this.handleInit();
+        }, 2000);
+      }
     }
   }
 
@@ -175,7 +175,7 @@ export default class ChatListScreen extends React.Component {
           style={{
             width: 200,
             height: 200,
-            transform: [{scale: 1.3}],
+            transform: [{ scale: 1.3 }],
           }}
         />
         <Text
@@ -195,57 +195,57 @@ export default class ChatListScreen extends React.Component {
     return (
       <View style={styles.container}>
         {auth().currentUser ? (
-          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+          <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
             {this.state.loading ? (
               <ActivityIndicator
                 size="large"
                 color={colors.baseline}
-                style={{marginTop: 10}}
+                style={{ marginTop: 10 }}
               />
             ) : (
-              <View style={styles.list}>
-                <FlatList
-                  refreshControl={
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.handleRefresh}
-                    />
-                  }
-                  ListEmptyComponent={this.renderListEmpty}
-                  style={{width: '100%', flex: 1}}
-                  data={this.state.showEmpty ? [] : this.state.chats}
-                  keyExtractor={_renderMyKeyExtractor}
-                  renderItem={({item}) => (
-                    <View style={{width: '100%', alignItems: 'center'}}>
-                      <ChatCard
-                        navigation={this.props.navigation}
-                        item={item}
-                        key={item.id}
-                        location={this.state.location}
-                        handleRefreshCount={this.props.handleRefreshCount}
+                <View style={styles.list}>
+                  <FlatList
+                    refreshControl={
+                      <RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.handleRefresh}
                       />
-                    </View>
-                  )}
-                />
-              </View>
-            )}
+                    }
+                    ListEmptyComponent={this.renderListEmpty}
+                    style={{ width: '100%', flex: 1 }}
+                    data={this.state.showEmpty ? [] : this.state.chats}
+                    keyExtractor={_renderMyKeyExtractor}
+                    renderItem={({ item }) => (
+                      <View style={{ width: '100%', alignItems: 'center' }}>
+                        <ChatCard
+                          navigation={this.props.navigation}
+                          item={item}
+                          key={item.id}
+                          location={this.state.location}
+                          handleRefreshCount={this.props.handleRefreshCount}
+                        />
+                      </View>
+                    )}
+                  />
+                </View>
+              )}
           </View>
         ) : (
-          <View style={{width: '100%', alignItems: 'center'}}>
-            <View style={styles.imageBox}>
-              <LottieView
-                source={require('../assets/login.json')}
-                autoPlay
-                loop
-              />
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <View style={styles.imageBox}>
+                <LottieView
+                  source={require('../assets/login.json')}
+                  autoPlay
+                  loop
+                />
+              </View>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate('Login')}
+                style={styles.loginButton}>
+                <Text style={styles.loginButtonText}>Login to continue</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Login')}
-              style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>Login to continue</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+          )}
       </View>
     );
   }
