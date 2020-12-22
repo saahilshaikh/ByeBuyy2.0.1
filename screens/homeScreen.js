@@ -78,7 +78,7 @@ export default class HomeScreen extends React.Component {
         snap.forEach((doc) => {
           console.log('75', Platform.OS);
           if (Platform.OS === 'android') {
-            if (doc.data().android !== '2.1.1') {
+            if (doc.data().android !== '2.1.2') {
               this.setState({
                 update: true,
                 showLocationAccess: true,
@@ -89,7 +89,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           } else {
-            if (doc.data().ios !== '2.1.1') {
+            if (doc.data().ios !== '2.1.2') {
               this.setState({
                 update: true,
               });
