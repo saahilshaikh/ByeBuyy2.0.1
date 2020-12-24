@@ -133,8 +133,8 @@ android {
         applicationId "com.byebuyy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 212
-        versionName "2.1.2"
+        versionCode 216
+        versionName "2.1.6"
         multiDexEnabled true
     }
     dexOptions {

@@ -74,7 +74,7 @@ export default class CommentCard extends React.Component {
   };
 
   handleEdit = () => {
-    if (this.state.desc !== '' && this.state.desc !== ' ') {
+    if (this.state.desc.replace(/ /g, '').length !== 0) {
       this.props.handleEditComment(this.props.item._id, this.state.desc);
       this.setState({
         editModalVisible: false,
@@ -89,7 +89,7 @@ export default class CommentCard extends React.Component {
   };
 
   handleReply = () => {
-    if (this.state.reply.replace(/ /g, '').length === 0) {
+    if (this.state.reply.replace(/ /g, '').length !== 0) {
       this.props.handleReplyComment(
         this.props.item._id,
         this.state.reply,

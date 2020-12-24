@@ -39,6 +39,20 @@ import {fcmService} from '../shared/FCMService';
 import {localNotificationService} from '../shared/LocalNotificationService';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
+import {
+  TabView,
+  TabBar,
+  SceneMap,
+  NavigationState,
+  SceneRendererProps,
+} from 'react-native-tab-view';
+
+type Route = {
+  key: string,
+  icon: string,
+};
+
+type State = NavigationState<Route>;
 
 const {width, height} = Dimensions.get('window');
 
@@ -46,9 +60,41 @@ Geocoder.init('AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ');
 
 export default class HomeScreen extends React.Component {
   inter = null;
+
   constructor() {
     super();
+    this.child1 = React.createRef();
+    this.child2 = React.createRef();
+    this.child3 = React.createRef();
+    this.child4 = React.createRef();
     this.state = {
+      index: 0,
+      routes: [
+        {
+          key: 'home',
+          index: 0,
+          active: require('../assets/images/homeActive.png'),
+          inactive: require('../assets/images/home.png'),
+        },
+        {
+          key: 'chats',
+          index: 1,
+          active: require('../assets/images/chatActive.png'),
+          inactive: require('../assets/images/chat.png'),
+        },
+        {
+          key: 'notifications',
+          index: 2,
+          active: require('../assets/images/notificationActive.png'),
+          inactive: require('../assets/images/notification.png'),
+        },
+        {
+          key: 'profile',
+          index: 3,
+          active: require('../assets/images/userActive.png'),
+          inactive: require('../assets/images/user.png'),
+        },
+      ],
       tab: 'Posts',
       showLocationAccess: false,
       location: {
@@ -78,7 +124,7 @@ export default class HomeScreen extends React.Component {
         snap.forEach((doc) => {
           console.log('75', Platform.OS);
           if (Platform.OS === 'android') {
-            if (doc.data().android !== '2.1.2') {
+            if (doc.data().android !== '2.1.6') {
               this.setState({
                 update: true,
                 showLocationAccess: true,
@@ -89,7 +135,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           } else {
-            if (doc.data().ios !== '2.1.2') {
+            if (doc.data().ios !== '2.1.6') {
               this.setState({
                 update: true,
               });
@@ -107,7 +153,7 @@ export default class HomeScreen extends React.Component {
       this.inter = setInterval(() => {
         this.handleNotiCount();
         this.handleChatCount();
-      }, 20000);
+      }, 10000);
     }
     fcmService.registerAppWithFCM();
     fcmService.register(
@@ -122,7 +168,6 @@ export default class HomeScreen extends React.Component {
 
   handleNotiCount = async () => {
     if (auth().currentUser) {
-      console.log('NOTI COUNT');
       this.setState({
         tab3Count: 0,
       });
@@ -500,27 +545,17 @@ export default class HomeScreen extends React.Component {
               lat: position.coords.latitude,
               long: position.coords.longitude,
             };
-            this.setState(
-              {
-                location: location,
-                locationLoading: false,
-              },
-              () => {
-                console.log(this.state.location);
-              },
-            );
+            this.setState({
+              location: location,
+              locationLoading: false,
+            });
           },
           async (error) => {
             console.log('Error in Location Access Settings');
-            this.setState(
-              {
-                location: {},
-                locationLoading: false,
-              },
-              () => {
-                console.log(this.state.location);
-              },
-            );
+            this.setState({
+              location: {},
+              locationLoading: false,
+            });
           },
           {
             enableHighAccuracy: true,
@@ -529,42 +564,27 @@ export default class HomeScreen extends React.Component {
           },
         );
       } else {
-        this.setState(
-          {
-            location: {},
-            locationLoading: false,
-          },
-          () => {
-            console.log(this.state.location);
-          },
-        );
+        this.setState({
+          location: {},
+          locationLoading: false,
+        });
       }
     } else {
       console.log('Error in Location Access');
-      this.setState(
-        {
-          location: {},
-          locationLoading: false,
-        },
-        () => {
-          console.log(this.state.location);
-        },
-      );
+      this.setState({
+        location: {},
+        locationLoading: false,
+      });
     }
   };
 
   handleDeniedLocationPermission = () => {
     console.log('LOCATION ACCESS DENIED');
-    this.setState(
-      {
-        location: {},
-        locationLoading: false,
-        showLocationAccess: false,
-      },
-      () => {
-        console.log(this.state.location);
-      },
-    );
+    this.setState({
+      location: {},
+      locationLoading: false,
+      showLocationAccess: false,
+    });
   };
 
   handleSearch = () => {
@@ -583,6 +603,106 @@ export default class HomeScreen extends React.Component {
       index: 1,
     });
   };
+
+  handleIndexChange = (index) => {
+    if (index === 0) {
+      console.log('INDEX 0');
+      this.child1.current.handleMount();
+      this.child2.current.handleUnmount();
+      this.child3.current.handleUnmount();
+    } else if (index === 1) {
+      console.log('INDEX 1');
+      this.child1.current.handleUnmount();
+      this.child2.current.handleMount();
+      this.child3.current.handleUnmount();
+    } else if (index === 2) {
+      console.log('INDEX 2');
+      this.child1.current.handleUnmount();
+      this.child2.current.handleUnmount();
+      this.child3.current.handleMount();
+    } else if (index === 3) {
+      console.log('INDEX 3');
+      this.child1.current.handleUnmount();
+      this.child2.current.handleUnmount();
+      this.child3.current.handleUnmount();
+    }
+    this.setState({
+      index: index,
+      tab2Count: 0,
+      tab3Count: 0,
+    });
+  };
+
+  renderIcon = ({route, color}: {route: Route, color: string}) => (
+    <View style={{width: 25, height: 25, position: 'relative'}}>
+      <Image source={route.inactive} style={{width: '100%', height: '100%'}} />
+      {route.index === 1 &&
+      this.state.index !== 1 &&
+      this.state.tab2Count > 0 ? (
+        <View style={styles.tabCount}>
+          <Text style={styles.tabCountText}>{this.state.tab2Count}</Text>
+        </View>
+      ) : null}
+      {route.index === 1 &&
+      this.state.index !== 2 &&
+      this.state.tab3Count > 0 ? (
+        <View style={styles.tabCount}>
+          <Text style={styles.tabCountText}>{this.state.tab3Count}</Text>
+        </View>
+      ) : null}
+    </View>
+  );
+
+  renderTabBar = (props: SceneRendererProps & {navigationState: State}) => {
+    return (
+      <TabBar
+        {...props}
+        indicatorStyle={styles.indicator}
+        renderIcon={this.renderIcon}
+        style={styles.tabbar}
+      />
+    );
+  };
+
+  renderScene = SceneMap({
+    home: () => (
+      <ProductListScreen
+        handleRequestTab={this.handleRequestTab}
+        navigation={this.props.navigation}
+        location={this.state.location}
+        index={this.state.index}
+        ref={this.child1}
+      />
+    ),
+    chats: () => (
+      <ChatListScreen
+        handleRequestTab={this.handleRequestTab}
+        navigation={this.props.navigation}
+        location={this.state.location}
+        index={this.state.index}
+        ref={this.child2}
+        handleRefreshCount={this.handleChatCount}
+      />
+    ),
+    notifications: () => (
+      <NotiListScreen
+        handleRequestTab={this.handleRequestTab}
+        navigation={this.props.navigation}
+        location={this.state.location}
+        index={this.state.index}
+        ref={this.child3}
+      />
+    ),
+    profile: () => (
+      <ProfileScreen
+        handleRequestTab={this.handleRequestTab}
+        navigation={this.props.navigation}
+        location={this.state.location}
+        index={this.state.index}
+        ref={this.child4}
+      />
+    ),
+  });
 
   render() {
     return (
@@ -656,7 +776,13 @@ export default class HomeScreen extends React.Component {
                         </TouchableOpacity>
                       </View>
                     </View>
-                    <View style={styles.tabbar}>
+                    <TabView
+                      navigationState={this.state}
+                      renderScene={this.renderScene}
+                      renderTabBar={this.renderTabBar}
+                      onIndexChange={this.handleIndexChange}
+                    />
+                    {/* <View style={styles.tabbar}>
                       {this.state.tab === 'Posts' ? (
                         <View style={styles.activeTab}>
                           <Image
@@ -757,8 +883,8 @@ export default class HomeScreen extends React.Component {
                           />
                         </TouchableOpacity>
                       )}
-                    </View>
-                    {this.state.tab === 'Posts' ? (
+                    </View> */}
+                    {/* {this.state.tab === 'Posts' ? (
                       <ProductListScreen
                         location={this.state.location}
                         navigation={this.props.navigation}
@@ -783,7 +909,7 @@ export default class HomeScreen extends React.Component {
                         location={this.state.location}
                         navigation={this.props.navigation}
                       />
-                    ) : null}
+                    ) : null} */}
                     {this.state.showDrawer ? (
                       <View
                         style={{
@@ -889,36 +1015,18 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   tabbar: {
-    width: '100%',
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#1B1F22',
+    elevation: 3,
   },
-  tab: {
-    width: '25%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    position: 'relative',
-  },
-  activeTab: {
-    width: '25%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    borderBottomColor: '#d65a31',
-    borderBottomWidth: 4,
-  },
-  tabImage: {
-    width: 25,
-    height: 25,
+  indicator: {
+    backgroundColor: colors.baseline,
+    height: 4,
+    borderRadius: 2,
   },
   tabCount: {
     position: 'absolute',
-    right: 20,
-    top: 0,
+    right: -10,
+    top: -5,
     backgroundColor: '#d65a31',
     paddingHorizontal: 7,
     paddingVertical: 2,

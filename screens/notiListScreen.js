@@ -17,6 +17,7 @@ import colors from '../appTheme';
 import {ScrollView} from 'react-native-gesture-handler';
 
 export default class NotiListScreen extends React.Component {
+  inter = null;
   constructor() {
     super();
     this.state = {
@@ -41,7 +42,21 @@ export default class NotiListScreen extends React.Component {
     });
     if (auth().currentUser) {
       this.handleInit();
-      setInterval(() => {
+    } else {
+      this.setState({
+        loading: false,
+      });
+    }
+  }
+
+  async handleMount() {
+    console.log('NOTI MOUNT');
+    this.setState({
+      location: this.props.location,
+    });
+    if (auth().currentUser) {
+      this.handleInit();
+      this.inter = setInterval(() => {
         this.handleInit();
       }, 15000);
     } else {
@@ -51,13 +66,17 @@ export default class NotiListScreen extends React.Component {
     }
   }
 
+  handleUnmount() {
+    console.log('NOTI UNMOUNT');
+    clearInterval(this.inter);
+  }
+
   handleInit = async () => {
     var data = {
       id: auth().currentUser.email,
     };
     const res = await axios.post(link + '/api/user/singleNoti', data);
     if (res.data !== null) {
-      console.log(res.data);
       var todayList = [];
       var weeklyList = [];
       var monthlyList = [];
@@ -65,7 +84,6 @@ export default class NotiListScreen extends React.Component {
       res.data.map((item) => {
         const diffTime = Math.abs(new Date() - new Date(item.date));
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        console.log(diffDays);
         if (diffDays <= 1) {
           todayList.push(item);
         } else if (diffDays > 1 && diffDays <= 7) {
@@ -130,7 +148,6 @@ export default class NotiListScreen extends React.Component {
           newnotiList.push(this.state.acnotiList[i]);
         }
       }
-      console.log(newnotiList);
       this.setState({
         notiList: [...this.state.notiList, ...newnotiList],
       });

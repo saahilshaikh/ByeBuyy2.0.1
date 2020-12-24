@@ -52,7 +52,6 @@ export default class Card2 extends React.Component {
       this.props.item._id + 'owner',
     );
     if (cardValue !== null && cardValue2 !== null) {
-      console.log('Card2 local found');
       var product = JSON.parse(cardValue);
       if (product.varient === 'Request') {
         this.setState({
@@ -79,7 +78,6 @@ export default class Card2 extends React.Component {
       }
       this.handleInit();
     } else {
-      console.log('Card2 local not found');
       this.handleInit();
     }
   }

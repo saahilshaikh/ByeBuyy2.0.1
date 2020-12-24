@@ -361,17 +361,20 @@ export default class EditProductScreen extends React.Component {
     this.setState({
       loading: true,
     });
-    if (this.state.wyh === '') {
+    if (this.state.wyh.replace(/ /g, '').length < 20) {
       Snackbar.show({
-        text: 'What do you have ? cannot be blank',
+        text: 'Please type a proper what do you have ?',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
         loading: false,
       });
-    } else if (this.state.wye === '' && this.state.type === 1) {
+    } else if (
+      this.state.wye.replace(/ /g, '').length < 10 &&
+      this.state.type === 1
+    ) {
       Snackbar.show({
-        text: 'What do you want to exchnage with ? cannot be blank',
+        text: 'Please type a proper what exchnage with ?',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
@@ -409,9 +412,9 @@ export default class EditProductScreen extends React.Component {
       this.setState({
         loading: false,
       });
-    } else if (this.state.desc === '' || this.state.desc.length < 10) {
+    } else if (this.state.desc.replace(/ /g, '').length < 20) {
       Snackbar.show({
-        text: 'Please add a product description of atleast 10 characters',
+        text: 'Please add a product description of atleast 20 characters',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({

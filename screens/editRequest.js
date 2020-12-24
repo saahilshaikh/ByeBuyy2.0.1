@@ -289,7 +289,7 @@ export default class EditRequest extends React.Component {
 
   handleSubmit = async () => {
     var props = this.props;
-    if (this.state.desc === '' || this.state.desc.length < 20) {
+    if (this.state.desc.replace(/ /g, '').length < 30) {
       Snackbar.show({
         text: 'Please add proper request',
         duration: Snackbar.LENGTH_SHORT,

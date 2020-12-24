@@ -112,8 +112,11 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Camera Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openCamera({
-        width: 2000,
-        height: 2000,
+        width: 1500,
+        height: 1500,
+        freeStyleCropEnabled: true,
+        cropping: true,
+        compressImageQuality: 0.8,
       })
         .then((image) => {
           var i = this.state.images.length + 1;
@@ -142,27 +145,27 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Gallery Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openPicker({
-        width: 2000,
-        height: 2000,
-        multiple: true,
+        width: 1500,
+        height: 1500,
+        freeStyleCropEnabled: true,
+        cropping: true,
         mediaType: 'photo',
+        compressImageQuality: 0.8,
       })
-        .then((items) => {
-          console.log(items);
-          for (var x = 0; x < items.length; x++) {
-            var i = this.state.images.length + 1;
-            var photos = [];
-            var photos = this.state.images;
-            var image = {};
-            image['uri'] = items[x].path;
-            image['key'] = i;
-            image['file'] = items[x];
-            photos.push(image);
-            console.log(photos);
-            this.setState({
-              images: photos,
-            });
-          }
+        .then((image) => {
+          var i = this.state.images.length + 1;
+          var photos = [];
+          photos = this.state.images;
+          var img = {};
+          img['uri'] = image.path;
+          img['key'] = i;
+          img['file'] = image;
+          photos.push(img);
+          i++;
+          console.log(photos);
+          this.setState({
+            images: photos,
+          });
         })
         .catch((err) => {
           console.log(err);

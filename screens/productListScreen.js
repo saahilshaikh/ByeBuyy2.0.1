@@ -106,7 +106,6 @@ export default class ProductListScreen extends React.Component {
     const postsValue = await AsyncStorage.getItem('bbposts');
     const catValue = await AsyncStorage.getItem('bbcats');
     if (postsValue !== null && catValue !== null) {
-      console.log('Found local posts list');
       this.setState({
         initialLoading: false,
         products: JSON.parse(postsValue),
@@ -114,22 +113,27 @@ export default class ProductListScreen extends React.Component {
         categories: JSON.parse(catValue),
         categoriesLoading: false,
       });
-      this.handleRefresh();
+      this.handleInit();
+      this.inter = setInterval(() => {
+        this.handleNew();
+      }, 10000);
     } else {
-      console.log('No local posts list found');
       this.handleInit();
     }
+    this.handleNew();
+  }
+
+  handleMount = async () => {
+    console.log('PL MOUNT');
     this.handleNew();
     this.inter = setInterval(() => {
       this.handleNew();
     }, 10000);
-  }
+  };
 
-  componentWillUnmount() {
+  handleUnmount() {
+    console.log('PL UNMOUNT');
     clearInterval(this.inter);
-    this.setState = (state, callback) => {
-      return;
-    };
   }
 
   handleShowNew = () => {
@@ -141,7 +145,7 @@ export default class ProductListScreen extends React.Component {
   handleNew = async () => {
     if (
       this.state.showMode === 'A' &&
-      this.state.current === 'All locations' &&
+      this.state.locationType === 'All locations' &&
       this.state.activeCat === 'All'
     ) {
       console.log('118,Checking New');
@@ -362,6 +366,7 @@ export default class ProductListScreen extends React.Component {
   };
 
   handleCategory = async (e) => {
+    console.log(e);
     this.moveToFront(e);
     this.setState({
       activeCat: e,

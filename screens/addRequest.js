@@ -267,7 +267,7 @@ export default class AddRequest extends React.Component {
         text: 'Please select a type',
         duration: Snackbar.LENGTH_SHORT,
       });
-    } else if (this.state.desc === '' || this.state.desc.length < 20) {
+    } else if (this.state.desc.replace(/ /g, '').length < 30) {
       Snackbar.show({
         text: 'Please add proper request',
         duration: Snackbar.LENGTH_SHORT,
