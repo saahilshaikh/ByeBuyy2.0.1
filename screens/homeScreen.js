@@ -153,7 +153,7 @@ export default class HomeScreen extends React.Component {
       this.inter = setInterval(() => {
         this.handleNotiCount();
         this.handleChatCount();
-      }, 10000);
+      }, 5000);
     }
     fcmService.registerAppWithFCM();
     fcmService.register(
@@ -168,9 +168,6 @@ export default class HomeScreen extends React.Component {
 
   handleNotiCount = async () => {
     if (auth().currentUser) {
-      this.setState({
-        tab3Count: 0,
-      });
       var data = {
         id: auth().currentUser.email,
       };
@@ -211,7 +208,16 @@ export default class HomeScreen extends React.Component {
           };
           var res2 = await axios.post(link + '/api/chat', data2);
           var unread = false;
-          if (res2.data !== null && res2.data.messages.length > 0) {
+          if (
+            res2.data !== null &&
+            res2.data.messages.length > 0 &&
+            new Date(
+              res2.data[
+                'clear' +
+                  (res2.data.participants.indexOf(auth().currentUser.email) + 1)
+              ],
+            ) < new Date(res2.data.messages[res2.data.messages.length - 1].date)
+          ) {
             res2.data.messages.map((m) => {
               if (m.read !== true && m.id !== auth().currentUser.email) {
                 unread = true;
@@ -220,10 +226,10 @@ export default class HomeScreen extends React.Component {
           }
           if (unread) {
             count = count + 1;
-            this.setState({
-              tab2Count: count,
-            });
           }
+          this.setState({
+            tab2Count: count,
+          });
         }
       }
     }
@@ -628,8 +634,6 @@ export default class HomeScreen extends React.Component {
     }
     this.setState({
       index: index,
-      tab2Count: 0,
-      tab3Count: 0,
     });
   };
 

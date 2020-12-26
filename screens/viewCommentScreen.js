@@ -29,6 +29,7 @@ import link from '../fetchPath';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import CommentCard from '../shared/commentCard';
 import colors from '../appTheme';
+import LottieView from 'lottie-react-native';
 
 const {width, height} = Dimensions.get('window');
 
@@ -555,96 +556,114 @@ export default class ViewCommentScreen extends React.Component {
             <Text style={styles.headerText}>Comments</Text>
           </View>
         </View>
-        {this.state.tags.length > 0 ? (
-          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
-            {this.state.tags &&
-              this.state.tags.map((tag) => {
-                return (
-                  <TouchableOpacity
-                    onPress={() => this.handleTag(tag)}
-                    style={{
-                      width: '90%',
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginVertical: 10,
-                    }}>
-                    <View style={styles.profileBox}>
-                      {tag.photo ? (
-                        <Image
-                          source={{uri: tag.photo}}
-                          style={styles.profileImage}
-                        />
-                      ) : (
-                        <View style={styles.profileImageBox}>
-                          <Text style={styles.imageText}>
-                            {tag.name.charAt(0).toUpperCase()}
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <View>
-                      <Text style={styles.profileName}>{tag.name}</Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
-          </View>
-        ) : (
-          <View style={{width: '100%', flex: 1}}>
-            <FlatList
-              ListEmptyComponent={this.renderListEmpty}
-              style={{width: '100%'}}
-              data={this.state.comments}
-              onEndReached={this.handleReachedEnd}
-              keyExtractor={(item, index) => index.toString()}
-              initialNumToRender={10}
-              onEndReachedThreshold={0.5}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this.handleRefresh}
-                />
-              }
-              renderItem={({item}) => (
-                <CommentCard
-                  item={item}
-                  navigation={this.props.navigation}
-                  handleDeleteComment={this.handleDeleteComment}
-                  handleEditComment={this.handleEditComment}
-                  handleReplyComment={this.handleReplyComment}
-                  handleDeleteReplyComment={this.handleDeleteReplyComment}
-                  handleEditReplyComment={this.handleEditReplyComment}
-                />
-              )}
-            />
-          </View>
-        )}
-        {auth().currentUser && this.state.NF === false ? (
-          <View style={styles.commentContainer}>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                onSelectionChange={({nativeEvent: {selection}}) => {
-                  console.log(selection);
-                  this.setState({selection});
-                }}
-                value={this.state.comment}
-                onChangeText={(e) => this.handleChange(e)}
-                maxLength={150}
-                placeholder="Type a comment ..."
+        {this.state.loading ? (
+          <View style={{marginBottom: 10}}>
+            <View style={{width: 60, height: 60}}>
+              <LottieView
+                source={require('../assets/loading.json')}
+                autoPlay={true}
+                loop={true}
               />
             </View>
-            {this.state.commenting ? (
-              <ActivityIndicator size="large" color={colors.baseline} />
-            ) : (
-              <TouchableOpacity
-                onPress={this.handleComment}
-                style={styles.bottomButton}>
-                <Ionicons name="ios-send" size={25} color={colors.baseline} />
-              </TouchableOpacity>
-            )}
           </View>
-        ) : null}
+        ) : (
+          <>
+            {this.state.tags.length > 0 ? (
+              <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+                {this.state.tags &&
+                  this.state.tags.map((tag) => {
+                    return (
+                      <TouchableOpacity
+                        onPress={() => this.handleTag(tag)}
+                        style={{
+                          width: '90%',
+                          alignItems: 'center',
+                          flexDirection: 'row',
+                          marginVertical: 10,
+                        }}>
+                        <View style={styles.profileBox}>
+                          {tag.photo ? (
+                            <Image
+                              source={{uri: tag.photo}}
+                              style={styles.profileImage}
+                            />
+                          ) : (
+                            <View style={styles.profileImageBox}>
+                              <Text style={styles.imageText}>
+                                {tag.name.charAt(0).toUpperCase()}
+                              </Text>
+                            </View>
+                          )}
+                        </View>
+                        <View>
+                          <Text style={styles.profileName}>{tag.name}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    );
+                  })}
+              </View>
+            ) : (
+              <View style={{width: '100%', flex: 1}}>
+                <FlatList
+                  ListEmptyComponent={this.renderListEmpty}
+                  style={{width: '100%'}}
+                  data={this.state.comments}
+                  onEndReached={this.handleReachedEnd}
+                  keyExtractor={(item, index) => index.toString()}
+                  initialNumToRender={10}
+                  onEndReachedThreshold={0.5}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.handleRefresh}
+                    />
+                  }
+                  renderItem={({item}) => (
+                    <CommentCard
+                      item={item}
+                      navigation={this.props.navigation}
+                      handleDeleteComment={this.handleDeleteComment}
+                      handleEditComment={this.handleEditComment}
+                      handleReplyComment={this.handleReplyComment}
+                      handleDeleteReplyComment={this.handleDeleteReplyComment}
+                      handleEditReplyComment={this.handleEditReplyComment}
+                    />
+                  )}
+                />
+              </View>
+            )}
+            {auth().currentUser && this.state.NF === false ? (
+              <View style={styles.commentContainer}>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    onSelectionChange={({nativeEvent: {selection}}) => {
+                      console.log(selection);
+                      this.setState({selection});
+                    }}
+                    value={this.state.comment}
+                    onChangeText={(e) => this.handleChange(e)}
+                    maxLength={150}
+                    placeholder="Type a comment ..."
+                  />
+                </View>
+                {this.state.commenting ? (
+                  <ActivityIndicator size="large" color={colors.baseline} />
+                ) : (
+                  <TouchableOpacity
+                    onPress={this.handleComment}
+                    style={styles.bottomButton}>
+                    <Ionicons
+                      name="ios-send"
+                      size={25}
+                      color={colors.baseline}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            ) : null}
+          </>
+        )}
       </SafeAreaView>
     );
   }
