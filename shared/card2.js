@@ -54,19 +54,45 @@ export default class Card2 extends React.Component {
     if (cardValue !== null && cardValue2 !== null) {
       var product = JSON.parse(cardValue);
       if (product.varient === 'Request') {
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-          like: auth().currentUser
-            ? product.likes.includes(auth().currentUser.email)
-            : false,
-          save: auth().currentUser
-            ? product.saves.includes(auth().currentUser.email)
-            : false,
-        });
+        if (this.props.nearby) {
+          if (product.distance * 1000 < 1501) {
+            this.setState({
+              product: product,
+              owner: JSON.parse(cardValue2),
+              loadingProduct: false,
+              loadingOwner: false,
+              NF: false,
+              like: auth().currentUser
+                ? product.likes.includes(auth().currentUser.email)
+                : false,
+              save: auth().currentUser
+                ? product.saves.includes(auth().currentUser.email)
+                : false,
+            });
+          } else {
+            this.setState({
+              product: [],
+              owner: [],
+              loadingProduct: false,
+              loadingOwner: false,
+              NF: true,
+            });
+          }
+        } else {
+          this.setState({
+            product: product,
+            owner: JSON.parse(cardValue2),
+            loadingProduct: false,
+            loadingOwner: false,
+            NF: false,
+            like: auth().currentUser
+              ? product.likes.includes(auth().currentUser.email)
+              : false,
+            save: auth().currentUser
+              ? product.saves.includes(auth().currentUser.email)
+              : false,
+          });
+        }
       } else {
         this.setState({
           product: [],
@@ -112,7 +138,7 @@ export default class Card2 extends React.Component {
               owner.id = owner._id;
               var product = res.data;
               product.id = product._id;
-              if (this.props.location && this.props.location.lat !== '') {
+              if (this.props.location.lat && this.props.location.lat !== '') {
                 const d = this.handleDistance(
                   product.lat,
                   product.long,
@@ -124,13 +150,33 @@ export default class Card2 extends React.Component {
               if (res2.data !== null && res2.data.name) {
                 this.storeData(this.props.item._id + 'product', product);
                 this.storeData(this.props.item._id + 'owner', owner);
-                this.setState({
-                  product: product,
-                  owner: owner,
-                  loadingProduct: false,
-                  loadingOwner: false,
-                  NF: false,
-                });
+                if (this.props.nearby) {
+                  if (product.distance * 1000 < 1501) {
+                    this.setState({
+                      product: product,
+                      owner: owner,
+                      loadingProduct: false,
+                      loadingOwner: false,
+                      NF: false,
+                    });
+                  } else {
+                    this.setState({
+                      product: [],
+                      owner: [],
+                      loadingProduct: false,
+                      loadingOwner: false,
+                      NF: true,
+                    });
+                  }
+                } else {
+                  this.setState({
+                    product: product,
+                    owner: owner,
+                    loadingProduct: false,
+                    loadingOwner: false,
+                    NF: false,
+                  });
+                }
               } else {
                 this.storeData(this.props.item._id + 'product', {});
                 this.storeData(this.props.item._id + 'owner', {});
@@ -189,13 +235,33 @@ export default class Card2 extends React.Component {
             if (res2.data !== null && res2.data.name) {
               this.storeData(this.props.item._id + 'product', product);
               this.storeData(this.props.item._id + 'owner', owner);
-              this.setState({
-                product: product,
-                owner: owner,
-                loadingProduct: false,
-                loadingOwner: false,
-                NF: false,
-              });
+              if (this.props.nearby) {
+                if (product.distance * 1000 < 1501) {
+                  this.setState({
+                    product: product,
+                    owner: owner,
+                    loadingProduct: false,
+                    loadingOwner: false,
+                    NF: false,
+                  });
+                } else {
+                  this.setState({
+                    product: [],
+                    owner: [],
+                    loadingProduct: false,
+                    loadingOwner: false,
+                    NF: true,
+                  });
+                }
+              } else {
+                this.setState({
+                  product: product,
+                  owner: owner,
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: false,
+                });
+              }
             } else {
               this.storeData(this.props.item._id + 'product', {});
               this.storeData(this.props.item._id + 'owner', {});
@@ -224,7 +290,6 @@ export default class Card2 extends React.Component {
             }
           }
         } else {
-          clearInterval(this.inter);
           this.storeData(this.props.item._id + 'product', {});
           this.storeData(this.props.item._id + 'owner', {});
           this.setState({

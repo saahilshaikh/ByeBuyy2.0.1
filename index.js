@@ -13,7 +13,6 @@ function HeadlessCheck({isHeadless}) {
     // App has been launched in the background by iOS, ignore
     return null;
   }
-
   return <App />;
 }
 

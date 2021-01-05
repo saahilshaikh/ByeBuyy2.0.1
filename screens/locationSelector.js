@@ -183,6 +183,17 @@ export default class LocationSelectorScreen extends React.Component {
     this.props.navigation.pop();
   };
 
+  handleNearby = () => {
+    this.props.route.params.handleLocation(
+      this.state.city,
+      this.state.country,
+      this.state.lat,
+      this.state.long,
+      'nearby',
+    );
+    this.props.navigation.pop();
+  };
+
   handleAllLocations = () => {
     this.props.route.params.handleLocation(
       '',
@@ -424,7 +435,7 @@ export default class LocationSelectorScreen extends React.Component {
                           flexDirection: 'row',
                           alignItems: 'center',
                         }}>
-                        <Text style={styles.topic}>Current Location</Text>
+                        <Text style={styles.topic}>Current City</Text>
                         <Ionicons
                           style={{marginLeft: 5}}
                           name="ios-location-outline"
@@ -443,33 +454,58 @@ export default class LocationSelectorScreen extends React.Component {
                       </Text>
                     </TouchableOpacity>
                   ) : null}
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      fontFamily: 'Muli-Bold',
-                      color: colors.baseline,
-                    }}>
-                    Recent Accesed Locations
-                  </Text>
-                  {this.state.recentLocations.map((item) => {
-                    return (
-                      <TouchableOpacity
-                        onPress={() => this.handleLocation(item)}
+                  {this.state.city ? (
+                    <TouchableOpacity
+                      onPress={this.handleNearby}
+                      style={{
+                        marginVertical: 5,
+                      }}>
+                      <View
                         style={{
                           flexDirection: 'row',
                           alignItems: 'center',
-                          marginVertical: 10,
                         }}>
-                        <Text style={styles.topic}>{item}</Text>
+                        <Text style={styles.topic}>Nearby</Text>
                         <Ionicons
                           style={{marginLeft: 5}}
                           name="ios-location-outline"
                           size={20}
                           color={colors.baseline}
                         />
-                      </TouchableOpacity>
-                    );
-                  })}
+                      </View>
+                    </TouchableOpacity>
+                  ) : null}
+                  {this.state.recentLocations.length > 0 ? (
+                    <>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          fontFamily: 'Muli-Bold',
+                          color: colors.baseline,
+                        }}>
+                        Recent Accesed Locations
+                      </Text>
+                      {this.state.recentLocations.map((item) => {
+                        return (
+                          <TouchableOpacity
+                            onPress={() => this.handleLocation(item)}
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginVertical: 10,
+                            }}>
+                            <Text style={styles.topic}>{item}</Text>
+                            <Ionicons
+                              style={{marginLeft: 5}}
+                              name="ios-location-outline"
+                              size={20}
+                              color={colors.baseline}
+                            />
+                          </TouchableOpacity>
+                        );
+                      })}
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </View>

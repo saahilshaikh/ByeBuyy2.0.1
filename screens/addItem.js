@@ -145,6 +145,7 @@ export default class AddItem extends React.Component {
         {label: 'Self help', value: 'Self help'},
         {label: 'Suspense and thriller', value: 'Suspense and thriller'},
       ],
+      value: '0',
     };
   }
 
@@ -433,6 +434,7 @@ export default class AddItem extends React.Component {
           subcategory: this.state.subcategory,
           from: this.state.from,
           to: this.state.to,
+          value: this.state.value,
         };
       } else if (this.state.type === 2) {
         var data = {
@@ -457,6 +459,7 @@ export default class AddItem extends React.Component {
           subcategory: this.state.subcategory,
           from: this.state.from,
           to: this.state.to,
+          value: this.state.value,
         };
       } else {
         var data = {
@@ -481,6 +484,7 @@ export default class AddItem extends React.Component {
           subcategory: this.state.subcategory,
           from: this.state.from,
           to: this.state.to,
+          value: this.state.value,
         };
       }
       const res = await axios.post(link + '/api/postProduct', data);
@@ -777,24 +781,6 @@ export default class AddItem extends React.Component {
                             />
                           </View>
                         </View>
-
-                        {/* <View style={styles.inputGroup3}>
-                              <Text style={styles.inputGroupText}>Quantity</Text>
-                              <View style={{ width: '100%' }}>
-                                <SelectInput
-                                  value={this.state.quantity}
-                                  options={this.state.quantities}
-                                  onCancelEditing={() => console.log('onCancel')}
-                                  onSubmitEditing={(e) => {
-                                    this.setState({
-                                      quantity: e,
-                                    });
-                                  }}
-                                  style={styles.picker}
-                                  labelStyle={{ fontSize: 16, color: '#464646' }}
-                                />
-                              </View>
-                            </View> */}
                       </View>
                       {this.state.category === 'Books' ? (
                         <View
@@ -935,17 +921,31 @@ export default class AddItem extends React.Component {
                           value={this.state.desc}></TextInput>
                       </View>
                       {this.state.type === 1 ? (
-                        <View style={styles.inputGroup}>
-                          <Text style={styles.inputGroupText}>
-                            What do you want to exchange with ?
-                          </Text>
-                          <TextInput
-                            style={styles.input}
-                            autoCapitalize="none"
-                            maxLength={100}
-                            onChangeText={(wye) => this.setState({wye})}
-                            value={this.state.wye}></TextInput>
-                        </View>
+                        <>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              What do you want to exchange with ?
+                            </Text>
+                            <TextInput
+                              style={styles.input}
+                              autoCapitalize="none"
+                              maxLength={100}
+                              onChangeText={(wye) => this.setState({wye})}
+                              value={this.state.wye}></TextInput>
+                          </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              Value of your item ?
+                            </Text>
+                            <TextInput
+                              style={styles.input}
+                              autoCapitalize="none"
+                              maxLength={100}
+                              keyboardType="numeric"
+                              onChangeText={(value) => this.setState({value})}
+                              value={this.state.value}></TextInput>
+                          </View>
+                        </>
                       ) : null}
 
                       {this.state.loadingLocation ? (

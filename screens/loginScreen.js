@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   ScrollView,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -289,19 +290,17 @@ class LoginScreen extends React.Component {
                 <TouchableOpacity
                   style={styles.social}
                   onPress={this.handleFacebook}>
-                  <FontAwesome
-                    name="facebook"
-                    size={24}
-                    style={{color: colors.baseline}}
+                  <Image
+                    style={{width: 42, height: 42}}
+                    source={require('../assets/images/facebook.png')}
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.social}
                   onPress={this.handleGoogle}>
-                  <FontAwesome
-                    name="google"
-                    size={26}
-                    style={{color: colors.baseline}}
+                  <Image
+                    style={{width: 40, height: 40}}
+                    source={require('../assets/images/google.png')}
                   />
                 </TouchableOpacity>
               </View>
@@ -335,14 +334,9 @@ const styles = StyleSheet.create({
     borderColor: colors.baseline,
   },
   social: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 2,
     marginHorizontal: 15,
     justifyContent: 'center',
     alignItems: 'center',
-    borderColor: colors.baseline,
   },
   action: {
     width: 50,

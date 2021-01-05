@@ -13,10 +13,9 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
 import LottieView from 'lottie-react-native';
-import { color } from 'react-native-reanimated';
 import colors from '../appTheme';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 export default class ForgotScreen extends React.Component {
   constructor() {
@@ -85,7 +84,7 @@ export default class ForgotScreen extends React.Component {
             <Ionicons
               name="ios-arrow-back"
               size={40}
-              style={{ color: colors.baseline }}
+              style={{color: colors.baseline}}
             />
           </TouchableOpacity>
           <Text
@@ -98,10 +97,10 @@ export default class ForgotScreen extends React.Component {
             Forgot Password
           </Text>
           {this.state.success ? (
-            <View style={{ width: '100%', alignItems: 'center' }}>
+            <View style={{width: '100%', alignItems: 'center'}}>
               <LottieView
                 source={require('../assets/433-checked-done.json')}
-                style={{ width: 200, height: 200 }}
+                style={{width: 200, height: 200}}
                 autoPlay={true}
                 loop={true}
               />
@@ -122,38 +121,38 @@ export default class ForgotScreen extends React.Component {
               </Text>
             </View>
           ) : (
-              <>
-                <Text style={styles.error}>{this.state.error}</Text>
-                <View style={styles.inputContainer}>
-                  <Text style={styles.inputHeader}>Email</Text>
-                  <TextInput
-                    value={this.state.email}
-                    onChangeText={(text) => {
-                      this.setState({
-                        email: text,
-                      });
-                    }}
-                    onSubmitEditing={this.handleSignIn}
-                    style={styles.input}></TextInput>
-                </View>
-                {this.state.loading ? (
-                  <ActivityIndicator size="large" color={colors.baseline} />
-                ) : (
-                    <TouchableOpacity
-                      onPress={this.handleSignIn}
-                      style={styles.button}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.white,
-                          fontFamily: 'Muli-Bold',
-                        }}>
-                        Reset Password
+            <>
+              <Text style={styles.error}>{this.state.error}</Text>
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputHeader}>Email</Text>
+                <TextInput
+                  value={this.state.email}
+                  onChangeText={(text) => {
+                    this.setState({
+                      email: text,
+                    });
+                  }}
+                  onSubmitEditing={this.handleSignIn}
+                  style={styles.input}></TextInput>
+              </View>
+              {this.state.loading ? (
+                <ActivityIndicator size="large" color={colors.baseline} />
+              ) : (
+                <TouchableOpacity
+                  onPress={this.handleSignIn}
+                  style={styles.button}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.white,
+                      fontFamily: 'Muli-Bold',
+                    }}>
+                    Reset Password
                   </Text>
-                    </TouchableOpacity>
-                  )}
-              </>
-            )}
+                </TouchableOpacity>
+              )}
+            </>
+          )}
         </ScrollView>
       </SafeAreaView>
     );

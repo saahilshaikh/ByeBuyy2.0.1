@@ -27,7 +27,6 @@ import LocationLoadingScreen from './locationLoadingScreen';
 import NetInfo from '@react-native-community/netinfo';
 import auth, {firebase} from '@react-native-firebase/auth';
 import NoInternetScreen from './noInternetScreen';
-import messaging from '@react-native-firebase/messaging';
 import CustomDrawer from '../shared/customDrawer';
 import {CommonActions} from '@react-navigation/native';
 import {GoogleSignin} from '@react-native-community/google-signin';
@@ -46,6 +45,7 @@ import {
   NavigationState,
   SceneRendererProps,
 } from 'react-native-tab-view';
+import Rate, {AndroidMarket} from 'react-native-rate';
 
 type Route = {
   key: string,
@@ -118,6 +118,18 @@ export default class HomeScreen extends React.Component {
   }
 
   async componentDidMount() {
+    // const options = {
+    //   GooglePackageName: 'com.byebuyy',
+    //   preferredAndroidMarket: AndroidMarket.Google,
+    //   preferInApp: false,
+    //   openAppStoreIfInAppFails: true,
+    //   fallbackPlatformURL: 'https://www.byebuyy.com',
+    // };
+    // Rate.rate(options, (success) => {
+    //   if (success) {
+    //     console.log(success);
+    //   }
+    // });
     firestore()
       .collection('settings')
       .onSnapshot((snap) => {
@@ -786,134 +798,6 @@ export default class HomeScreen extends React.Component {
                       renderTabBar={this.renderTabBar}
                       onIndexChange={this.handleIndexChange}
                     />
-                    {/* <View style={styles.tabbar}>
-                      {this.state.tab === 'Posts' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/home.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Posts'})}
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/home.png')}
-                            style={styles.tabImage}
-                          />
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Chat' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/chat.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab2Count > 0 ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab2Count}
-                              </Text>
-                            </View>
-                          ) : null}
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.setState({tab: 'Chat', tab2Count: 0})
-                          }
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/chat.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab2Count > 0 ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab2Count}
-                              </Text>
-                            </View>
-                          ) : null}
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Activity' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/notification.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab3Count > 0 ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab3Count}
-                              </Text>
-                            </View>
-                          ) : null}
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.setState({tab: 'Activity', tab3Count: 0})
-                          }
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/notification.png')}
-                            style={styles.tabImage}
-                          />
-                          {this.state.tab3Count > 0 ? (
-                            <View style={styles.tabCount}>
-                              <Text style={styles.tabCountText}>
-                                {this.state.tab3Count}
-                              </Text>
-                            </View>
-                          ) : null}
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Profile' ? (
-                        <View style={styles.activeTab}>
-                          <Image
-                            source={require('../assets/images/user.png')}
-                            style={styles.tabImage}
-                          />
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Profile'})}
-                          style={styles.tab}>
-                          <Image
-                            source={require('../assets/images/user.png')}
-                            style={styles.tabImage}
-                          />
-                        </TouchableOpacity>
-                      )}
-                    </View> */}
-                    {/* {this.state.tab === 'Posts' ? (
-                      <ProductListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Chat' ? (
-                      <ChatListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                        handleRefreshCount={this.handleChatCount}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Activity' ? (
-                      <NotiListScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                        handleNotiCount={this.handleNotiCount}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Profile' ? (
-                      <ProfileScreen
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null} */}
                     {this.state.showDrawer ? (
                       <View
                         style={{

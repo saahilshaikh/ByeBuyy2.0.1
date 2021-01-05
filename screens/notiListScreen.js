@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   RefreshControl,
+  ScrollView,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import LottieView from 'lottie-react-native';
@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import link from '../fetchPath';
 import axios from 'axios';
 import colors from '../appTheme';
-import {ScrollView} from 'react-native-gesture-handler';
+import Card4 from '../shared/card4';
 
 export default class NotiListScreen extends React.Component {
   inter = null;
@@ -33,6 +33,7 @@ export default class NotiListScreen extends React.Component {
         lat: '',
         long: '',
       },
+      sUsers: [],
     };
   }
 
@@ -90,9 +91,10 @@ export default class NotiListScreen extends React.Component {
           weeklyList.push(item);
         } else if (diffDays > 7 && diffDays <= 30) {
           monthlyList.push(item);
-        } else {
-          earlierList.push(item);
         }
+        //  else {
+        //   earlierList.push(item);
+        // }
       });
       this.setState({
         today: todayList,
@@ -104,6 +106,16 @@ export default class NotiListScreen extends React.Component {
     } else {
       this.setState({
         loading: false,
+      });
+    }
+    var data2 = {
+      email: auth().currentUser.email,
+    };
+    const res2 = await axios.post(link + '/api/suggestedUsers', data2);
+    if (res2.data !== null) {
+      console.log(res2.data);
+      this.setState({
+        sUsers: res2.data,
       });
     }
   };
@@ -120,21 +132,46 @@ export default class NotiListScreen extends React.Component {
     };
     var res = await axios.post(link + '/api/user/singleNoti', data);
     if (res.data !== null) {
-      this.props.handleNotiCount();
-      var notiList = [];
+      var todayList = [];
+      var weeklyList = [];
+      var monthlyList = [];
+      var earlierList = [];
       res.data.map((item) => {
-        if (notiList.length < 10) {
-          notiList.push(item);
+        const diffTime = Math.abs(new Date() - new Date(item.date));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays <= 1) {
+          todayList.push(item);
+        } else if (diffDays > 1 && diffDays <= 7) {
+          weeklyList.push(item);
+        } else if (diffDays > 7 && diffDays <= 30) {
+          monthlyList.push(item);
         }
+        //  else {
+        //   earlierList.push(item);
+        // }
       });
       this.setState({
-        notiList: notiList,
-        acnotiList: res.data,
-        loading: false,
+        today: todayList,
+        weekly: weeklyList,
+        monthly: monthlyList,
+        earlier: earlierList,
         refreshing: false,
+        loading: false,
+      });
+    }
+    var data2 = {
+      email: auth().currentUser.email,
+    };
+    const res2 = await axios.post(link + '/api/suggestedUsers', data2);
+    if (res2.data !== null) {
+      console.log(res2.data);
+      this.setState({
+        sUsers: res2.data,
       });
     }
   };
+
+  handleRefreshSuggested = async () => {};
 
   handleReachedEnd = () => {
     var newnotiList = [];
@@ -267,6 +304,25 @@ export default class NotiListScreen extends React.Component {
                       })}
                     </View>
                   ) : null}
+                  {this.state.sUsers.length > 0 ? (
+                    <View style={styles.suggestedUsers}>
+                      <Text style={styles.suggestedUsersHeader}>
+                        Suggested Users
+                      </Text>
+                      <View style={styles.suggestedUsersList}>
+                        {this.state.sUsers.map((user) => {
+                          return (
+                            <Card4
+                              id={user}
+                              handleRefresh={this.handleRefreshSuggested}
+                              navigation={this.props.navigation}
+                              location={this.props.location}
+                            />
+                          );
+                        })}
+                      </View>
+                    </View>
+                  ) : null}
                   {this.state.monthly.length > 0 ? (
                     <View style={{width: '90%', marginTop: 10}}>
                       <Text style={styles.header}>This Month</Text>
@@ -300,12 +356,13 @@ export default class NotiListScreen extends React.Component {
                     </View>
                   ) : null}
                 </View>
-                {this.state.today.length === 0 &&
+
+                {/* {this.state.today.length === 0 &&
                 this.state.weekly.length === 0 &&
                 this.state.monthly.length === 0 &&
                 this.state.earlier.length === 0 ? (
                   <>{this.renderListEmpty()}</>
-                ) : null}
+                ) : null} */}
               </ScrollView>
             ) : (
               <View style={{width: '100%', alignItems: 'center'}}>
@@ -341,8 +398,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    color: colors.baseline,
-    fontFamily: 'Muli-Regular',
+    color: colors.grey,
+    fontFamily: 'Muli-Bold',
     fontSize: 16,
   },
   imageBox: {
@@ -361,5 +418,15 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontFamily: 'Muli-Bold',
     fontSize: 14,
+  },
+  suggestedUsers: {
+    width: '100%',
+  },
+  suggestedUsersHeader: {
+    color: colors.grey,
+    fontFamily: 'Muli-Bold',
+    fontSize: 16,
+    marginVertical: 10,
+    marginLeft: 20,
   },
 });

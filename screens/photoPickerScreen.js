@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-import CameraRoll from '@react-native-community/cameraroll';
 import Ioniocns from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -30,9 +29,7 @@ export default class PhotoPickerScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
-    // this.handleShowGallery();
-  }
+  componentDidMount() {}
 
   hasAndroidPermission = async () => {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
@@ -44,35 +41,6 @@ export default class PhotoPickerScreen extends React.Component {
 
     const status = await PermissionsAndroid.request(permission);
     return status === 'granted';
-  };
-  handleShowGallery = async () => {
-    console.log('Ran SG');
-    this.setState({
-      sphotos: [],
-    });
-    var per = await this.hasAndroidPermission();
-    if (per) {
-      CameraRoll.getPhotos({
-        first: 10,
-        assetType: 'Photos',
-        groupTypes: 'All',
-      }).then((r) => {
-        var i = 0;
-        r.edges.map((n) => {
-          if (n.node.image.size) {
-            var item = {};
-            item['uri'] = n.node.image.uri;
-            item['file'] = n.node.image;
-            item['selected'] = false;
-            item['key'] = i;
-            this.setState({
-              rphotos: [...this.state.rphotos, item],
-            });
-            i++;
-          }
-        });
-      });
-    }
   };
 
   handleSelect = (e) => {
@@ -112,8 +80,6 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Camera Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openCamera({
-        width: 1500,
-        height: 1500,
         freeStyleCropEnabled: true,
         cropping: true,
         compressImageQuality: 0.8,
@@ -145,8 +111,6 @@ export default class PhotoPickerScreen extends React.Component {
     console.log('Gallery Click');
     if (this.state.sphotos.length + this.state.images.length < this.state.max) {
       ImagePicker.openPicker({
-        width: 1500,
-        height: 1500,
         freeStyleCropEnabled: true,
         cropping: true,
         mediaType: 'photo',
@@ -190,8 +154,6 @@ export default class PhotoPickerScreen extends React.Component {
   };
 
   handleDone = () => {
-    // console.log(this.state.images);
-    // this.props.handleImages(this.state.images);
     this.props.route.params.handleImages(this.state.images);
     this.props.navigation.pop();
   };

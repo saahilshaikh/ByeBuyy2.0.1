@@ -41,12 +41,23 @@ export default class ActivityCard extends React.Component {
     var res2 = await axios.post(link + '/api/user/single', data2);
     if (res.data !== null && res2.data !== null) {
       if (res.data.user !== auth().currentUser.email) {
-        this.setState({
-          data: res.data,
-          loading: false,
-          user: res2.data,
-          hide: false,
-        });
+        var data3 = {
+          id: res.data.id,
+        };
+        var res3 = await axios.post(link + '/api/product/single', data3);
+        if (res3.data.varient) {
+          this.setState({
+            data: res.data,
+            loading: false,
+            user: res2.data,
+            hide: false,
+          });
+        } else {
+          this.setState({
+            loading: false,
+            hide: true,
+          });
+        }
       } else {
         this.setState({
           loading: false,

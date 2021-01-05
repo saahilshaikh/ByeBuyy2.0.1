@@ -17,7 +17,6 @@ import auth from '@react-native-firebase/auth';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import Snackbar from 'react-native-snackbar';
-import Multiline from '../shared/multiLine';
 import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';

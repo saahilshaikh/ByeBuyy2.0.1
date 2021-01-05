@@ -9,7 +9,6 @@ import {
   Image,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
-import {PulseLoader} from 'react-native-indicator';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import colors from '../appTheme';
 

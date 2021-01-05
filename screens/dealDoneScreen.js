@@ -11,7 +11,6 @@ import {
   FlatList,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ScrollView} from 'react-native-gesture-handler';
 import colors from '../appTheme';
 import DealCard from '../shared/dealCard';
 import axios from 'axios';

@@ -27,14 +27,12 @@ import Snackbar from 'react-native-snackbar';
 import DocumentPicker from 'react-native-document-picker';
 import Card3 from '../shared/card3';
 import Moment from 'react-moment';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import LottieView from 'lottie-react-native';
 import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
-import {CameraRoll} from '@react-native-community/cameraroll';
 import Clipboard from '@react-native-community/clipboard';
 import MiniCard from '../shared/mincard';
 
@@ -82,6 +80,7 @@ export default class ChatScreen extends React.PureComponent {
       block: false,
       menu2: false,
       menu3: false,
+      progress: 0,
     };
   }
 
@@ -324,8 +323,11 @@ export default class ChatScreen extends React.PureComponent {
     });
     console.log('Camera Click');
     ImagePicker.openCamera({
-      width: 1500,
-      height: 1500,
+      multiple: false,
+      mediaType: 'photo',
+      cropping: true,
+      freeStyleCropEnabled: true,
+      compressImageQuality: 0.8,
     })
       .then((img) => {
         console.log(img);
@@ -345,10 +347,11 @@ export default class ChatScreen extends React.PureComponent {
     });
     console.log('Gallery Click');
     ImagePicker.openPicker({
-      width: 1500,
-      height: 1500,
       multiple: false,
       mediaType: 'photo',
+      cropping: true,
+      freeStyleCropEnabled: true,
+      compressImageQuality: 0.8,
     })
       .then((item) => {
         console.log(item);
@@ -577,14 +580,25 @@ export default class ChatScreen extends React.PureComponent {
         this.props.route.params.id
       }/${uid}`,
     );
-    await RNFS.readFile(e, 'base64').then(async (result) => {
-      await storageRef.putString(result, 'base64', {
-        contentType: 'jpg',
+    var metadata = {
+      contentType: 'image/jpeg',
+    };
+    var result = await RNFS.readFile(e, 'base64');
+    var uploadTask = storageRef.putString(result, 'base64', metadata);
+    uploadTask.on('state_changed', (snapshot) => {
+      this.setState({
+        progress:
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
       });
     });
-    await storageRef.getDownloadURL().then((url) => {
-      y = url;
-    });
+    try {
+      await uploadTask;
+      await storageRef.getDownloadURL().then((url) => {
+        y = url;
+      });
+    } catch (e) {
+      console.error(e);
+    }
     return y;
   };
 
@@ -646,14 +660,25 @@ export default class ChatScreen extends React.PureComponent {
         this.props.route.params.id
       }/${uid}`,
     );
-    await RNFS.readFile(e, 'base64').then(async (result) => {
-      await storageRef.putString(result, 'base64', {
-        contentType: 'mp4',
+    var metadata = {
+      contentType: 'video/mp4',
+    };
+    var result = await RNFS.readFile(e, 'base64');
+    var uploadTask = storageRef.putString(result, 'base64', metadata);
+    uploadTask.on('state_changed', (snapshot) => {
+      this.setState({
+        progress:
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
       });
     });
-    await storageRef.getDownloadURL().then((url) => {
-      y = url;
-    });
+    try {
+      await uploadTask;
+      await storageRef.getDownloadURL().then((url) => {
+        y = url;
+      });
+    } catch (e) {
+      console.error(e);
+    }
     return y;
   };
 
@@ -715,14 +740,25 @@ export default class ChatScreen extends React.PureComponent {
         this.props.route.params.id
       }/${uid}`,
     );
-    await RNFS.readFile(e, 'base64').then(async (result) => {
-      await storageRef.putString(result, 'base64', {
-        contentType: 'pdf',
+    var metadata = {
+      contentType: 'application/pdf',
+    };
+    var result = await RNFS.readFile(e, 'base64');
+    var uploadTask = storageRef.putString(result, 'base64', metadata);
+    uploadTask.on('state_changed', (snapshot) => {
+      this.setState({
+        progress:
+          Math.round(snapshot.bytesTransferred / snapshot.totalBytes) * 10000,
       });
     });
-    await storageRef.getDownloadURL().then((url) => {
-      y = url;
-    });
+    try {
+      await uploadTask;
+      await storageRef.getDownloadURL().then((url) => {
+        y = url;
+      });
+    } catch (e) {
+      console.error(e);
+    }
     return y;
   };
 
@@ -1061,6 +1097,7 @@ export default class ChatScreen extends React.PureComponent {
             format={this.state.prevFormat}
             url={this.state.prevUrl}
             name={this.state.prevName}
+            progress={this.state.progress}
           />
         ) : null}
       </View>

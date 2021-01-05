@@ -113,14 +113,11 @@ export default class ProductListScreen extends React.Component {
         categories: JSON.parse(catValue),
         categoriesLoading: false,
       });
-      this.handleInit();
-      this.inter = setInterval(() => {
-        this.handleNew();
-      }, 10000);
-    } else {
-      this.handleInit();
     }
-    this.handleNew();
+    this.handleInit();
+    this.inter = setInterval(() => {
+      this.handleNew();
+    }, 10000);
   }
 
   handleMount = async () => {
@@ -312,6 +309,21 @@ export default class ProductListScreen extends React.Component {
             this.handleCategory('All');
           },
         );
+      } else if (type === 'nearby') {
+        var location = {
+          lat: lat,
+          long: long,
+        };
+        this.setState(
+          {
+            current: city + ',' + country,
+            location: location,
+            locationType: 'Nearby',
+          },
+          () => {
+            this.handleCategory('All');
+          },
+        );
       } else if (type === 'home') {
         var location = {
           lat: lat,
@@ -384,9 +396,6 @@ export default class ProductListScreen extends React.Component {
         loc: this.state.current,
       };
       var res = await axios.post(link + '/api/showProducts10/filter', data);
-      res.data.map((item) => {
-        console.log(item.city);
-      });
       if (res.data) {
         this.setState({
           products: res.data,
@@ -519,10 +528,22 @@ export default class ProductListScreen extends React.Component {
               borderRadius: 5,
             }}
             onPress={this.toggleModal}>
+            <Text
+              style={{
+                fontFamily: 'Muli-Bold',
+                color: colors.white,
+                fontSize: 14,
+                marginRight: 5,
+              }}>
+              {this.state.showMode === 'A' ? 'Show All' : null}
+              {this.state.showMode === 'P' ? 'Show Products' : null}
+              {this.state.showMode === 'R' ? 'Show Requests' : null}
+            </Text>
             <MaterialCommunityIcons
               name="filter-menu"
-              size={22}
+              size={16}
               color={colors.white}
+              style={{marginTop: 2}}
             />
           </TouchableOpacity>
         </View>
@@ -671,7 +692,7 @@ export default class ProductListScreen extends React.Component {
   };
 
   render() {
-    const keyExtractor = (item, index) => index.toString();
+    const keyExtractor = (item, index) => item._id.toString();
     return (
       <View style={styles.container}>
         <View style={styles.list}>
@@ -733,6 +754,7 @@ export default class ProductListScreen extends React.Component {
                             item={item}
                             location={this.state.location}
                             navigation={this.props.navigation}
+                            nearby={this.state.locationType === 'Nearby'}
                           />
                         ) : (
                           <>
@@ -745,6 +767,7 @@ export default class ProductListScreen extends React.Component {
                                 item={item}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
+                                nearby={this.state.locationType === 'Nearby'}
                               />
                             ) : null}
                           </>
@@ -762,6 +785,7 @@ export default class ProductListScreen extends React.Component {
                             item={item}
                             location={this.state.location}
                             navigation={this.props.navigation}
+                            nearby={this.state.locationType === 'Nearby'}
                           />
                         ) : (
                           <>
@@ -774,6 +798,7 @@ export default class ProductListScreen extends React.Component {
                                 item={item}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
+                                nearby={this.state.locationType === 'Nearby'}
                               />
                             ) : null}
                           </>

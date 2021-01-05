@@ -70,7 +70,7 @@ class LocalNotificationService {
       id: id,
       autoCancel: true,
       largeIcon: options.largeIcon || 'ic_launcher',
-      smallIcon: options.smallIcon || 'ic_notification',
+      smallIcon: options.smallIcon || 'ic_launcher',
       bigText: message || '',
       subText: title || '',
       vibrate: options.vibrate || true,

@@ -305,8 +305,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 10,
-
-    backgroundColor: colors.secondary,
+    backgroundColor: '#282828',
     marginVertical: 5,
     borderRadius: 10,
     elevation: 3,
@@ -316,7 +315,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 10,
-    backgroundColor: colors.darkText,
+    backgroundColor: colors.secondary,
     marginVertical: 5,
     borderRadius: 10,
     elevation: 3,

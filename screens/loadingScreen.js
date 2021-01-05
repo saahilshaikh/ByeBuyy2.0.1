@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
-import {PulseLoader} from 'react-native-indicator';
 
 const {width, height} = Dimensions.get('window');
 

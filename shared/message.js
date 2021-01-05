@@ -16,6 +16,7 @@ import MiniCard from './mincard';
 import MiniCard2 from './minicard2';
 import colors from '../appTheme';
 import Modal from 'react-native-modal';
+import * as Progress from 'react-native-progress';
 
 const {width, height} = Dimensions.get('window');
 
@@ -188,7 +189,7 @@ class Message extends React.Component {
                   style={styles.down}
                   onPress={() => {
                     if (this.props.format === 'attach-photo') {
-                      this.props.saveToGallery(this.props.url, '.jpg');
+                      this.props.saveToGallery(this.props.url, '.jpeg');
                     } else if (this.props.format === 'attach-video') {
                       this.props.saveToGallery(this.props.url, this.props.name);
                     } else if (this.props.format === 'attach-doc') {
@@ -212,26 +213,11 @@ class Message extends React.Component {
                   justifyContent: 'space-between',
                 }}>
                 {this.props.loading ? (
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      fontFamily: 'Muli-Regular',
-                      color: this.props.type ? colors.white : colors.secondary,
-                    }}>
-                    <Ionicons
-                      name="ios-time-outline"
-                      size={16}
-                      style={{
-                        color: this.props.type
-                          ? colors.white
-                          : colors.secondary,
-                        marginRight: 10,
-                      }}
-                    />{' '}
-                    <Moment element={Text} format="MMMM Do YYYY, h:mm a">
-                      {new Date()}
-                    </Moment>
-                  </Text>
+                  <Progress.Pie
+                    progress={this.props.progress / 100}
+                    size={15}
+                    color="#d65a31"
+                  />
                 ) : (
                   <Text
                     style={{
@@ -244,21 +230,27 @@ class Message extends React.Component {
                     </Moment>
                   </Text>
                 )}
-                {this.props.read ? (
-                  <Ionicons
-                    name="checkmark"
-                    size={16}
-                    color="#d65a31"
-                    style={{marginLeft: 5}}
-                  />
-                ) : (
-                  <Ionicons
-                    name="checkmark"
-                    size={16}
-                    color={colors.grey}
-                    style={{marginLeft: 5}}
-                  />
-                )}
+                <>
+                  {this.props.read ? (
+                    <>
+                      {this.props.read === true ? (
+                        <Ionicons
+                          name="checkmark"
+                          size={16}
+                          color="#d65a31"
+                          style={{marginLeft: 5}}
+                        />
+                      ) : (
+                        <Ionicons
+                          name="checkmark"
+                          size={16}
+                          color={colors.grey}
+                          style={{marginLeft: 5}}
+                        />
+                      )}
+                    </>
+                  ) : null}
+                </>
               </View>
             </TouchableOpacity>
             <View

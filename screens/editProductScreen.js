@@ -138,6 +138,7 @@ export default class EditProductScreen extends React.Component {
         {label: 'Self help', value: 'Self help'},
         {label: 'Suspense and thriller', value: 'Suspense and thriller'},
       ],
+      value: '0',
     };
   }
 
@@ -197,6 +198,7 @@ export default class EditProductScreen extends React.Component {
         subcategory: res2.data.subcategory,
         from: new Date(res2.data.from),
         to: new Date(res2.data.to),
+        value: res.data.value ? res.data.value : '0',
       });
       var minDate2 = res2.data.share_till ? res2.data.share_till : new Date();
       var maxDate2 = minDate2;
@@ -484,6 +486,7 @@ export default class EditProductScreen extends React.Component {
         subcategory: this.state.subcategory,
         from: this.state.from,
         to: this.state.to,
+        value: this.state.value,
       };
       var res = await axios.post(link + '/api/updateProduct', data);
       if (res.data !== null) {
@@ -879,17 +882,33 @@ export default class EditProductScreen extends React.Component {
                               value={this.state.desc}></TextInput>
                           </View>
                           {this.state.type === 'exchange' ? (
-                            <View style={styles.inputGroup}>
-                              <Text style={styles.inputGroupText}>
-                                What do you want to exchange with ?
-                              </Text>
-                              <TextInput
-                                style={styles.input}
-                                autoCapitalize="none"
-                                maxLength={100}
-                                onChangeText={(wye) => this.setState({wye})}
-                                value={this.state.wye}></TextInput>
-                            </View>
+                            <>
+                              <View style={styles.inputGroup}>
+                                <Text style={styles.inputGroupText}>
+                                  What do you want to exchange with ?
+                                </Text>
+                                <TextInput
+                                  style={styles.input}
+                                  autoCapitalize="none"
+                                  maxLength={100}
+                                  onChangeText={(wye) => this.setState({wye})}
+                                  value={this.state.wye}></TextInput>
+                              </View>
+                              <View style={styles.inputGroup}>
+                                <Text style={styles.inputGroupText}>
+                                  Value of your item ?
+                                </Text>
+                                <TextInput
+                                  style={styles.input}
+                                  autoCapitalize="none"
+                                  maxLength={100}
+                                  keyboardType="numeric"
+                                  onChangeText={(value) =>
+                                    this.setState({value})
+                                  }
+                                  value={this.state.value}></TextInput>
+                              </View>
+                            </>
                           ) : null}
 
                           {this.state.type === 'lend' ? (

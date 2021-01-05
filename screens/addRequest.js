@@ -17,7 +17,6 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
 var RNFS = require('react-native-fs');
 import Snackbar from 'react-native-snackbar';
 import LottieView from 'lottie-react-native';

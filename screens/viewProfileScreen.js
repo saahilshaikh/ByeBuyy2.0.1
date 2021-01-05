@@ -360,19 +360,19 @@ export default class ViewProfileScreen extends React.Component {
                 {this.state.sameList && this.state.sameList.length > 0 ? (
                   <TouchableOpacity
                     onPress={this.handleShowOthers}
-                    style={{width: '90%'}}>
+                    style={{
+                      width: '90%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginVertical: 5,
+                    }}>
+                    <Text style={styles.followedText}>Followed by </Text>
+                    <ShowSimilar
+                      navigation={this.props.navigation}
+                      sameList={this.state.sameList}
+                    />
                     <Text style={styles.followedText}>
-                      Followed by{' '}
-                      <ShowSimilar
-                        navigation={this.props.navigation}
-                        sameList={this.state.sameList}
-                      />{' '}
-                      {this.state.sameList.length - 1 > 0
-                        ? 'and ' +
-                          (this.state.sameList.length - 1 > 1
-                            ? this.state.sameList.length - 1 + ' others'
-                            : this.state.sameList.length - 1 + ' other')
-                        : null}
+                      {this.state.sameList.length - 5 > 0 ? '+' : null}
                     </Text>
                   </TouchableOpacity>
                 ) : null}

@@ -29,6 +29,8 @@ import ImageView from 'react-native-image-viewing';
 import Card3 from './card3';
 import CountDownTimer from 'react-native-countdown-timer-hooks';
 
+import {Grayscale} from 'react-native-color-matrix-image-filters';
+
 const {width, height} = Dimensions.get('window');
 
 export default class Card extends React.Component {
@@ -77,21 +79,45 @@ export default class Card extends React.Component {
         var d2 = Math.floor(
           (new Date(product.from).getTime() - new Date().getTime()) / 1000,
         );
-        this.setState({
-          product: product,
-          owner: JSON.parse(cardValue2),
-          loadingProduct: false,
-          loadingOwner: false,
-          NF: false,
-          showExpired: d < 0 ? true : false,
-          showTimer: d2 > 0 ? true : false,
-          like: auth().currentUser
-            ? product.likes.includes(auth().currentUser.email)
-            : false,
-          save: auth().currentUser
-            ? product.saves.includes(auth().currentUser.email)
-            : false,
-        });
+        if (this.props.nearby) {
+          if (product.distance * 1000 < 1501) {
+            this.setState({
+              product: product,
+              owner: JSON.parse(cardValue2),
+              loadingProduct: false,
+              loadingOwner: false,
+              NF: false,
+              like: auth().currentUser
+                ? product.likes.includes(auth().currentUser.email)
+                : false,
+              save: auth().currentUser
+                ? product.saves.includes(auth().currentUser.email)
+                : false,
+            });
+          } else {
+            this.setState({
+              product: [],
+              owner: [],
+              loadingProduct: false,
+              loadingOwner: false,
+              NF: true,
+            });
+          }
+        } else {
+          this.setState({
+            product: product,
+            owner: JSON.parse(cardValue2),
+            loadingProduct: false,
+            loadingOwner: false,
+            NF: false,
+            like: auth().currentUser
+              ? product.likes.includes(auth().currentUser.email)
+              : false,
+            save: auth().currentUser
+              ? product.saves.includes(auth().currentUser.email)
+              : false,
+          });
+        }
       } else {
         this.setState({
           product: [],
@@ -156,14 +182,36 @@ export default class Card extends React.Component {
                   1000,
               );
               this.setState({
-                product: product,
-                owner: owner,
-                loadingProduct: false,
-                loadingOwner: false,
-                NF: false,
                 showExpired: d < 0 ? true : false,
                 showTimer: d2 > 0 ? true : false,
               });
+              if (this.props.nearby) {
+                if (product.distance * 1000 < 1501) {
+                  this.setState({
+                    product: product,
+                    owner: owner,
+                    loadingProduct: false,
+                    loadingOwner: false,
+                    NF: false,
+                  });
+                } else {
+                  this.setState({
+                    product: [],
+                    owner: [],
+                    loadingProduct: false,
+                    loadingOwner: false,
+                    NF: true,
+                  });
+                }
+              } else {
+                this.setState({
+                  product: product,
+                  owner: owner,
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: false,
+                });
+              }
             } else {
               this.storeData(this.props.item._id + 'product', {});
               this.storeData(this.props.item._id + 'owner', {});
@@ -233,13 +281,43 @@ export default class Card extends React.Component {
           if (res2.data !== null && res2.data.name) {
             this.storeData(this.props.item._id + 'product', product);
             this.storeData(this.props.item._id + 'owner', owner);
+            var d = Math.floor(
+              (new Date(product.to).getTime() - new Date().getTime()) / 1000,
+            );
+            var d2 = Math.floor(
+              (new Date(product.from).getTime() - new Date().getTime()) / 1000,
+            );
             this.setState({
-              product: product,
-              owner: owner,
-              loadingProduct: false,
-              loadingOwner: false,
-              NF: false,
+              showExpired: d < 0 ? true : false,
+              showTimer: d2 > 0 ? true : false,
             });
+            if (this.props.nearby) {
+              if (product.distance * 1000 < 1501) {
+                this.setState({
+                  product: product,
+                  owner: owner,
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: false,
+                });
+              } else {
+                this.setState({
+                  product: [],
+                  owner: [],
+                  loadingProduct: false,
+                  loadingOwner: false,
+                  NF: true,
+                });
+              }
+            } else {
+              this.setState({
+                product: product,
+                owner: owner,
+                loadingProduct: false,
+                loadingOwner: false,
+                NF: false,
+              });
+            }
           } else {
             this.storeData(this.props.item._id + 'product', {});
             this.storeData(this.props.item._id + 'owner', {});
@@ -820,10 +898,21 @@ export default class Card extends React.Component {
                             }
                             style={styles.profileBox}>
                             {this.state.owner.photo ? (
-                              <Image
-                                source={{uri: this.state.owner.photo}}
-                                style={styles.profileImage}
-                              />
+                              <>
+                                {this.state.product.quantity === 0 ? (
+                                  <Grayscale>
+                                    <Image
+                                      source={{uri: this.state.owner.photo}}
+                                      style={styles.profileImage}
+                                    />
+                                  </Grayscale>
+                                ) : (
+                                  <Image
+                                    source={{uri: this.state.owner.photo}}
+                                    style={styles.profileImage}
+                                  />
+                                )}
+                              </>
                             ) : (
                               <View style={styles.profileImageBox}>
                                 <Text style={styles.imageText}>
@@ -1007,7 +1096,11 @@ export default class Card extends React.Component {
                                   }}>
                                   <Ionicons
                                     name="ios-navigate"
-                                    color={colors.baseline}
+                                    color={
+                                      this.state.product.quantity === 0
+                                        ? colors.grey
+                                        : colors.baseline
+                                    }
                                     size={14}
                                     style={{marginRight: 5}}
                                   />
@@ -1025,6 +1118,33 @@ export default class Card extends React.Component {
                             </>
                           ) : null}
                         </View>
+                        {this.state.product.type === 'exchange' &&
+                        this.state.product.value ? (
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginVertical: 5,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: 'Muli-Regular',
+                                color: colors.white,
+                                fontSize: 16,
+                                marginRight: 5,
+                              }}>
+                              Value :
+                            </Text>
+                            <Text
+                              style={{
+                                fontFamily: 'Muli-Regular',
+                                color: colors.baseline,
+                                fontSize: 16,
+                              }}>
+                              &#x20b9; {this.state.product.value}
+                            </Text>
+                          </View>
+                        ) : null}
                         <Text style={styles.title}>
                           Ready to {this.state.product.type}{' '}
                           {this.state.product.what}{' '}
@@ -1207,7 +1327,16 @@ export default class Card extends React.Component {
                           onPress={() =>
                             this.setState({viewmore: !this.state.viewmore})
                           }>
-                          <Text style={styles.viewMoreText}>
+                          <Text
+                            style={[
+                              styles.viewMoreText,
+                              {
+                                color:
+                                  this.state.product.quantity === 0
+                                    ? '#e5e5e5'
+                                    : colors.baseline,
+                              },
+                            ]}>
                             {this.state.viewmore ? 'view less' : 'view more'}
                           </Text>
                         </TouchableOpacity>
@@ -1220,20 +1349,41 @@ export default class Card extends React.Component {
                           <>
                             {this.state.product.images.map((image, index) => {
                               return (
-                                <TouchableOpacity
-                                  onPress={() =>
-                                    this.handleCardImageClick(
-                                      this.state.product.images,
-                                      image.index,
-                                    )
-                                  }
-                                  key={index}
-                                  style={styles.imageBox}>
-                                  <Image
-                                    source={{uri: image.image}}
-                                    style={styles.imageBox}
-                                  />
-                                </TouchableOpacity>
+                                <>
+                                  {this.state.product.quantity === 0 ? (
+                                    <Grayscale>
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          this.handleCardImageClick(
+                                            this.state.product.images,
+                                            image.index,
+                                          )
+                                        }
+                                        key={index}
+                                        style={styles.imageBox}>
+                                        <Image
+                                          source={{uri: image.image}}
+                                          style={styles.imageBox}
+                                        />
+                                      </TouchableOpacity>
+                                    </Grayscale>
+                                  ) : (
+                                    <TouchableOpacity
+                                      onPress={() =>
+                                        this.handleCardImageClick(
+                                          this.state.product.images,
+                                          image.index,
+                                        )
+                                      }
+                                      key={index}
+                                      style={styles.imageBox}>
+                                      <Image
+                                        source={{uri: image.image}}
+                                        style={styles.imageBox}
+                                      />
+                                    </TouchableOpacity>
+                                  )}
+                                </>
                               );
                             })}
                           </>
@@ -1257,12 +1407,23 @@ export default class Card extends React.Component {
                                   )
                                 }
                                 style={styles.imageBoxOne}>
-                                <Image
-                                  source={{
-                                    uri: this.state.product.images[0].image,
-                                  }}
-                                  style={styles.imageBoxOne}
-                                />
+                                {this.state.product.quantity === 0 ? (
+                                  <Grayscale>
+                                    <Image
+                                      source={{
+                                        uri: this.state.product.images[0].image,
+                                      }}
+                                      style={styles.imageBoxOne}
+                                    />
+                                  </Grayscale>
+                                ) : (
+                                  <Image
+                                    source={{
+                                      uri: this.state.product.images[0].image,
+                                    }}
+                                    style={styles.imageBoxOne}
+                                  />
+                                )}
                               </TouchableOpacity>
                             )}
                           </>
@@ -1346,8 +1507,6 @@ export default class Card extends React.Component {
                       </View>
                       <View
                         style={{
-                          width: 40,
-                          height: 40,
                           alignItems: 'center',
                           justifyContent: 'center',
                         }}>
@@ -1356,44 +1515,56 @@ export default class Card extends React.Component {
                             {auth().currentUser.email !==
                             this.state.owner.email ? (
                               <View style={styles.requestContainer}>
-                                <TouchableOpacity
-                                  onPress={this.handleRequest}
-                                  style={{
-                                    flexDirection: 'row',
-                                    height: 40,
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                  }}>
-                                  <MaterialCommunityIcons
-                                    name="message-processing-outline"
-                                    size={28}
-                                    color={colors.grey}
-                                  />
-                                </TouchableOpacity>
-                                {this.state.product.quantity === 0 ? (
-                                  <View style={styles.crossbar}></View>
+                                {this.state.product.quantity !== 0 ? (
+                                  <TouchableOpacity
+                                    onPress={this.handleRequest}
+                                    style={{
+                                      flexDirection: 'row',
+                                      paddingVertical: 6,
+                                      paddingHorizontal: 8,
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      marginRight: 10,
+                                      borderRadius: 5,
+                                      backgroundColor: colors.baseline,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        fontFamily: 'Muli-Bold',
+                                        fontSize: 14,
+                                        color: colors.white,
+                                      }}>
+                                      Request
+                                    </Text>
+                                  </TouchableOpacity>
                                 ) : null}
                               </View>
                             ) : null}
                           </>
                         ) : (
                           <View style={styles.requestContainer}>
-                            <TouchableOpacity
-                              onPress={this.handleRequest}
-                              style={{
-                                flexDirection: 'row',
-                                height: 40,
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                              }}>
-                              <MaterialCommunityIcons
-                                name="message-processing-outline"
-                                size={28}
-                                color={colors.grey}
-                              />
-                            </TouchableOpacity>
-                            {this.state.product.quantity === 0 ? (
-                              <View style={styles.crossbar}></View>
+                            {this.state.product.quantity !== 0 ? (
+                              <TouchableOpacity
+                                onPress={this.handleRequest}
+                                style={{
+                                  flexDirection: 'row',
+                                  paddingVertical: 6,
+                                  paddingHorizontal: 8,
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  marginRight: 10,
+                                  borderRadius: 5,
+                                  backgroundColor: colors.baseline,
+                                }}>
+                                <Text
+                                  style={{
+                                    fontFamily: 'Muli-Bold',
+                                    fontSize: 14,
+                                    color: colors.white,
+                                  }}>
+                                  Request
+                                </Text>
+                              </TouchableOpacity>
                             ) : null}
                           </View>
                         )}
@@ -1951,12 +2122,6 @@ export default class Card extends React.Component {
                     style={styles.requestButton}
                     onPress={this.handleRequestProduct}>
                     <Text style={styles.requestButtonText}>Request</Text>
-                    <Ionicons
-                      name="ios-chatbubble-ellipses"
-                      size={20}
-                      color={colors.white}
-                      style={{marginLeft: 5}}
-                    />
                   </TouchableOpacity>
                 </View>
               </View>
@@ -2062,7 +2227,7 @@ const styles = StyleSheet.create({
   itemInActive: {
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#464646',
+    backgroundColor: '#282828',
     justifyContent: 'space-between',
     elevation: 3,
     borderRadius: 10,
@@ -2182,8 +2347,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   imageBoxOne: {
-    width: width - 60,
-    height: width - 60,
+    width: width - 52,
+    height: width - 52,
     borderRadius: 5,
     position: 'relative',
   },
@@ -2286,8 +2451,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 40,
-    height: 40,
   },
   crossbar: {
     position: 'absolute',
