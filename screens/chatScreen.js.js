@@ -38,7 +38,7 @@ import MiniCard from '../shared/mincard';
 
 var RNFS = require('react-native-fs');
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 var mode = 'date';
 export default class ChatScreen extends React.PureComponent {
@@ -142,7 +142,7 @@ export default class ChatScreen extends React.PureComponent {
         if (res2.data !== null && res2.data.name) {
           this.storeData(this.props.route.params.id + 'chat', res.data);
           this.storeData(this.props.route.params.id + 'user', res2.data);
-          this.flatList.scrollToEnd({animated: true});
+          this.flatList.scrollToEnd({ animated: true });
           this.setState({
             user: res2.data,
             chat: res.data,
@@ -507,7 +507,7 @@ export default class ChatScreen extends React.PureComponent {
           },
           async () => {
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            this.flatList.scrollToEnd({ animated: true });
           },
         );
         var data2 = {
@@ -516,9 +516,7 @@ export default class ChatScreen extends React.PureComponent {
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
-        if (res2.data.type === 'success') {
-          console.log('Ordered Chat');
-        }
+        console.log(data2);
       }
     }
   };
@@ -555,7 +553,7 @@ export default class ChatScreen extends React.PureComponent {
           },
           async () => {
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            this.flatList.scrollToEnd({ animated: true });
           },
         );
         var data2 = {
@@ -576,8 +574,7 @@ export default class ChatScreen extends React.PureComponent {
     var y;
     var uid = await UUIDGenerator.getRandomUUID();
     var storageRef = storage().ref(
-      `users/${auth().currentUser.email}/chats/${
-        this.props.route.params.id
+      `users/${auth().currentUser.email}/chats/${this.props.route.params.id
       }/${uid}`,
     );
     var metadata = {
@@ -635,7 +632,7 @@ export default class ChatScreen extends React.PureComponent {
           },
           async () => {
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            this.flatList.scrollToEnd({ animated: true });
           },
         );
         var data2 = {
@@ -656,8 +653,7 @@ export default class ChatScreen extends React.PureComponent {
     var y;
     var uid = await UUIDGenerator.getRandomUUID();
     var storageRef = storage().ref(
-      `users/${auth().currentUser.email}/chats/${
-        this.props.route.params.id
+      `users/${auth().currentUser.email}/chats/${this.props.route.params.id
       }/${uid}`,
     );
     var metadata = {
@@ -715,7 +711,7 @@ export default class ChatScreen extends React.PureComponent {
           },
           async () => {
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            this.flatList.scrollToEnd({ animated: true });
           },
         );
         var data2 = {
@@ -736,8 +732,7 @@ export default class ChatScreen extends React.PureComponent {
     var y;
     var uid = await UUIDGenerator.getRandomUUID();
     var storageRef = storage().ref(
-      `users/${auth().currentUser.email}/chats/${
-        this.props.route.params.id
+      `users/${auth().currentUser.email}/chats/${this.props.route.params.id
       }/${uid}`,
     );
     var metadata = {
@@ -1084,7 +1079,7 @@ export default class ChatScreen extends React.PureComponent {
 
   renderFooter = () => {
     return (
-      <View style={{width: '100%'}}>
+      <View style={{ width: '100%' }}>
         {this.state.sending ? (
           <Message
             navigation={this.props.navigation}
@@ -1153,7 +1148,7 @@ export default class ChatScreen extends React.PureComponent {
               source={require('../assets/chatload.json')}
               autoPlay={true}
               loop={true}
-              style={{width: 250, height: 250}}
+              style={{ width: 250, height: 250 }}
             />
             <Text
               style={{
@@ -1177,46 +1172,134 @@ export default class ChatScreen extends React.PureComponent {
               <Ionicons
                 name="ios-close"
                 size={30}
-                style={{color: colors.white, marginRight: 10}}
+                style={{ color: colors.white, marginRight: 10 }}
               />
-              <Text style={{fontSize: 16, color: colors.white}}>
+              <Text style={{ fontSize: 16, color: colors.white }}>
                 Close Chat
               </Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <View style={{width: '100%', flex: 1}}>
-            <View
-              style={{
-                backgroundColor: colors.secondary,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                width: '100%',
-              }}>
+            <View style={{ width: '100%', flex: 1 }}>
               <View
                 style={{
+                  backgroundColor: colors.secondary,
+                  paddingHorizontal: 10,
+                  paddingVertical: 10,
                   flexDirection: 'row',
                   alignItems: 'center',
+                  justifyContent: 'space-between',
+                  width: '100%',
                 }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.headerIcon}
+                    onPress={() => this.props.navigation.pop()}>
+                    <Ionicons name="ios-close" size={30} color={colors.grey} />
+                  </TouchableOpacity>
+                  {this.state.loading ? (
+                    <View
+                      style={{
+                        width: '60%',
+                        paddingHorizontal: 5,
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderRadius: 5,
+                      }}>
+                      <SkeletonContent
+                        containerStyle={{ width: '100%' }}
+                        boneColor={colors.primary}
+                        highlightColor={colors.darkText}
+                        isLoading={
+                          this.state.loadingProduct || this.state.loadingOwner
+                        }
+                        layout={[
+                          {
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            children: [
+                              {
+                                width: 40,
+                                height: 40,
+                                marginRight: 10,
+                                borderRadius: 20,
+                              },
+                              {
+                                width: 150,
+                                height: 20,
+                              },
+                            ],
+                          },
+                        ]}></SkeletonContent>
+                    </View>
+                  ) : (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <View
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            backgroundColor: colors.grey,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginLeft: 5,
+                          }}>
+                          {this.state.user.photo ? (
+                            <Image
+                              source={{ uri: this.state.user.photo }}
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                backgroundColor: colors.grey,
+                              }}
+                            />
+                          ) : (
+                              <Text style={styles.imageText}>
+                                {this.state.user.name.charAt(0).toUpperCase()}
+                              </Text>
+                            )}
+                        </View>
+                        <View>
+                          <Text style={styles.header}>{this.state.user.name}</Text>
+                          {this.state.user.active && !this.state.user.logout ? (
+                            <Text style={styles.headerStatus}>Online</Text>
+                          ) : null}
+                        </View>
+                      </View>
+                    )}
+                </View>
                 <TouchableOpacity
-                  style={styles.headerIcon}
-                  onPress={() => this.props.navigation.pop()}>
-                  <Ionicons name="ios-close" size={30} color={colors.grey} />
+                  onPress={this.handleMenu}
+                  style={styles.headerIcon}>
+                  <Ionicons
+                    name="ios-ellipsis-vertical-outline"
+                    size={26}
+                    color={colors.grey}
+                  />
                 </TouchableOpacity>
+              </View>
+              <View style={{ width: '100%', flex: 1, marginVertical: 2 }}>
                 {this.state.loading ? (
                   <View
                     style={{
-                      width: '60%',
-                      paddingHorizontal: 5,
+                      width: '100%',
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       borderRadius: 5,
+                      marginTop: 10,
                     }}>
                     <SkeletonContent
-                      containerStyle={{width: '100%'}}
+                      containerStyle={{ width: '100%', alignItems: 'center' }}
                       boneColor={colors.primary}
                       highlightColor={colors.darkText}
                       isLoading={
@@ -1224,1319 +1307,1305 @@ export default class ChatScreen extends React.PureComponent {
                       }
                       layout={[
                         {
+                          width: '95%',
                           flexDirection: 'row',
                           alignItems: 'center',
                           children: [
                             {
-                              width: 40,
-                              height: 40,
-                              marginRight: 10,
-                              borderRadius: 20,
+                              width: 120,
+                              height: 50,
                             },
+                          ],
+                        },
+                        {
+                          width: '95%',
+                          justifyContent: 'flex-end',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          marginTop: 10,
+                          children: [
                             {
-                              width: 150,
-                              height: 20,
+                              width: 120,
+                              height: 50,
                             },
                           ],
                         },
                       ]}></SkeletonContent>
                   </View>
                 ) : (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <View
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        backgroundColor: colors.grey,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        marginLeft: 5,
-                      }}>
-                      {this.state.user.photo ? (
-                        <Image
-                          source={{uri: this.state.user.photo}}
-                          style={{
-                            width: 40,
-                            height: 40,
-                            borderRadius: 20,
-                            backgroundColor: colors.grey,
-                          }}
-                        />
-                      ) : (
-                        <Text style={styles.imageText}>
-                          {this.state.user.name.charAt(0).toUpperCase()}
-                        </Text>
-                      )}
-                    </View>
-                    <View>
-                      <Text style={styles.header}>{this.state.user.name}</Text>
-                      {this.state.user.active && !this.state.user.logout ? (
-                        <Text style={styles.headerStatus}>Online</Text>
-                      ) : null}
-                    </View>
-                  </View>
-                )}
-              </View>
-              <TouchableOpacity
-                onPress={this.handleMenu}
-                style={styles.headerIcon}>
-                <Ionicons
-                  name="ios-ellipsis-vertical-outline"
-                  size={26}
-                  color={colors.grey}
-                />
-              </TouchableOpacity>
-            </View>
-            <View style={{width: '100%', flex: 1, marginVertical: 2}}>
-              {this.state.loading ? (
-                <View
-                  style={{
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    borderRadius: 5,
-                    marginTop: 10,
-                  }}>
-                  <SkeletonContent
-                    containerStyle={{width: '100%', alignItems: 'center'}}
-                    boneColor={colors.primary}
-                    highlightColor={colors.darkText}
-                    isLoading={
-                      this.state.loadingProduct || this.state.loadingOwner
-                    }
-                    layout={[
-                      {
-                        width: '95%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        children: [
-                          {
-                            width: 120,
-                            height: 50,
-                          },
-                        ],
-                      },
-                      {
-                        width: '95%',
-                        justifyContent: 'flex-end',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        marginTop: 10,
-                        children: [
-                          {
-                            width: 120,
-                            height: 50,
-                          },
-                        ],
-                      },
-                    ]}></SkeletonContent>
-                </View>
-              ) : (
-                <View style={styles.list}>
-                  <FlatList
-                    ListFooterComponent={this.renderFooter}
-                    initialNumToRender={500}
-                    ref={(ref) => (this.flatList = ref)}
-                    style={{width: '100%', flex: 1}}
-                    data={this.state.chat.messages}
-                    windowSize={10}
-                    keyExtractor={(item, index) => index.toString()}
-                    contentContainerStyle={{
-                      flexGrow: 1,
-                      justifyContent: 'flex-end',
-                    }}
-                    renderItem={({item, index}) => {
-                      if (
-                        Math.floor(
-                          (new Date(
-                            this.state.chat[
-                              'clear' +
+                    <View style={styles.list}>
+                      <FlatList
+                        ListFooterComponent={this.renderFooter}
+                        initialNumToRender={500}
+                        ref={(ref) => (this.flatList = ref)}
+                        style={{ width: '100%', flex: 1 }}
+                        data={this.state.chat.messages}
+                        windowSize={10}
+                        keyExtractor={(item, index) => index.toString()}
+                        contentContainerStyle={{
+                          flexGrow: 1,
+                          justifyContent: 'flex-end',
+                        }}
+                        renderItem={({ item, index }) => {
+                          if (
+                            Math.floor(
+                              (new Date(
+                                this.state.chat[
+                                'clear' +
                                 (this.state.chat.participants.indexOf(
                                   auth().currentUser.email,
                                 ) +
                                   1)
-                            ],
-                          ).getTime() -
-                            new Date(item.date).getTime()) /
-                            1000,
-                        ) < 0
-                      ) {
-                        if (
-                          item.format !== 'deal-done' &&
-                          item.format !== 'accept' &&
-                          item.format !== 'reject' &&
-                          item.format !== 'meeting' &&
-                          item.hide
-                            ? !item.hide.includes(auth().currentUser.email)
-                            : true
-                        ) {
-                          return (
-                            <Message
-                              key={index}
-                              location={this.props.route.params.location}
-                              navigation={this.props.navigation}
-                              loading={false}
-                              handleDocumentView={(url, type) =>
-                                this.handleDocumentView(url, type)
-                              }
-                              type={item.id === auth().currentUser.email}
-                              message={item.message}
-                              format={item.format}
-                              url={item.url}
-                              name={item.name}
-                              date={item.date}
-                              read={item.read}
-                              saveToGallery={this.saveToGallery}
-                              copyText={this.copyText}
-                              item={item}
-                              handleHide={this.handleHide}
+                                ],
+                              ).getTime() -
+                                new Date(item.date).getTime()) /
+                              1000,
+                            ) < 0
+                          ) {
+                            if (
+                              item.format !== 'deal-done' &&
+                                item.format !== 'accept' &&
+                                item.format !== 'reject' &&
+                                item.format !== 'meeting' &&
+                                item.hide
+                                ? !item.hide.includes(auth().currentUser.email)
+                                : true
+                            ) {
+                              return (
+                                <Message
+                                  key={index}
+                                  location={this.props.route.params.location}
+                                  navigation={this.props.navigation}
+                                  loading={false}
+                                  handleDocumentView={(url, type) =>
+                                    this.handleDocumentView(url, type)
+                                  }
+                                  type={item.id === auth().currentUser.email}
+                                  message={item.message}
+                                  format={item.format}
+                                  url={item.url}
+                                  name={item.name}
+                                  date={item.date}
+                                  read={item.read}
+                                  saveToGallery={this.saveToGallery}
+                                  copyText={this.copyText}
+                                  item={item}
+                                  handleHide={this.handleHide}
+                                />
+                              );
+                            } else if (item.format === 'accept') {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginVertical: 5,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    backgroundColor: colors.secondary,
+                                    paddingVertical: 12,
+                                  }}>
+                                  <Ionicons
+                                    name="ios-megaphone"
+                                    size={16}
+                                    color="#acadaa"
+                                  />
+                                  <Text style={styles.dealstatusMessage}>
+                                    Request accepted on{' '}
+                                    <Moment element={Text} format="MMMM Do YYYY">
+                                      {item.date}
+                                    </Moment>
+                                  </Text>
+                                </View>
+                              );
+                            } else if (item.format === 'reject') {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginVertical: 5,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    backgroundColor: colors.secondary,
+                                    paddingVertical: 12,
+                                  }}>
+                                  <Ionicons
+                                    name="ios-megaphone"
+                                    size={16}
+                                    color="#acadaa"
+                                  />
+                                  <Text style={styles.dealstatusMessage}>
+                                    Request rejected on{' '}
+                                    <Moment element={Text} format="MMMM Do YYYY">
+                                      {item.date}
+                                    </Moment>
+                                  </Text>
+                                </View>
+                              );
+                            } else if (item.format === 'meeting') {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginVertical: 5,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    backgroundColor: colors.secondary,
+                                    paddingVertical: 12,
+                                  }}>
+                                  <Ionicons
+                                    name="ios-megaphone"
+                                    size={16}
+                                    color="#acadaa"
+                                  />
+                                  <Text style={styles.dealstatusMessage}>
+                                    New Meeting set
+                              </Text>
+                                </View>
+                              );
+                            } else if (item.format === 'deal-done') {
+                              return (
+                                <View
+                                  key={index}
+                                  style={{
+                                    marginVertical: 5,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    flexDirection: 'row',
+                                    justifyContent: 'center',
+                                    backgroundColor: colors.secondary,
+                                    paddingVertical: 12,
+                                  }}>
+                                  <Ionicons
+                                    name="ios-megaphone"
+                                    size={16}
+                                    color="#acadaa"
+                                  />
+                                  <Text style={styles.dealstatusMessage}>
+                                    Deal accomplished on{' '}
+                                    <Moment element={Text} format="MMMM Do YYYY">
+                                      {item.date}
+                                    </Moment>
+                                  </Text>
+                                </View>
+                              );
+                            }
+                          }
+                        }}
+                      />
+                    </View>
+                  )}
+              </View>
+              {this.state.showDeal && this.state.chat.deals.length > 0 ? (
+                <>
+                  {this.state.chat.deals[0].initiate !==
+                    auth().currentUser.email ? (
+                      <View style={styles.dealPop}>
+                        <View style={styles.dealPopLeft}>
+                          <View>
+                            <Text style={styles.dname}>{this.state.user.name}</Text>
+                            {this.state.chat.deals[0].dealStatus ? (
+                              <>
+                                {this.state.chat.deals[0].dealDone.includes(
+                                  auth().currentUser.email,
+                                ) ? (
+                                    <Text style={styles.dtype}>
+                                      Deal successfully finished from your side
+                                    </Text>
+                                  ) : (
+                                    <Text style={styles.dtype}>
+                                      Meeting Set, have a look
+                                    </Text>
+                                  )}
+                              </>
+                            ) : (
+                                <>
+                                  {this.state.chat.deals[0].status ? (
+                                    <Text style={styles.dtype}>Ongoing deal</Text>
+                                  ) : (
+                                      <Text style={styles.dtype}>
+                                        {this.state.chat.deals[0].varient === 'request'
+                                          ? 'Requested one of your product'
+                                          : 'Wants to exchnage with your product'}
+                                      </Text>
+                                    )}
+                                </>
+                              )}
+                          </View>
+                        </View>
+                        <View style={styles.dealPopRight}>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({ showDealInfo: true });
+                            }}>
+                            <Ionicons
+                              name="ios-information-circle"
+                              size={30}
+                              color={colors.white}
                             />
-                          );
-                        } else if (item.format === 'accept') {
-                          return (
-                            <View
-                              key={index}
-                              style={{
-                                marginVertical: 5,
-                                width: '100%',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                backgroundColor: colors.secondary,
-                                paddingVertical: 12,
-                              }}>
-                              <Ionicons
-                                name="ios-megaphone"
-                                size={16}
-                                color="#acadaa"
-                              />
-                              <Text style={styles.dealstatusMessage}>
-                                Request accepted on{' '}
-                                <Moment element={Text} format="MMMM Do YYYY">
-                                  {item.date}
-                                </Moment>
-                              </Text>
-                            </View>
-                          );
-                        } else if (item.format === 'reject') {
-                          return (
-                            <View
-                              key={index}
-                              style={{
-                                marginVertical: 5,
-                                width: '100%',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                backgroundColor: colors.secondary,
-                                paddingVertical: 12,
-                              }}>
-                              <Ionicons
-                                name="ios-megaphone"
-                                size={16}
-                                color="#acadaa"
-                              />
-                              <Text style={styles.dealstatusMessage}>
-                                Request rejected on{' '}
-                                <Moment element={Text} format="MMMM Do YYYY">
-                                  {item.date}
-                                </Moment>
-                              </Text>
-                            </View>
-                          );
-                        } else if (item.format === 'meeting') {
-                          return (
-                            <View
-                              key={index}
-                              style={{
-                                marginVertical: 5,
-                                width: '100%',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                backgroundColor: colors.secondary,
-                                paddingVertical: 12,
-                              }}>
-                              <Ionicons
-                                name="ios-megaphone"
-                                size={16}
-                                color="#acadaa"
-                              />
-                              <Text style={styles.dealstatusMessage}>
-                                New Meeting set
-                              </Text>
-                            </View>
-                          );
-                        } else if (item.format === 'deal-done') {
-                          return (
-                            <View
-                              key={index}
-                              style={{
-                                marginVertical: 5,
-                                width: '100%',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                backgroundColor: colors.secondary,
-                                paddingVertical: 12,
-                              }}>
-                              <Ionicons
-                                name="ios-megaphone"
-                                size={16}
-                                color="#acadaa"
-                              />
-                              <Text style={styles.dealstatusMessage}>
-                                Deal accomplished on{' '}
-                                <Moment element={Text} format="MMMM Do YYYY">
-                                  {item.date}
-                                </Moment>
-                              </Text>
-                            </View>
-                          );
-                        }
-                      }
-                    }}
-                  />
-                </View>
-              )}
-            </View>
-            {this.state.showDeal && this.state.chat.deals.length > 0 ? (
-              <>
-                {this.state.chat.deals[0].initiate !==
-                auth().currentUser.email ? (
-                  <View style={styles.dealPop}>
-                    <View style={styles.dealPopLeft}>
-                      <View>
-                        <Text style={styles.dname}>{this.state.user.name}</Text>
-                        {this.state.chat.deals[0].dealStatus ? (
-                          <>
-                            {this.state.chat.deals[0].dealDone.includes(
-                              auth().currentUser.email,
-                            ) ? (
-                              <Text style={styles.dtype}>
-                                Deal successfully finished from your side
-                              </Text>
-                            ) : (
-                              <Text style={styles.dtype}>
-                                Meeting Set, have a look
-                              </Text>
+                          </TouchableOpacity>
+                          {this.state.chat.deals[0].dealDone.includes(
+                            auth().currentUser.email,
+                          ) ? null : (
+                              <TouchableOpacity
+                                style={styles.daction}
+                                onPress={() => {
+                                  this.setState({ showDealMenu: true });
+                                }}>
+                                <Ionicons
+                                  name="ios-ellipsis-vertical-outline"
+                                  size={30}
+                                  color={colors.baseline}
+                                />
+                              </TouchableOpacity>
                             )}
-                          </>
-                        ) : (
-                          <>
-                            {this.state.chat.deals[0].status ? (
-                              <Text style={styles.dtype}>Ongoing deal</Text>
-                            ) : (
-                              <Text style={styles.dtype}>
-                                {this.state.chat.deals[0].varient === 'request'
-                                  ? 'Requested one of your product'
-                                  : 'Wants to exchnage with your product'}
-                              </Text>
-                            )}
-                          </>
-                        )}
+                        </View>
                       </View>
-                    </View>
-                    <View style={styles.dealPopRight}>
-                      <TouchableOpacity
-                        style={styles.daction}
-                        onPress={() => {
-                          this.setState({showDealInfo: true});
-                        }}>
-                        <Ionicons
-                          name="ios-information-circle"
-                          size={30}
-                          color={colors.white}
-                        />
-                      </TouchableOpacity>
-                      {this.state.chat.deals[0].dealDone.includes(
-                        auth().currentUser.email,
-                      ) ? null : (
-                        <TouchableOpacity
-                          style={styles.daction}
-                          onPress={() => {
-                            this.setState({showDealMenu: true});
-                          }}>
-                          <Ionicons
-                            name="ios-ellipsis-vertical-outline"
-                            size={30}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  </View>
-                ) : (
-                  <View style={styles.dealPop}>
-                    <View style={styles.dealPopLeft}>
-                      <View>
-                        <Text style={styles.dname}>{this.state.user.name}</Text>
-                        {this.state.chat.deals[0].dealStatus ? (
-                          <>
-                            {this.state.chat.deals[0].dealDone.includes(
-                              auth().currentUser.email,
-                            ) ? (
-                              <Text style={styles.dtype}>
-                                Deal successfully finished from your side
-                              </Text>
+                    ) : (
+                      <View style={styles.dealPop}>
+                        <View style={styles.dealPopLeft}>
+                          <View>
+                            <Text style={styles.dname}>{this.state.user.name}</Text>
+                            {this.state.chat.deals[0].dealStatus ? (
+                              <>
+                                {this.state.chat.deals[0].dealDone.includes(
+                                  auth().currentUser.email,
+                                ) ? (
+                                    <Text style={styles.dtype}>
+                                      Deal successfully finished from your side
+                                    </Text>
+                                  ) : (
+                                    <Text style={styles.dtype}>
+                                      Meeting Set, have a look
+                                    </Text>
+                                  )}
+                              </>
                             ) : (
-                              <Text style={styles.dtype}>
-                                Meeting Set, have a look
-                              </Text>
+                                <Text style={styles.dtype}>
+                                  {this.state.chat.deals[0].status
+                                    ? 'Ongoing deal'
+                                    : 'Request Pending'}
+                                </Text>
+                              )}
+                          </View>
+                        </View>
+                        <View style={styles.dealPopRight}>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({ showDealInfo: true });
+                            }}>
+                            <Ionicons
+                              name="ios-information-circle"
+                              size={30}
+                              color={colors.white}
+                            />
+                          </TouchableOpacity>
+                          {this.state.chat.deals[0].dealDone.includes(
+                            auth().currentUser.email,
+                          ) ? null : (
+                              <TouchableOpacity
+                                style={styles.daction}
+                                onPress={() => {
+                                  this.setState({ showDealMenu: true });
+                                }}>
+                                <Ionicons
+                                  name="ios-ellipsis-vertical-outline"
+                                  size={30}
+                                  color={colors.baseline}
+                                />
+                              </TouchableOpacity>
                             )}
-                          </>
-                        ) : (
-                          <Text style={styles.dtype}>
-                            {this.state.chat.deals[0].status
-                              ? 'Ongoing deal'
-                              : 'Request Pending'}
-                          </Text>
-                        )}
+                        </View>
                       </View>
-                    </View>
-                    <View style={styles.dealPopRight}>
-                      <TouchableOpacity
-                        style={styles.daction}
-                        onPress={() => {
-                          this.setState({showDealInfo: true});
-                        }}>
-                        <Ionicons
-                          name="ios-information-circle"
-                          size={30}
-                          color={colors.white}
-                        />
-                      </TouchableOpacity>
-                      {this.state.chat.deals[0].dealDone.includes(
-                        auth().currentUser.email,
-                      ) ? null : (
-                        <TouchableOpacity
-                          style={styles.daction}
-                          onPress={() => {
-                            this.setState({showDealMenu: true});
-                          }}>
-                          <Ionicons
-                            name="ios-ellipsis-vertical-outline"
-                            size={30}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                  </View>
-                )}
-              </>
-            ) : null}
-            {this.state.block ? (
-              <View style={styles.blocked}>
-                <Text style={styles.blockedText}>User Blocked</Text>
-                <Text onPress={this.handleUnblock} style={styles.unblockedText}>
-                  Unblock
+                    )}
+                </>
+              ) : null}
+              {this.state.block ? (
+                <View style={styles.blocked}>
+                  <Text style={styles.blockedText}>User Blocked</Text>
+                  <Text onPress={this.handleUnblock} style={styles.unblockedText}>
+                    Unblock
                 </Text>
-              </View>
-            ) : null}
-            {this.state.chat.blocked &&
-            this.state.chat.blocked.length > 0 &&
-            !this.state.chat.blocked.includes(auth().currentUser.email) ? (
-              <View style={styles.blocked}>
-                <Text style={styles.blockedText}>
-                  You cannot send message to this user
-                </Text>
-              </View>
-            ) : null}
-            {this.state.block ||
-            (this.state.chat.blocked &&
-              this.state.chat.blocked.length > 0) ? null : (
-              <View style={styles.bottomBar}>
-                <View
-                  style={[
-                    styles.inputContainer,
-                    {
-                      width:
-                        this.state.message.length > 0
-                          ? width * 0.8
-                          : width * 0.7,
-                    },
-                  ]}>
-                  <TextInput
-                    style={styles.input}
-                    value={this.state.message}
-                    onChangeText={(text) => this.handleMessage(text)}
-                    placeholder="Type a message"
-                  />
                 </View>
-                {this.state.message.length > 0 ? (
-                  <TouchableOpacity
-                    onPress={() => this.handleSend(1)}
-                    style={styles.bottomButton}>
-                    <Ionicons name="ios-send" size={26} color={colors.grey} />
-                  </TouchableOpacity>
-                ) : (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => this.setState({attach: true})}
-                      style={styles.bottomButton}>
-                      <Ionicons
-                        name="ios-attach"
-                        size={35}
-                        color={colors.grey}
+              ) : null}
+              {this.state.chat.blocked &&
+                this.state.chat.blocked.length > 0 &&
+                !this.state.chat.blocked.includes(auth().currentUser.email) ? (
+                  <View style={styles.blocked}>
+                    <Text style={styles.blockedText}>
+                      You cannot send message to this user
+                </Text>
+                  </View>
+                ) : null}
+              {this.state.block ||
+                (this.state.chat.blocked &&
+                  this.state.chat.blocked.length > 0) ? null : (
+                  <View style={styles.bottomBar}>
+                    <View
+                      style={[
+                        styles.inputContainer,
+                        {
+                          width:
+                            this.state.message.length > 0
+                              ? width * 0.8
+                              : width * 0.7,
+                        },
+                      ]}>
+                      <TextInput
+                        style={styles.input}
+                        value={this.state.message}
+                        onChangeText={(text) => this.handleMessage(text)}
+                        placeholder="Type a message"
                       />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={this.handleCamera}
-                      style={styles.bottomButton}>
-                      <Ionicons
-                        name="ios-camera"
-                        size={35}
-                        color={colors.grey}
-                      />
-                    </TouchableOpacity>
-                  </>
-                )}
-              </View>
-            )}
-            <Modal isVisible={this.state.menu}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    menu: false,
-                  });
-                }}
-                style={{
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'center',
-                  flex: 1,
-                }}>
-                <View
-                  style={{
-                    width: '80%',
-                    backgroundColor: colors.secondary,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                  }}>
-                  <View style={{width: '100%'}}>
-                    {this.state.chat.blocked &&
-                    this.state.chat.blocked.includes(
-                      auth().currentUser.email,
-                    ) ? (
+                    </View>
+                    {this.state.message.length > 0 ? (
                       <TouchableOpacity
-                        onPress={this.handleUnblock}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 20,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Text
-                          style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 16,
-                          }}>
-                          Unblock
-                        </Text>
+                        onPress={() => this.handleSend(1)}
+                        style={styles.bottomButton}>
+                        <Ionicons name="ios-send" size={26} color={colors.grey} />
                       </TouchableOpacity>
                     ) : (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            menu3: true,
-                            menu: false,
-                          });
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 20,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Text
-                          style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 16,
-                          }}>
-                          Block
-                        </Text>
-                      </TouchableOpacity>
-                    )}
+                        <>
+                          <TouchableOpacity
+                            onPress={() => this.setState({ attach: true })}
+                            style={styles.bottomButton}>
+                            <Ionicons
+                              name="ios-attach"
+                              size={35}
+                              color={colors.grey}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={this.handleCamera}
+                            style={styles.bottomButton}>
+                            <Ionicons
+                              name="ios-camera"
+                              size={35}
+                              color={colors.grey}
+                            />
+                          </TouchableOpacity>
+                        </>
+                      )}
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState({
-                        menu2: true,
-                        menu: false,
-                      });
-                    }}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        textAlign: 'center',
-                      }}>
-                      Clear Conversation
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </Modal>
-            <Modal isVisible={this.state.menu2}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    menu2: false,
-                  });
-                }}
-                style={{
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'center',
-                  flex: 1,
-                }}>
-                <View
+                )}
+              <Modal isVisible={this.state.menu}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({
+                      menu: false,
+                    });
+                  }}
                   style={{
-                    width: '80%',
-                    backgroundColor: colors.secondary,
-                    borderRadius: 10,
                     alignItems: 'center',
+                    width: '100%',
+                    justifyContent: 'center',
+                    flex: 1,
                   }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState(
-                        {
-                          menu2: false,
-                        },
-                        () => {
-                          this.handleClear();
-                        },
-                      );
-                    }}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      justifyContent: 'center',
-                      borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        textAlign: 'center',
-                      }}>
-                      Yes, clear conversation
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState({
-                        menu2: false,
-                      });
-                    }}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        textAlign: 'center',
-                      }}>
-                      No, dont clear conversation
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </Modal>
-            <Modal isVisible={this.state.menu3}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    menu3: false,
-                  });
-                }}
-                style={{
-                  alignItems: 'center',
-                  width: '100%',
-                  justifyContent: 'center',
-                  flex: 1,
-                }}>
-                <View
-                  style={{
-                    width: '80%',
-                    backgroundColor: colors.secondary,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                  }}>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState(
-                        {
-                          menu3: false,
-                        },
-                        () => {
-                          this.handleBlock();
-                        },
-                      );
-                    }}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      justifyContent: 'center',
-                      borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        textAlign: 'center',
-                      }}>
-                      Yes, block user
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.setState({
-                        menu3: false,
-                      });
-                    }}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 20,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        textAlign: 'center',
-                      }}>
-                      No, dont block user
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            </Modal>
-            <Modal isVisible={this.state.attach}>
-              <View
-                style={{
-                  alignItems: 'center',
-                }}>
-                <View
-                  style={{
-                    width: '80%',
-                    backgroundColor: colors.secondary,
-                    borderRadius: 10,
-                    alignItems: 'center',
-                  }}>
-                  <TouchableOpacity
-                    onPress={this.handleGallery}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 15,
-                      justifyContent: 'center',
-                      borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        marginRight: 5,
-                      }}>
-                      Send Photo
-                    </Text>
-                    <Ionicons
-                      name="ios-image"
-                      size={24}
-                      color={colors.baseline}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={this.handleVideoGallery}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 15,
-                      justifyContent: 'center',
-                      borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        marginRight: 5,
-                      }}>
-                      Send Video
-                    </Text>
-                    <Ionicons
-                      name="ios-videocam"
-                      size={24}
-                      color={colors.baseline}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={this.handleDocument}
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 15,
-                      justifyContent: 'center',
-                      borderBottomColor: colors.grey,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                        marginRight: 5,
-                      }}>
-                      Send Document
-                    </Text>
-                    <Ionicons
-                      name="ios-document-text"
-                      size={24}
-                      color={colors.baseline}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.setState({
-                        attach: false,
-                      })
-                    }
-                    style={{
-                      width: '100%',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingVertical: 15,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontFamily: 'Muli-Bold',
-                        color: colors.white,
-                        fontSize: 16,
-                      }}>
-                      Cancel
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </Modal>
-            {this.state.showDeal ? (
-              <>
-                <Modal isVisible={this.state.showDealInfo}>
                   <View
                     style={{
+                      width: '80%',
+                      backgroundColor: colors.secondary,
+                      borderRadius: 10,
                       alignItems: 'center',
                     }}>
-                    <View
+                    <View style={{ width: '100%' }}>
+                      {this.state.chat.blocked &&
+                        this.state.chat.blocked.includes(
+                          auth().currentUser.email,
+                        ) ? (
+                          <TouchableOpacity
+                            onPress={this.handleUnblock}
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              paddingVertical: 20,
+                              justifyContent: 'center',
+                              borderBottomColor: colors.grey,
+                              borderBottomWidth: StyleSheet.hairlineWidth,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                fontSize: 16,
+                              }}>
+                              Unblock
+                        </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <TouchableOpacity
+                            onPress={() => {
+                              this.setState({
+                                menu3: true,
+                                menu: false,
+                              });
+                            }}
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              paddingVertical: 20,
+                              justifyContent: 'center',
+                              borderBottomColor: colors.grey,
+                              borderBottomWidth: StyleSheet.hairlineWidth,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                fontSize: 16,
+                              }}>
+                              Block
+                        </Text>
+                          </TouchableOpacity>
+                        )}
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState({
+                          menu2: true,
+                          menu: false,
+                        });
+                      }}
                       style={{
                         width: '100%',
-                        backgroundColor: colors.secondary,
-                        borderRadius: 10,
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 20,
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          textAlign: 'center',
+                        }}>
+                        Clear Conversation
+                    </Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+              <Modal isVisible={this.state.menu2}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({
+                      menu2: false,
+                    });
+                  }}
+                  style={{
+                    alignItems: 'center',
+                    width: '100%',
+                    justifyContent: 'center',
+                    flex: 1,
+                  }}>
+                  <View
+                    style={{
+                      width: '80%',
+                      backgroundColor: colors.secondary,
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState(
+                          {
+                            menu2: false,
+                          },
+                          () => {
+                            this.handleClear();
+                          },
+                        );
+                      }}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 20,
+                        justifyContent: 'center',
+                        borderBottomColor: colors.grey,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          textAlign: 'center',
+                        }}>
+                        Yes, clear conversation
+                    </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState({
+                          menu2: false,
+                        });
+                      }}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 20,
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          textAlign: 'center',
+                        }}>
+                        No, dont clear conversation
+                    </Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+              <Modal isVisible={this.state.menu3}>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({
+                      menu3: false,
+                    });
+                  }}
+                  style={{
+                    alignItems: 'center',
+                    width: '100%',
+                    justifyContent: 'center',
+                    flex: 1,
+                  }}>
+                  <View
+                    style={{
+                      width: '80%',
+                      backgroundColor: colors.secondary,
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState(
+                          {
+                            menu3: false,
+                          },
+                          () => {
+                            this.handleBlock();
+                          },
+                        );
+                      }}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 20,
+                        justifyContent: 'center',
+                        borderBottomColor: colors.grey,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          textAlign: 'center',
+                        }}>
+                        Yes, block user
+                    </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.setState({
+                          menu3: false,
+                        });
+                      }}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 20,
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          textAlign: 'center',
+                        }}>
+                        No, dont block user
+                    </Text>
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </Modal>
+              <Modal isVisible={this.state.attach}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                  }}>
+                  <View
+                    style={{
+                      width: '80%',
+                      backgroundColor: colors.secondary,
+                      borderRadius: 10,
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      onPress={this.handleGallery}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 15,
+                        justifyContent: 'center',
+                        borderBottomColor: colors.grey,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          marginRight: 5,
+                        }}>
+                        Send Photo
+                    </Text>
+                      <Ionicons
+                        name="ios-image"
+                        size={24}
+                        color={colors.baseline}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={this.handleVideoGallery}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 15,
+                        justifyContent: 'center',
+                        borderBottomColor: colors.grey,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          marginRight: 5,
+                        }}>
+                        Send Video
+                    </Text>
+                      <Ionicons
+                        name="ios-videocam"
+                        size={24}
+                        color={colors.baseline}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={this.handleDocument}
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 15,
+                        justifyContent: 'center',
+                        borderBottomColor: colors.grey,
+                        borderBottomWidth: StyleSheet.hairlineWidth,
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                          marginRight: 5,
+                        }}>
+                        Send Document
+                    </Text>
+                      <Ionicons
+                        name="ios-document-text"
+                        size={24}
+                        color={colors.baseline}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.setState({
+                          attach: false,
+                        })
+                      }
+                      style={{
+                        width: '100%',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        paddingVertical: 15,
+                        justifyContent: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontFamily: 'Muli-Bold',
+                          color: colors.white,
+                          fontSize: 16,
+                        }}>
+                        Cancel
+                    </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </Modal>
+              {this.state.showDeal ? (
+                <>
+                  <Modal isVisible={this.state.showDealInfo}>
+                    <View
+                      style={{
                         alignItems: 'center',
                       }}>
                       <View
                         style={{
                           width: '100%',
-                          flexDirection: 'row',
+                          backgroundColor: colors.secondary,
+                          borderRadius: 10,
                           alignItems: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                          paddingVertical: 10,
                         }}>
-                        <TouchableOpacity
-                          style={{marginLeft: 20}}
-                          onPress={() =>
-                            this.setState({
-                              showDealInfo: false,
-                            })
-                          }>
-                          <Ionicons
-                            name="ios-close"
-                            size={30}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
-                        <Text style={styles.dealInfoHeader}>Deal Info</Text>
+                        <View
+                          style={{
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
+                            paddingVertical: 10,
+                          }}>
+                          <TouchableOpacity
+                            style={{ marginLeft: 20 }}
+                            onPress={() =>
+                              this.setState({
+                                showDealInfo: false,
+                              })
+                            }>
+                            <Ionicons
+                              name="ios-close"
+                              size={30}
+                              color={colors.baseline}
+                            />
+                          </TouchableOpacity>
+                          <Text style={styles.dealInfoHeader}>Deal Info</Text>
+                        </View>
+                        {this.state.chat.deals ? (
+                          <>
+                            {this.state.chat.deals[0].initiate !==
+                              auth().currentUser.email ? (
+                                <ScrollView
+                                  style={{
+                                    width: '100%',
+                                    paddingVertical: 2,
+                                    maxHeight: 0.7 * height,
+                                  }}>
+                                  {this.state.chat.deals[0].meeting.landmark ? (
+                                    <View
+                                      style={{
+                                        width: '100%',
+                                        paddingHorizontal: 20,
+                                        paddingVertical: 10,
+                                      }}>
+                                      <Text style={styles.dSubHeader}>Meeting</Text>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>
+                                          Location
+                                    </Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {
+                                            this.state.chat.deals[0].meeting
+                                              .location
+                                          }
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>
+                                          Landmark
+                                    </Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {
+                                            this.state.chat.deals[0].meeting
+                                              .landmark
+                                          }
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>Date</Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {this.state.chat.deals[0].meeting.date}
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>Time</Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {this.state.chat.deals[0].meeting.time}
+                                        </Text>
+                                      </View>
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          this.handleChangeMeeting(
+                                            this.state.chat.deals[0].meeting,
+                                          )
+                                        }
+                                        style={{
+                                          width: 100,
+                                          height: 36,
+                                          borderRadius: 18,
+                                          justifyContent: 'center',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                          borderColor: colors.grey,
+                                          borderWidth: StyleSheet.hairlineWidth,
+                                          marginTop: 10,
+                                        }}>
+                                        <Ionicons
+                                          name="ios-color-wand"
+                                          size={18}
+                                          color={colors.grey}
+                                          style={{ marginRight: 5 }}
+                                        />
+                                        <Text
+                                          style={{
+                                            fontFamily: 'Muli-Bold',
+                                            color: colors.grey,
+                                            fontSize: 10,
+                                          }}>
+                                          Change
+                                    </Text>
+                                      </TouchableOpacity>
+                                    </View>
+                                  ) : null}
+                                  {this.state.chat.deals[0].varient ===
+                                    'exchange' ? (
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          alignItems: 'center',
+                                          paddingVertical: 10,
+                                        }}>
+                                        <MiniCard
+                                          key={this.state.chat.deals[0].id1}
+                                          id={this.state.chat.deals[0].id1}
+                                          navigation={this.props.navigation}
+                                        />
+                                        <View style={{ marginVertical: 10 }}>
+                                          <Ionicons
+                                            name="ios-repeat"
+                                            size={40}
+                                            color={colors.baseline}
+                                            style={{ transform: [{ rotate: '90deg' }] }}
+                                          />
+                                        </View>
+                                        <MiniCard
+                                          key={this.state.chat.deals[0].id1}
+                                          id={this.state.chat.deals[0].id1}
+                                          navigation={this.props.navigation}
+                                        />
+                                      </View>
+                                    ) : (
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          alignItems: 'center',
+                                          paddingVertical: 10,
+                                        }}>
+                                        <View style={{ width: '100%', padding: 20 }}>
+                                          <Text style={styles.dSubHeader}>
+                                            Reason why{' '}
+                                            <Text style={{ color: colors.white }}>
+                                              {this.state.user.name}
+                                            </Text>
+                                            {'\n'}wants this product :
+                                    </Text>
+                                          <Text style={styles.dMessage}>
+                                            {this.state.chat.deals[0].message}
+                                          </Text>
+                                        </View>
+                                        <View style={{ marginVertical: 10 }}>
+                                          <Ionicons
+                                            name="ios-return-down-back"
+                                            size={40}
+                                            color={colors.baseline}
+                                            style={{ transform: [{ rotate: '-90deg' }] }}
+                                          />
+                                        </View>
+                                        <MiniCard
+                                          key={this.state.chat.deals[0].id1}
+                                          id={this.state.chat.deals[0].id1}
+                                          navigation={this.props.navigation}
+                                        />
+                                      </View>
+                                    )}
+
+                                  <View
+                                    style={{
+                                      width: '100%',
+                                      paddingHorizontal: 20,
+                                      paddingVertical: 10,
+                                    }}>
+                                    <Text style={styles.dSubHeader}>Logs</Text>
+                                    {this.state.chat.deals[0].logs.map((item) => {
+                                      return (
+                                        <View
+                                          style={{
+                                            width: '100%',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                          }}>
+                                          <Text style={styles.dlogHead}>
+                                            {item.name}
+                                          </Text>
+                                          <Text style={styles.dlogHead}>:</Text>
+                                          <Text style={styles.dlogDate}>
+                                            <Moment
+                                              element={Text}
+                                              format={'MMMM Do YYYY'}>
+                                              {item.date}
+                                            </Moment>
+                                          </Text>
+                                        </View>
+                                      );
+                                    })}
+                                  </View>
+                                </ScrollView>
+                              ) : (
+                                <ScrollView
+                                  style={{
+                                    width: '100%',
+                                    paddingVertical: 2,
+                                    maxHeight: 0.7 * height,
+                                  }}>
+                                  {this.state.chat.deals[0].meeting.landmark ? (
+                                    <View
+                                      style={{
+                                        width: '100%',
+                                        paddingHorizontal: 20,
+                                        paddingVertical: 10,
+                                      }}>
+                                      <Text style={styles.dSubHeader}>Meeting</Text>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>
+                                          Location
+                                    </Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {
+                                            this.state.chat.deals[0].meeting
+                                              .location
+                                          }
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>
+                                          Landmark
+                                    </Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {
+                                            this.state.chat.deals[0].meeting
+                                              .landmark
+                                          }
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>Date</Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {this.state.chat.deals[0].meeting.date}
+                                        </Text>
+                                      </View>
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                        }}>
+                                        <Text style={styles.dlogHead}>Time</Text>
+                                        <Text style={styles.dlogHead}>:</Text>
+                                        <Text style={styles.dlogDate}>
+                                          {this.state.chat.deals[0].meeting.time}
+                                        </Text>
+                                      </View>
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          this.handleChangeMeeting(
+                                            this.state.chat.deals[0].meeting,
+                                          )
+                                        }
+                                        style={{
+                                          width: 100,
+                                          height: 36,
+                                          borderRadius: 18,
+                                          justifyContent: 'center',
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                          borderColor: colors.grey,
+                                          borderWidth: StyleSheet.hairlineWidth,
+                                          marginTop: 10,
+                                        }}>
+                                        <Ionicons
+                                          name="ios-color-wand"
+                                          size={18}
+                                          color={colors.grey}
+                                          style={{ marginRight: 5 }}
+                                        />
+                                        <Text
+                                          style={{
+                                            fontFamily: 'Muli-Bold',
+                                            color: colors.grey,
+                                            fontSize: 10,
+                                          }}>
+                                          Change
+                                    </Text>
+                                      </TouchableOpacity>
+                                    </View>
+                                  ) : null}
+                                  {this.state.chat.deals[0].varient ===
+                                    'exchange' ? (
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          alignItems: 'center',
+                                          paddingVertical: 10,
+                                        }}>
+                                        <Card3
+                                          key={this.state.chat.deals[0].id1}
+                                          handleCardImageClick={(e, f) =>
+                                            this.handleCardImageClick(e, f)
+                                          }
+                                          id={this.state.chat.deals[0].id1}
+                                          navigation={this.props.navigation}
+                                        />
+                                        <View style={{ marginVertical: 10 }}>
+                                          <Ionicons
+                                            name="ios-repeat"
+                                            size={40}
+                                            color={colors.baseline}
+                                            style={{ transform: [{ rotate: '90deg' }] }}
+                                          />
+                                        </View>
+                                        <Card3
+                                          key={this.state.chat.deals[0].id2}
+                                          handleCardImageClick={(e, f) =>
+                                            this.handleCardImageClick(e, f)
+                                          }
+                                          id={this.state.chat.deals[0].id2}
+                                          navigation={this.props.navigation}
+                                        />
+                                      </View>
+                                    ) : (
+                                      <View
+                                        style={{
+                                          width: '100%',
+                                          alignItems: 'center',
+                                          paddingVertical: 10,
+                                        }}>
+                                        <View style={{ width: '100%', padding: 20 }}>
+                                          <Text style={styles.dSubHeader}>
+                                            Reason you stated for this product :
+                                    </Text>
+                                          <Text style={styles.dMessage}>
+                                            {this.state.chat.deals[0].message}
+                                          </Text>
+                                        </View>
+                                        <View style={{ marginVertical: 10 }}>
+                                          <Ionicons
+                                            name="ios-return-down-back"
+                                            size={40}
+                                            color={colors.baseline}
+                                            style={{ transform: [{ rotate: '-90deg' }] }}
+                                          />
+                                        </View>
+                                        <Card3
+                                          key={this.state.chat.deals[0].id1}
+                                          handleCardImageClick={(e, f) =>
+                                            this.handleCardImageClick(e, f)
+                                          }
+                                          id={this.state.chat.deals[0].id1}
+                                          navigation={this.props.navigation}
+                                        />
+                                      </View>
+                                    )}
+
+                                  <View
+                                    style={{
+                                      width: '100%',
+                                      paddingHorizontal: 20,
+                                      paddingVertical: 10,
+                                    }}>
+                                    <Text style={styles.dSubHeader}>Logs</Text>
+                                    {this.state.chat.deals[0].logs.map((item) => {
+                                      return (
+                                        <View
+                                          style={{
+                                            width: '100%',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                          }}>
+                                          <Text style={styles.dlogHead}>
+                                            {item.name}
+                                          </Text>
+                                          <Text style={styles.dlogHead}>:</Text>
+                                          <Text style={styles.dlogDate}>
+                                            <Moment
+                                              element={Text}
+                                              format={'MMMM Do YYYY'}>
+                                              {item.date}
+                                            </Moment>
+                                          </Text>
+                                        </View>
+                                      );
+                                    })}
+                                  </View>
+                                </ScrollView>
+                              )}
+                          </>
+                        ) : null}
                       </View>
-                      {this.state.chat.deals ? (
-                        <>
-                          {this.state.chat.deals[0].initiate !==
-                          auth().currentUser.email ? (
-                            <ScrollView
-                              style={{
-                                width: '100%',
-                                paddingVertical: 2,
-                                maxHeight: 0.7 * height,
-                              }}>
-                              {this.state.chat.deals[0].meeting.landmark ? (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    paddingHorizontal: 20,
-                                    paddingVertical: 10,
-                                  }}>
-                                  <Text style={styles.dSubHeader}>Meeting</Text>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>
-                                      Location
-                                    </Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {
-                                        this.state.chat.deals[0].meeting
-                                          .location
-                                      }
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>
-                                      Landmark
-                                    </Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {
-                                        this.state.chat.deals[0].meeting
-                                          .landmark
-                                      }
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>Date</Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {this.state.chat.deals[0].meeting.date}
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>Time</Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {this.state.chat.deals[0].meeting.time}
-                                    </Text>
-                                  </View>
-                                  <TouchableOpacity
-                                    onPress={() =>
-                                      this.handleChangeMeeting(
-                                        this.state.chat.deals[0].meeting,
-                                      )
-                                    }
-                                    style={{
-                                      width: 100,
-                                      height: 36,
-                                      borderRadius: 18,
-                                      justifyContent: 'center',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                      borderColor: colors.grey,
-                                      borderWidth: StyleSheet.hairlineWidth,
-                                      marginTop: 10,
-                                    }}>
-                                    <Ionicons
-                                      name="ios-color-wand"
-                                      size={18}
-                                      color={colors.grey}
-                                      style={{marginRight: 5}}
-                                    />
-                                    <Text
-                                      style={{
-                                        fontFamily: 'Muli-Bold',
-                                        color: colors.grey,
-                                        fontSize: 10,
-                                      }}>
-                                      Change
-                                    </Text>
-                                  </TouchableOpacity>
-                                </View>
-                              ) : null}
-                              {this.state.chat.deals[0].varient ===
-                              'exchange' ? (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    paddingVertical: 10,
-                                  }}>
-                                  <MiniCard
-                                    key={this.state.chat.deals[0].id1}
-                                    id={this.state.chat.deals[0].id1}
-                                    navigation={this.props.navigation}
-                                  />
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-repeat"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '90deg'}]}}
-                                    />
-                                  </View>
-                                  <MiniCard
-                                    key={this.state.chat.deals[0].id1}
-                                    id={this.state.chat.deals[0].id1}
-                                    navigation={this.props.navigation}
-                                  />
-                                </View>
-                              ) : (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    paddingVertical: 10,
-                                  }}>
-                                  <View style={{width: '100%', padding: 20}}>
-                                    <Text style={styles.dSubHeader}>
-                                      Reason why{' '}
-                                      <Text style={{color: colors.white}}>
-                                        {this.state.user.name}
-                                      </Text>
-                                      {'\n'}wants this product :
-                                    </Text>
-                                    <Text style={styles.dMessage}>
-                                      {this.state.chat.deals[0].message}
-                                    </Text>
-                                  </View>
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-return-down-back"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '-90deg'}]}}
-                                    />
-                                  </View>
-                                  <MiniCard
-                                    key={this.state.chat.deals[0].id1}
-                                    id={this.state.chat.deals[0].id1}
-                                    navigation={this.props.navigation}
-                                  />
-                                </View>
-                              )}
-
-                              <View
-                                style={{
-                                  width: '100%',
-                                  paddingHorizontal: 20,
-                                  paddingVertical: 10,
-                                }}>
-                                <Text style={styles.dSubHeader}>Logs</Text>
-                                {this.state.chat.deals[0].logs.map((item) => {
-                                  return (
-                                    <View
-                                      style={{
-                                        width: '100%',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                      }}>
-                                      <Text style={styles.dlogHead}>
-                                        {item.name}
-                                      </Text>
-                                      <Text style={styles.dlogHead}>:</Text>
-                                      <Text style={styles.dlogDate}>
-                                        <Moment
-                                          element={Text}
-                                          format={'MMMM Do YYYY'}>
-                                          {item.date}
-                                        </Moment>
-                                      </Text>
-                                    </View>
-                                  );
-                                })}
-                              </View>
-                            </ScrollView>
-                          ) : (
-                            <ScrollView
-                              style={{
-                                width: '100%',
-                                paddingVertical: 2,
-                                maxHeight: 0.7 * height,
-                              }}>
-                              {this.state.chat.deals[0].meeting.landmark ? (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    paddingHorizontal: 20,
-                                    paddingVertical: 10,
-                                  }}>
-                                  <Text style={styles.dSubHeader}>Meeting</Text>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>
-                                      Location
-                                    </Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {
-                                        this.state.chat.deals[0].meeting
-                                          .location
-                                      }
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>
-                                      Landmark
-                                    </Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {
-                                        this.state.chat.deals[0].meeting
-                                          .landmark
-                                      }
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>Date</Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {this.state.chat.deals[0].meeting.date}
-                                    </Text>
-                                  </View>
-                                  <View
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                    }}>
-                                    <Text style={styles.dlogHead}>Time</Text>
-                                    <Text style={styles.dlogHead}>:</Text>
-                                    <Text style={styles.dlogDate}>
-                                      {this.state.chat.deals[0].meeting.time}
-                                    </Text>
-                                  </View>
-                                  <TouchableOpacity
-                                    onPress={() =>
-                                      this.handleChangeMeeting(
-                                        this.state.chat.deals[0].meeting,
-                                      )
-                                    }
-                                    style={{
-                                      width: 100,
-                                      height: 36,
-                                      borderRadius: 18,
-                                      justifyContent: 'center',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                      borderColor: colors.grey,
-                                      borderWidth: StyleSheet.hairlineWidth,
-                                      marginTop: 10,
-                                    }}>
-                                    <Ionicons
-                                      name="ios-color-wand"
-                                      size={18}
-                                      color={colors.grey}
-                                      style={{marginRight: 5}}
-                                    />
-                                    <Text
-                                      style={{
-                                        fontFamily: 'Muli-Bold',
-                                        color: colors.grey,
-                                        fontSize: 10,
-                                      }}>
-                                      Change
-                                    </Text>
-                                  </TouchableOpacity>
-                                </View>
-                              ) : null}
-                              {this.state.chat.deals[0].varient ===
-                              'exchange' ? (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    paddingVertical: 10,
-                                  }}>
-                                  <Card3
-                                    key={this.state.chat.deals[0].id1}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
-                                    id={this.state.chat.deals[0].id1}
-                                    navigation={this.props.navigation}
-                                  />
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-repeat"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '90deg'}]}}
-                                    />
-                                  </View>
-                                  <Card3
-                                    key={this.state.chat.deals[0].id2}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
-                                    id={this.state.chat.deals[0].id2}
-                                    navigation={this.props.navigation}
-                                  />
-                                </View>
-                              ) : (
-                                <View
-                                  style={{
-                                    width: '100%',
-                                    alignItems: 'center',
-                                    paddingVertical: 10,
-                                  }}>
-                                  <View style={{width: '100%', padding: 20}}>
-                                    <Text style={styles.dSubHeader}>
-                                      Reason you stated for this product :
-                                    </Text>
-                                    <Text style={styles.dMessage}>
-                                      {this.state.chat.deals[0].message}
-                                    </Text>
-                                  </View>
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-return-down-back"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '-90deg'}]}}
-                                    />
-                                  </View>
-                                  <Card3
-                                    key={this.state.chat.deals[0].id1}
-                                    handleCardImageClick={(e, f) =>
-                                      this.handleCardImageClick(e, f)
-                                    }
-                                    id={this.state.chat.deals[0].id1}
-                                    navigation={this.props.navigation}
-                                  />
-                                </View>
-                              )}
-
-                              <View
-                                style={{
-                                  width: '100%',
-                                  paddingHorizontal: 20,
-                                  paddingVertical: 10,
-                                }}>
-                                <Text style={styles.dSubHeader}>Logs</Text>
-                                {this.state.chat.deals[0].logs.map((item) => {
-                                  return (
-                                    <View
-                                      style={{
-                                        width: '100%',
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                      }}>
-                                      <Text style={styles.dlogHead}>
-                                        {item.name}
-                                      </Text>
-                                      <Text style={styles.dlogHead}>:</Text>
-                                      <Text style={styles.dlogDate}>
-                                        <Moment
-                                          element={Text}
-                                          format={'MMMM Do YYYY'}>
-                                          {item.date}
-                                        </Moment>
-                                      </Text>
-                                    </View>
-                                  );
-                                })}
-                              </View>
-                            </ScrollView>
-                          )}
-                        </>
-                      ) : null}
                     </View>
-                  </View>
-                </Modal>
-                <Modal isVisible={this.state.showDealMenu}>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                    }}>
+                  </Modal>
+                  <Modal isVisible={this.state.showDealMenu}>
                     <View
                       style={{
-                        width: '80%',
-                        backgroundColor: colors.secondary,
-                        borderRadius: 10,
                         alignItems: 'center',
                       }}>
-                      <View style={{width: '100%'}}>
-                        {this.state.chat.deals[0].initiate !==
-                        auth().currentUser.email ? (
-                          <>
-                            {this.state.chat.deals &&
-                            this.state.chat.deals[0].status ? (
+                      <View
+                        style={{
+                          width: '80%',
+                          backgroundColor: colors.secondary,
+                          borderRadius: 10,
+                          alignItems: 'center',
+                        }}>
+                        <View style={{ width: '100%' }}>
+                          {this.state.chat.deals[0].initiate !==
+                            auth().currentUser.email ? (
+                              <>
+                                {this.state.chat.deals &&
+                                  this.state.chat.deals[0].status ? (
+                                    <>
+                                      {this.state.chat.deals[0].dealStatus ? (
+                                        <TouchableOpacity
+                                          onPress={this.handleDealDone}
+                                          style={{
+                                            width: '100%',
+                                            flexDirection: 'row',
+                                            alignItems: 'center',
+                                            paddingVertical: 15,
+                                            justifyContent: 'center',
+                                            borderBottomColor: colors.grey,
+                                            borderBottomWidth:
+                                              StyleSheet.hairlineWidth,
+                                          }}>
+                                          <Text
+                                            style={{
+                                              fontFamily: 'Muli-Bold',
+                                              color: colors.white,
+                                              fontSize: 16,
+                                            }}>
+                                            Deal Done
+                                    </Text>
+                                        </TouchableOpacity>
+                                      ) : (
+                                          <TouchableOpacity
+                                            onPress={this.handleLetsMakeADeal}
+                                            style={{
+                                              width: '100%',
+                                              flexDirection: 'row',
+                                              alignItems: 'center',
+                                              paddingVertical: 15,
+                                              justifyContent: 'center',
+                                              borderBottomColor: colors.grey,
+                                              borderBottomWidth:
+                                                StyleSheet.hairlineWidth,
+                                            }}>
+                                            <Text
+                                              style={{
+                                                fontFamily: 'Muli-Bold',
+                                                color: colors.white,
+                                                fontSize: 16,
+                                              }}>
+                                              Lets make a deal
+                                    </Text>
+                                          </TouchableOpacity>
+                                        )}
+                                    </>
+                                  ) : (
+                                    <TouchableOpacity
+                                      onPress={this.handleAcceptDeal}
+                                      style={{
+                                        width: '100%',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        paddingVertical: 15,
+                                        justifyContent: 'center',
+                                        borderBottomColor: colors.grey,
+                                        borderBottomWidth: StyleSheet.hairlineWidth,
+                                      }}>
+                                      <Text
+                                        style={{
+                                          fontFamily: 'Muli-Bold',
+                                          color: colors.white,
+                                          fontSize: 16,
+                                        }}>
+                                        Accept deal
+                                </Text>
+                                    </TouchableOpacity>
+                                  )}
+                              </>
+                            ) : null}
+                          {this.state.chat.deals[0].status &&
+                            this.state.chat.deals[0].initiate ===
+                            auth().currentUser.email ? (
                               <>
                                 {this.state.chat.deals[0].dealStatus ? (
                                   <TouchableOpacity
@@ -2548,8 +2617,7 @@ export default class ChatScreen extends React.PureComponent {
                                       paddingVertical: 15,
                                       justifyContent: 'center',
                                       borderBottomColor: colors.grey,
-                                      borderBottomWidth:
-                                        StyleSheet.hairlineWidth,
+                                      borderBottomWidth: StyleSheet.hairlineWidth,
                                     }}>
                                     <Text
                                       style={{
@@ -2558,115 +2626,68 @@ export default class ChatScreen extends React.PureComponent {
                                         fontSize: 16,
                                       }}>
                                       Deal Done
-                                    </Text>
+                                </Text>
                                   </TouchableOpacity>
                                 ) : (
-                                  <TouchableOpacity
-                                    onPress={this.handleLetsMakeADeal}
-                                    style={{
-                                      width: '100%',
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                      paddingVertical: 15,
-                                      justifyContent: 'center',
-                                      borderBottomColor: colors.grey,
-                                      borderBottomWidth:
-                                        StyleSheet.hairlineWidth,
-                                    }}>
-                                    <Text
+                                    <TouchableOpacity
+                                      onPress={this.handleLetsMakeADeal}
                                       style={{
-                                        fontFamily: 'Muli-Bold',
-                                        color: colors.white,
-                                        fontSize: 16,
+                                        width: '100%',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        paddingVertical: 15,
+                                        justifyContent: 'center',
+                                        borderBottomColor: colors.grey,
+                                        borderBottomWidth: StyleSheet.hairlineWidth,
                                       }}>
-                                      Lets make a deal
-                                    </Text>
-                                  </TouchableOpacity>
-                                )}
+                                      <Text
+                                        style={{
+                                          fontFamily: 'Muli-Bold',
+                                          color: colors.white,
+                                          fontSize: 16,
+                                        }}>
+                                        Lets make a deal
+                                </Text>
+                                    </TouchableOpacity>
+                                  )}
                               </>
-                            ) : (
-                              <TouchableOpacity
-                                onPress={this.handleAcceptDeal}
-                                style={{
-                                  width: '100%',
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  paddingVertical: 15,
-                                  justifyContent: 'center',
-                                  borderBottomColor: colors.grey,
-                                  borderBottomWidth: StyleSheet.hairlineWidth,
-                                }}>
-                                <Text
-                                  style={{
-                                    fontFamily: 'Muli-Bold',
-                                    color: colors.white,
-                                    fontSize: 16,
-                                  }}>
-                                  Accept deal
-                                </Text>
-                              </TouchableOpacity>
-                            )}
-                          </>
-                        ) : null}
-                        {this.state.chat.deals[0].status &&
-                        this.state.chat.deals[0].initiate ===
-                          auth().currentUser.email ? (
-                          <>
-                            {this.state.chat.deals[0].dealStatus ? (
-                              <TouchableOpacity
-                                onPress={this.handleDealDone}
-                                style={{
-                                  width: '100%',
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  paddingVertical: 15,
-                                  justifyContent: 'center',
-                                  borderBottomColor: colors.grey,
-                                  borderBottomWidth: StyleSheet.hairlineWidth,
-                                }}>
-                                <Text
-                                  style={{
-                                    fontFamily: 'Muli-Bold',
-                                    color: colors.white,
-                                    fontSize: 16,
-                                  }}>
-                                  Deal Done
-                                </Text>
-                              </TouchableOpacity>
-                            ) : (
-                              <TouchableOpacity
-                                onPress={this.handleLetsMakeADeal}
-                                style={{
-                                  width: '100%',
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  paddingVertical: 15,
-                                  justifyContent: 'center',
-                                  borderBottomColor: colors.grey,
-                                  borderBottomWidth: StyleSheet.hairlineWidth,
-                                }}>
-                                <Text
-                                  style={{
-                                    fontFamily: 'Muli-Bold',
-                                    color: colors.white,
-                                    fontSize: 16,
-                                  }}>
-                                  Lets make a deal
-                                </Text>
-                              </TouchableOpacity>
-                            )}
-                          </>
-                        ) : null}
+                            ) : null}
+                          <TouchableOpacity
+                            onPress={this.handleRejectDeal}
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              paddingVertical: 16,
+                              justifyContent: 'center',
+                              borderBottomColor: colors.grey,
+                              borderBottomWidth: StyleSheet.hairlineWidth,
+                            }}>
+                            <Text
+                              style={{
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                                fontSize: 16,
+                              }}>
+                              {this.state.chat.deals[0].initiate ===
+                                auth().currentUser.email
+                                ? 'Cancel Request'
+                                : 'Reject deal'}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
                         <TouchableOpacity
-                          onPress={this.handleRejectDeal}
+                          onPress={() =>
+                            this.setState({
+                              showDealMenu: false,
+                            })
+                          }
                           style={{
                             width: '100%',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            paddingVertical: 16,
+                            paddingVertical: 15,
                             justifyContent: 'center',
-                            borderBottomColor: colors.grey,
-                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
                           <Text
                             style={{
@@ -2674,392 +2695,366 @@ export default class ChatScreen extends React.PureComponent {
                               color: colors.white,
                               fontSize: 16,
                             }}>
-                            {this.state.chat.deals[0].initiate ===
-                            auth().currentUser.email
-                              ? 'Cancel Request'
-                              : 'Reject deal'}
-                          </Text>
+                            Cancel
+                        </Text>
                         </TouchableOpacity>
                       </View>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.setState({
-                            showDealMenu: false,
-                          })
-                        }
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                        }}>
-                        <Text
-                          style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 16,
-                          }}>
-                          Cancel
-                        </Text>
-                      </TouchableOpacity>
                     </View>
-                  </View>
-                </Modal>
-                <Modal isVisible={this.state.showDealForm}>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                    }}>
+                  </Modal>
+                  <Modal isVisible={this.state.showDealForm}>
                     <View
                       style={{
-                        width: '100%',
-                        backgroundColor: colors.secondary,
-                        borderRadius: 10,
                         alignItems: 'center',
                       }}>
                       <View
                         style={{
                           width: '100%',
+                          backgroundColor: colors.secondary,
+                          borderRadius: 10,
                           alignItems: 'center',
-                          paddingVertical: 10,
                         }}>
                         <View
                           style={{
                             width: '100%',
-                            flexDirection: 'row',
                             alignItems: 'center',
-                            borderBottomColor: colors.grey,
-                            borderBottomWidth: StyleSheet.hairlineWidth,
                             paddingVertical: 10,
                           }}>
-                          <TouchableOpacity
-                            style={{marginLeft: 20}}
-                            onPress={() =>
-                              this.setState({
-                                showDealForm: false,
-                              })
-                            }>
-                            <Ionicons
-                              name="ios-close"
-                              size={30}
-                              color={colors.baseline}
-                            />
-                          </TouchableOpacity>
-                          <Text style={styles.dealInfoHeader}>
-                            Set Up Meeting
+                          <View
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              borderBottomColor: colors.grey,
+                              borderBottomWidth: StyleSheet.hairlineWidth,
+                              paddingVertical: 10,
+                            }}>
+                            <TouchableOpacity
+                              style={{ marginLeft: 20 }}
+                              onPress={() =>
+                                this.setState({
+                                  showDealForm: false,
+                                })
+                              }>
+                              <Ionicons
+                                name="ios-close"
+                                size={30}
+                                color={colors.baseline}
+                              />
+                            </TouchableOpacity>
+                            <Text style={styles.dealInfoHeader}>
+                              Set Up Meeting
                           </Text>
-                        </View>
-                        <View
-                          style={{
-                            width: '100%',
-                            alignItems: 'center',
-                            paddingVertical: 10,
-                          }}>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>Landmark</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(landmark) =>
-                                this.setState({landmark})
-                              }
-                              value={this.state.landmark}></TextInput>
                           </View>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>City</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(city) => this.setState({city})}
-                              value={this.state.city}></TextInput>
-                          </View>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>Country</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(country) =>
-                                this.setState({country})
-                              }
-                              value={this.state.country}></TextInput>
-                          </View>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>Date</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(date) => this.setState({date})}
-                              value={this.state.date}></TextInput>
-                          </View>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>Time</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(time) => this.setState({time})}
-                              value={this.state.time}></TextInput>
-                          </View>
-                          <TouchableOpacity
-                            onPress={this.handleConfirmDeal}
-                            style={styles.confirmButton}>
-                            <Text style={styles.confirmButtonText}>
-                              Confirm
+                          <View
+                            style={{
+                              width: '100%',
+                              alignItems: 'center',
+                              paddingVertical: 10,
+                            }}>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>Landmark</Text>
+                              <TextInput
+                                style={styles.input2}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(landmark) =>
+                                  this.setState({ landmark })
+                                }
+                                value={this.state.landmark}></TextInput>
+                            </View>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>City</Text>
+                              <TextInput
+                                style={styles.input2}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(city) => this.setState({ city })}
+                                value={this.state.city}></TextInput>
+                            </View>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>Country</Text>
+                              <TextInput
+                                style={styles.input2}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(country) =>
+                                  this.setState({ country })
+                                }
+                                value={this.state.country}></TextInput>
+                            </View>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>Date</Text>
+                              <TextInput
+                                style={styles.input2}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(date) => this.setState({ date })}
+                                value={this.state.date}></TextInput>
+                            </View>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>Time</Text>
+                              <TextInput
+                                style={styles.input2}
+                                autoCapitalize="none"
+                                maxLength={40}
+                                onChangeText={(time) => this.setState({ time })}
+                                value={this.state.time}></TextInput>
+                            </View>
+                            <TouchableOpacity
+                              onPress={this.handleConfirmDeal}
+                              style={styles.confirmButton}>
+                              <Text style={styles.confirmButtonText}>
+                                Confirm
                             </Text>
-                          </TouchableOpacity>
+                            </TouchableOpacity>
+                          </View>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </Modal>
-                <Modal isVisible={this.state.rateForm}>
-                  <View
-                    style={{
-                      alignItems: 'center',
-                    }}>
+                  </Modal>
+                  <Modal isVisible={this.state.rateForm}>
                     <View
                       style={{
-                        width: '100%',
-                        backgroundColor: colors.secondary,
-                        borderRadius: 10,
                         alignItems: 'center',
                       }}>
                       <View
                         style={{
                           width: '100%',
+                          backgroundColor: colors.secondary,
+                          borderRadius: 10,
                           alignItems: 'center',
-                          paddingVertical: 10,
                         }}>
                         <View
                           style={{
                             width: '100%',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            borderBottomColor: colors.grey,
-                            borderBottomWidth: StyleSheet.hairlineWidth,
-                            paddingVertical: 10,
-                          }}>
-                          <TouchableOpacity
-                            style={{marginLeft: 20}}
-                            onPress={() =>
-                              this.setState({
-                                rateForm: false,
-                              })
-                            }>
-                            <Ionicons
-                              name="ios-close"
-                              size={30}
-                              color={colors.baseline}
-                            />
-                          </TouchableOpacity>
-                          <Text style={styles.dealInfoHeader}>
-                            Rate {this.state.user.name}
-                          </Text>
-                        </View>
-                        <View
-                          style={{
-                            width: '100%',
                             alignItems: 'center',
                             paddingVertical: 10,
                           }}>
-                          {this.state.rating > 0 ? (
-                            <Text
-                              style={{
-                                fontSize: 30,
-                                color: colors.white,
-                                fontFamily: 'Muli-Bold',
-                                marginTop: 5,
-                              }}>
-                              {this.state.rating}.0
+                          <View
+                            style={{
+                              width: '100%',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              borderBottomColor: colors.grey,
+                              borderBottomWidth: StyleSheet.hairlineWidth,
+                              paddingVertical: 10,
+                            }}>
+                            <TouchableOpacity
+                              style={{ marginLeft: 20 }}
+                              onPress={() =>
+                                this.setState({
+                                  rateForm: false,
+                                })
+                              }>
+                              <Ionicons
+                                name="ios-close"
+                                size={30}
+                                color={colors.baseline}
+                              />
+                            </TouchableOpacity>
+                            <Text style={styles.dealInfoHeader}>
+                              Rate {this.state.user.name}
                             </Text>
-                          ) : null}
-                          <View style={styles.stars}>
-                            {stars.map((star) => {
-                              if (star.active) {
-                                return (
-                                  <TouchableOpacity
-                                    key={star.key}
-                                    onPress={() =>
-                                      this.setState({
-                                        rating: star.key,
-                                      })
-                                    }>
-                                    <FontAwesome
-                                      name="star"
-                                      style={styles.star}
-                                    />
-                                  </TouchableOpacity>
-                                );
-                              } else {
-                                return (
-                                  <TouchableOpacity
-                                    key={star.key}
-                                    onPress={() =>
-                                      this.setState({
-                                        rating: star.key,
-                                      })
-                                    }>
-                                    <FontAwesome
-                                      name="star-o"
-                                      style={styles.star}
-                                    />
-                                  </TouchableOpacity>
-                                );
-                              }
-                            })}
                           </View>
-                          <View style={styles.inputGroup}>
-                            <Text style={styles.inputGroupText}>
-                              Few words regarding the experience ?
+                          <View
+                            style={{
+                              width: '100%',
+                              alignItems: 'center',
+                              paddingVertical: 10,
+                            }}>
+                            {this.state.rating > 0 ? (
+                              <Text
+                                style={{
+                                  fontSize: 30,
+                                  color: colors.white,
+                                  fontFamily: 'Muli-Bold',
+                                  marginTop: 5,
+                                }}>
+                                {this.state.rating}.0
+                              </Text>
+                            ) : null}
+                            <View style={styles.stars}>
+                              {stars.map((star) => {
+                                if (star.active) {
+                                  return (
+                                    <TouchableOpacity
+                                      key={star.key}
+                                      onPress={() =>
+                                        this.setState({
+                                          rating: star.key,
+                                        })
+                                      }>
+                                      <FontAwesome
+                                        name="star"
+                                        style={styles.star}
+                                      />
+                                    </TouchableOpacity>
+                                  );
+                                } else {
+                                  return (
+                                    <TouchableOpacity
+                                      key={star.key}
+                                      onPress={() =>
+                                        this.setState({
+                                          rating: star.key,
+                                        })
+                                      }>
+                                      <FontAwesome
+                                        name="star-o"
+                                        style={styles.star}
+                                      />
+                                    </TouchableOpacity>
+                                  );
+                                }
+                              })}
+                            </View>
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>
+                                Few words regarding the experience ?
                             </Text>
-                            <TextInput
-                              style={styles.inputArea}
-                              autoCapitalize="none"
-                              multiline={true}
-                              maxLength={300}
-                              onChangeText={(rateComment) =>
-                                this.setState({rateComment})
-                              }
-                              value={this.state.rateComment}></TextInput>
+                              <TextInput
+                                style={styles.inputArea}
+                                autoCapitalize="none"
+                                multiline={true}
+                                maxLength={300}
+                                onChangeText={(rateComment) =>
+                                  this.setState({ rateComment })
+                                }
+                                value={this.state.rateComment}></TextInput>
+                            </View>
+                            <TouchableOpacity
+                              onPress={this.handleRating}
+                              style={styles.confirmButton}>
+                              <Text style={styles.confirmButtonText}>
+                                Rate User
+                            </Text>
+                            </TouchableOpacity>
                           </View>
-                          <TouchableOpacity
-                            onPress={this.handleRating}
-                            style={styles.confirmButton}>
-                            <Text style={styles.confirmButtonText}>
-                              Rate User
-                            </Text>
-                          </TouchableOpacity>
                         </View>
                       </View>
                     </View>
-                  </View>
-                </Modal>
-              </>
-            ) : null}
-            <Modal isVisible={this.state.rateForm}>
-              <View
-                style={{
-                  alignItems: 'center',
-                }}>
+                  </Modal>
+                </>
+              ) : null}
+              <Modal isVisible={this.state.rateForm}>
                 <View
                   style={{
-                    width: '100%',
-                    backgroundColor: colors.secondary,
-                    borderRadius: 10,
                     alignItems: 'center',
                   }}>
                   <View
                     style={{
                       width: '100%',
+                      backgroundColor: colors.secondary,
+                      borderRadius: 10,
                       alignItems: 'center',
-                      paddingVertical: 10,
                     }}>
                     <View
                       style={{
                         width: '100%',
-                        flexDirection: 'row',
                         alignItems: 'center',
-                        borderBottomColor: colors.grey,
-                        borderBottomWidth: StyleSheet.hairlineWidth,
                         paddingVertical: 10,
                       }}>
-                      <TouchableOpacity
-                        style={{marginLeft: 20}}
-                        onPress={() =>
-                          this.setState({
-                            rateForm: false,
-                          })
-                        }>
-                        <Ionicons
-                          name="ios-close"
-                          size={30}
-                          color={colors.baseline}
-                        />
-                      </TouchableOpacity>
-                      <Text style={styles.dealInfoHeader}>
-                        Rate the experience
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          borderBottomColor: colors.grey,
+                          borderBottomWidth: StyleSheet.hairlineWidth,
+                          paddingVertical: 10,
+                        }}>
+                        <TouchableOpacity
+                          style={{ marginLeft: 20 }}
+                          onPress={() =>
+                            this.setState({
+                              rateForm: false,
+                            })
+                          }>
+                          <Ionicons
+                            name="ios-close"
+                            size={30}
+                            color={colors.baseline}
+                          />
+                        </TouchableOpacity>
+                        <Text style={styles.dealInfoHeader}>
+                          Rate the experience
                       </Text>
-                    </View>
-                    <View
-                      style={{
-                        width: '100%',
-                        alignItems: 'center',
-                        paddingVertical: 10,
-                      }}>
-                      {this.state.rating > 0 ? (
-                        <Text
-                          style={{
-                            fontSize: 30,
-                            color: colors.white,
-                            fontFamily: 'Muli-Bold',
-                            marginTop: 5,
-                          }}>
-                          {this.state.rating}.0
-                        </Text>
-                      ) : null}
-                      <View style={styles.stars}>
-                        {stars.map((star) => {
-                          if (star.active) {
-                            return (
-                              <TouchableOpacity
-                                key={star.key}
-                                onPress={() =>
-                                  this.setState({
-                                    rating: star.key,
-                                  })
-                                }>
-                                <FontAwesome name="star" style={styles.star} />
-                              </TouchableOpacity>
-                            );
-                          } else {
-                            return (
-                              <TouchableOpacity
-                                key={star.key}
-                                onPress={() =>
-                                  this.setState({
-                                    rating: star.key,
-                                  })
-                                }>
-                                <FontAwesome
-                                  name="star-o"
-                                  style={styles.star}
-                                />
-                              </TouchableOpacity>
-                            );
-                          }
-                        })}
                       </View>
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>
-                          Few words regarding the experience ?
+                      <View
+                        style={{
+                          width: '100%',
+                          alignItems: 'center',
+                          paddingVertical: 10,
+                        }}>
+                        {this.state.rating > 0 ? (
+                          <Text
+                            style={{
+                              fontSize: 30,
+                              color: colors.white,
+                              fontFamily: 'Muli-Bold',
+                              marginTop: 5,
+                            }}>
+                            {this.state.rating}.0
+                          </Text>
+                        ) : null}
+                        <View style={styles.stars}>
+                          {stars.map((star) => {
+                            if (star.active) {
+                              return (
+                                <TouchableOpacity
+                                  key={star.key}
+                                  onPress={() =>
+                                    this.setState({
+                                      rating: star.key,
+                                    })
+                                  }>
+                                  <FontAwesome name="star" style={styles.star} />
+                                </TouchableOpacity>
+                              );
+                            } else {
+                              return (
+                                <TouchableOpacity
+                                  key={star.key}
+                                  onPress={() =>
+                                    this.setState({
+                                      rating: star.key,
+                                    })
+                                  }>
+                                  <FontAwesome
+                                    name="star-o"
+                                    style={styles.star}
+                                  />
+                                </TouchableOpacity>
+                              );
+                            }
+                          })}
+                        </View>
+                        <View style={styles.inputGroup}>
+                          <Text style={styles.inputGroupText}>
+                            Few words regarding the experience ?
                         </Text>
-                        <TextInput
-                          style={styles.inputArea}
-                          autoCapitalize="none"
-                          multiline={true}
-                          maxLength={300}
-                          onChangeText={(rateComment) =>
-                            this.setState({rateComment})
-                          }
-                          value={this.state.rateComment}></TextInput>
+                          <TextInput
+                            style={styles.inputArea}
+                            autoCapitalize="none"
+                            multiline={true}
+                            maxLength={300}
+                            onChangeText={(rateComment) =>
+                              this.setState({ rateComment })
+                            }
+                            value={this.state.rateComment}></TextInput>
+                        </View>
+                        <TouchableOpacity
+                          onPress={this.handleRating}
+                          style={styles.confirmButton}>
+                          <Text style={styles.confirmButtonText}>Rate User</Text>
+                        </TouchableOpacity>
                       </View>
-                      <TouchableOpacity
-                        onPress={this.handleRating}
-                        style={styles.confirmButton}>
-                        <Text style={styles.confirmButtonText}>Rate User</Text>
-                      </TouchableOpacity>
                     </View>
                   </View>
                 </View>
-              </View>
-            </Modal>
-          </View>
-        )}
+              </Modal>
+            </View>
+          )}
       </SafeAreaView>
     );
   }
