@@ -114,29 +114,19 @@ export default class HomeScreen extends React.Component {
       tab2Count: 0,
       tab3Count: 0,
       update: false,
+      showExit: false,
     };
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
   }
 
   async componentDidMount() {
-    // const options = {
-    //   GooglePackageName: 'com.byebuyy',
-    //   preferredAndroidMarket: AndroidMarket.Google,
-    //   preferInApp: false,
-    //   openAppStoreIfInAppFails: true,
-    //   fallbackPlatformURL: 'https://www.byebuyy.com',
-    // };
-    // Rate.rate(options, (success) => {
-    //   if (success) {
-    //     console.log(success);
-    //   }
-    // });
     firestore()
       .collection('settings')
       .onSnapshot((snap) => {
         snap.forEach((doc) => {
           console.log('75', Platform.OS);
           if (Platform.OS === 'android') {
-            if (doc.data().android !== '2.1.6') {
+            if (doc.data().android !== '2.1.8') {
               this.setState({
                 update: true,
                 showLocationAccess: true,
@@ -147,7 +137,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           } else {
-            if (doc.data().ios !== '2.1.6') {
+            if (doc.data().ios !== '2.1.8') {
               this.setState({
                 update: true,
               });
@@ -175,8 +165,50 @@ export default class HomeScreen extends React.Component {
     );
     localNotificationService.configure(this.onOpenNotification);
     AppState.addEventListener('change', this.handleAppStateChange);
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick,
+    );
     this.handlePermissionAndroid();
   }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.handleBackButtonClick,
+    );
+  }
+
+  handleBackButtonClick() {
+    console.log();
+    if (this.props.navigation.isFocused()) {
+      if (this.state.showExit) {
+        BackHandler.exitApp();
+      } else {
+        this.setState({
+          showExit: true,
+        });
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  handleRate = () => {
+    const options = {
+      GooglePackageName: 'com.byebuyy',
+      preferredAndroidMarket: AndroidMarket.Google,
+      preferInApp: false,
+      openAppStoreIfInAppFails: true,
+      fallbackPlatformURL: 'https://www.byebuyy.com',
+    };
+    Rate.rate(options, (success) => {
+      if (success) {
+        console.log(success);
+      }
+    });
+  };
 
   handleNotiCount = async () => {
     if (auth().currentUser) {
@@ -317,6 +349,11 @@ export default class HomeScreen extends React.Component {
       }
     } else if (e.data.type === 'Chat') {
       this.props.navigation.push('Chat', {id: e.data.id, location: location});
+    } else if (e.data.type === 'ViewProfile') {
+      this.props.navigation.push('viewProfile', {
+        id: e.data.id,
+        location: location,
+      });
     } else if (e.data.type === 'Follow') {
       this.props.navigation.push('viewProfile', {
         id: e.data.id,
@@ -358,6 +395,16 @@ export default class HomeScreen extends React.Component {
       );
     } else if (e === 'About') {
       this.props.navigation.push('About', {handleBack: this.handleBackHome});
+      this.setState(
+        {
+          activeMenu: e,
+        },
+        () => {
+          this.handleToggleClose();
+        },
+      );
+    } else if (e === 'Feedback') {
+      this.props.navigation.push('Feedback', {handleBack: this.handleBackHome});
       this.setState(
         {
           activeMenu: e,
@@ -869,6 +916,78 @@ export default class HomeScreen extends React.Component {
               </TouchableOpacity>
             </View>
           </View>
+        </Modal>
+        <Modal isVisible={this.state.showExit}>
+          <TouchableOpacity
+            onPress={() => {
+              this.setState({
+                showExit: false,
+              });
+            }}
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              justifyContent: 'center',
+              flex: 1,
+            }}>
+            <View
+              style={{
+                width: '85%',
+                backgroundColor: colors.secondary,
+                borderRadius: 10,
+                alignItems: 'center',
+                paddingVertical: 20,
+              }}>
+              <Image
+                source={require('../assets/images/icon.png')}
+                style={{width: 50, height: 50, marginBottom: 10}}
+              />
+              <Text
+                style={{
+                  color: colors.white,
+                  fontSize: 20,
+                  fontFamily: 'Muli-Bold',
+                }}>
+                How was your experience ?
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 20,
+                }}>
+                <TouchableOpacity
+                  onPress={this.handleBackButtonClick}
+                  style={{
+                    width: 120,
+                    borderColor: colors.baseline,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: 40,
+                    borderRadius: 5,
+                    marginHorizontal: 10,
+                  }}>
+                  <Text style={styles.updateButtonText}>Exit App</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={this.handleRate}
+                  style={{
+                    width: 120,
+                    borderColor: colors.baseline,
+                    borderWidth: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: 40,
+                    borderRadius: 5,
+                    marginHorizontal: 10,
+                    backgroundColor: colors.baseline,
+                  }}>
+                  <Text style={styles.updateButtonText}>Rate Us</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableOpacity>
         </Modal>
         <SafeAreaView></SafeAreaView>
       </>

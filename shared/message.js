@@ -17,64 +17,65 @@ import MiniCard2 from './minicard2';
 import colors from '../appTheme';
 import Modal from 'react-native-modal';
 import * as Progress from 'react-native-progress';
+import Hyperlink from 'react-native-hyperlink';
 
 const {width, height} = Dimensions.get('window');
 
 class Message extends React.Component {
   constructor() {
     super();
-    this.state = {
-      menu: false,
-      menu2: false,
-    };
+    this.state = {};
   }
+
+  handleHighlight = (e) => {
+    this.props.showMessageMenu(e);
+  };
 
   render() {
     return (
       <>
-        <View
+        <TouchableOpacity
+          onPress={() => this.handleHighlight({})}
+          onLongPress={() => this.handleHighlight(this.props.data)}
           style={{
             width: '100%',
-            marginVertical: 10,
+            marginVertical: 2,
             flexDirection: 'row',
             justifyContent: this.props.type ? 'flex-end' : 'flex-start',
+            position: 'relative',
           }}>
-          <View
+          <TouchableOpacity
+            onLongPress={() => this.handleHighlight(this.props.data)}
             style={{
               flexDirection: this.props.type ? 'row' : 'row-reverse',
               alignItems: 'center',
-              marginRight: 5,
-              maxWidth: '90%',
+              marginVertical: 2,
             }}>
-            <TouchableOpacity
-              onLongPress={() => {
-                this.setState({
-                  menu: true,
-                });
-              }}
+            <View
               style={{
                 borderRadius: 5,
                 backgroundColor: this.props.type
                   ? colors.secondary
                   : colors.white,
-                paddingVertical: 5,
-                paddingHorizontal: 10,
+                padding: 8,
                 borderBottomRightRadius: this.props.type ? 0 : 5,
                 borderBottomLeftRadius: this.props.type ? 5 : 0,
+                maxWidth: 340,
               }}>
               {this.props.format === 'attach-video' ||
               this.props.format === 'attach-doc' ||
               this.props.format === 'attach-photo' ? null : (
-                <Text
-                  selectable={true}
-                  style={{
-                    fontSize: 16,
-                    marginBottom: 5,
-                    fontFamily: 'Muli-Regular',
-                    color: this.props.type ? colors.white : colors.darkText,
-                  }}>
-                  {this.props.message}
-                </Text>
+                <Hyperlink linkStyle={{color: '#2980b9'}} linkDefault={true}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginBottom: 5,
+                      fontFamily: 'Muli-Regular',
+                      color: this.props.type ? colors.white : colors.darkText,
+                    }}>
+                    {this.props.message}
+                  </Text>
+                </Hyperlink>
               )}
               {this.props.format === 'post-product' ? (
                 <View style={styles.post}>
@@ -102,6 +103,7 @@ class Message extends React.Component {
                       this.props.format,
                     )
                   }
+                  onLongPress={() => this.handleHighlight(this.props.data)}
                   style={{
                     width: 200,
                     maxHeight: 200,
@@ -123,11 +125,12 @@ class Message extends React.Component {
                       this.props.format,
                     )
                   }
+                  onLongPress={() => this.handleHighlight(this.props.data)}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     padding: 10,
-                    backgroundColor: colors.white,
+                    backgroundColor: '#d5d5d5',
                     borderRadius: 5,
                     marginBottom: 10,
                     marginTop: 5,
@@ -156,15 +159,17 @@ class Message extends React.Component {
                       this.props.format,
                     )
                   }
+                  onLongPress={() => this.handleHighlight(this.props.data)}
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     paddingHorizontal: 10,
                     paddingVertical: 20,
-                    backgroundColor: colors.white,
+                    backgroundColor: '#d5d5d5',
                     borderRadius: 5,
                     marginBottom: 10,
                     marginTop: 5,
+                    width: 250,
                   }}>
                   <Ionicons
                     name="ios-videocam"
@@ -176,34 +181,11 @@ class Message extends React.Component {
                       fontSize: 14,
                       fontFamily: 'Muli-Regular',
                       color: colors.darkText,
-                      marginLeft: 5,
+                      marginLeft: 10,
+                      width: '85%',
                     }}>
                     {this.props.name}
                   </Text>
-                </TouchableOpacity>
-              ) : null}
-              {this.props.format === 'attach-video' ||
-              this.props.format === 'attach-doc' ||
-              this.props.format === 'attach-photo' ? (
-                <TouchableOpacity
-                  style={styles.down}
-                  onPress={() => {
-                    if (this.props.format === 'attach-photo') {
-                      this.props.saveToGallery(this.props.url, '.jpeg');
-                    } else if (this.props.format === 'attach-video') {
-                      this.props.saveToGallery(this.props.url, this.props.name);
-                    } else if (this.props.format === 'attach-doc') {
-                      this.props.saveToGallery(this.props.url, this.props.name);
-                    }
-                  }}>
-                  <Ionicons
-                    name="download-outline"
-                    size={20}
-                    style={{
-                      color: colors.white,
-                      transform: [{translateX: 1}, {translateY: -1}],
-                    }}
-                  />
                 </TouchableOpacity>
               ) : null}
               <View
@@ -225,34 +207,32 @@ class Message extends React.Component {
                       fontFamily: 'Muli-Regular',
                       color: this.props.type ? colors.white : colors.secondary,
                     }}>
-                    <Moment element={Text} format="MMMM Do YYYY, h:mm a">
+                    <Moment element={Text} format="DD-MM-YYYY, h:mm a">
                       {this.props.date}
                     </Moment>
                   </Text>
                 )}
-                <>
-                  {this.props.read ? (
-                    <>
-                      {this.props.read === true ? (
-                        <Ionicons
-                          name="checkmark"
-                          size={16}
-                          color="#d65a31"
-                          style={{marginLeft: 5}}
-                        />
-                      ) : (
-                        <Ionicons
-                          name="checkmark"
-                          size={16}
-                          color={colors.grey}
-                          style={{marginLeft: 5}}
-                        />
-                      )}
-                    </>
-                  ) : null}
-                </>
+                {this.props.type ? (
+                  <>
+                    {this.props.read === true ? (
+                      <Ionicons
+                        name="ios-checkmark-done"
+                        size={16}
+                        color={colors.grey}
+                        style={{marginLeft: 5}}
+                      />
+                    ) : (
+                      <Ionicons
+                        name="checkmark"
+                        size={16}
+                        color={colors.grey}
+                        style={{marginLeft: 5}}
+                      />
+                    )}
+                  </>
+                ) : null}
               </View>
-            </TouchableOpacity>
+            </View>
             <View
               style={{
                 width: 10,
@@ -281,165 +261,12 @@ class Message extends React.Component {
                   borderBottomRightRadius: this.props.type ? 0 : 10,
                 }}></View>
             </View>
-          </View>
-        </View>
-        <Modal isVisible={this.state.menu}>
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({
-                menu: false,
-              });
-            }}
-            style={{
-              alignItems: 'center',
-              width: '100%',
-              justifyContent: 'center',
-              flex: 1,
-            }}>
-            <View
-              style={{
-                width: '80%',
-                backgroundColor: colors.secondary,
-                borderRadius: 10,
-                alignItems: 'center',
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState(
-                    {
-                      menu: false,
-                    },
-                    () => {
-                      if (this.props.format === 'message') {
-                        this.props.copyText(this.props.message);
-                      } else {
-                        this.props.copyText(this.props.url);
-                      }
-                    },
-                  );
-                }}
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 15,
-                  justifyContent: 'center',
-                  borderBottomColor: colors.grey,
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.white,
-                    fontSize: 16,
-                    textAlign: 'center',
-                  }}>
-                  Copy message
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    menu: false,
-                    menu2: true,
-                  });
-                }}
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 20,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.white,
-                    fontSize: 16,
-                    textAlign: 'center',
-                  }}>
-                  Clear message
-                </Text>
-              </TouchableOpacity>
-            </View>
           </TouchableOpacity>
-        </Modal>
-        <Modal isVisible={this.state.menu2}>
-          <TouchableOpacity
-            onPress={() => {
-              this.setState({
-                menu2: false,
-              });
-            }}
-            style={{
-              alignItems: 'center',
-              width: '100%',
-              justifyContent: 'center',
-              flex: 1,
-            }}>
-            <View
-              style={{
-                width: '80%',
-                backgroundColor: colors.secondary,
-                borderRadius: 10,
-                alignItems: 'center',
-              }}>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState(
-                    {
-                      menu2: false,
-                    },
-                    () => {
-                      this.props.handleHide(this.props.item._id);
-                    },
-                  );
-                }}
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 20,
-                  justifyContent: 'center',
-                  borderBottomColor: colors.grey,
-                  borderBottomWidth: StyleSheet.hairlineWidth,
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.white,
-                    fontSize: 16,
-                    textAlign: 'center',
-                  }}>
-                  Yes, clear message
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  this.setState({
-                    menu2: false,
-                  });
-                }}
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  paddingVertical: 20,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.white,
-                    fontSize: 16,
-                    textAlign: 'center',
-                  }}>
-                  No, dont clear message
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        </Modal>
+          {this.props.highlight &&
+          this.props.highlight._id === this.props.data._id ? (
+            <View style={styles.highlight}></View>
+          ) : null}
+        </TouchableOpacity>
       </>
     );
   }
@@ -460,6 +287,12 @@ const styles = StyleSheet.create({
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  highlight: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: '#d6543040',
   },
 });
 

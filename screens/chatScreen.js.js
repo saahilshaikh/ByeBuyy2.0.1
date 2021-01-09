@@ -11,8 +11,7 @@ import {
   TextInput,
   Keyboard,
   FlatList,
-  Alert,
-  Platform,
+  Share,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -34,7 +33,7 @@ import link from '../fetchPath';
 import AsyncStorage from '@react-native-community/async-storage';
 import RNFetchBlob from 'rn-fetch-blob';
 import Clipboard from '@react-native-community/clipboard';
-import MiniCard from '../shared/mincard';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 var RNFS = require('react-native-fs');
 
@@ -70,9 +69,10 @@ export default class ChatScreen extends React.PureComponent {
       landmark: '',
       city: '',
       country: '',
-      date: '',
-      time: '',
+      date: new Date(),
+      time: new Date(),
       showDate: false,
+      showTime: false,
       rateForm: false,
       rating: 0,
       rateComment: '',
@@ -81,6 +81,8 @@ export default class ChatScreen extends React.PureComponent {
       menu2: false,
       menu3: false,
       progress: 0,
+      showMessageMenu: {},
+      showDeleteMenu: false,
     };
   }
 
@@ -95,13 +97,18 @@ export default class ChatScreen extends React.PureComponent {
       if (chatValue !== null && chatValue2 !== null) {
         console.log('Local chat found');
         var ch = JSON.parse(chatValue);
-        this.setState({
-          user: JSON.parse(chatValue2),
-          chat: ch,
-          loading: false,
-          block: ch.blocked.includes(auth().currentUser.email),
-          showDeal: ch.deals.length > 0,
-        });
+        this.setState(
+          {
+            user: JSON.parse(chatValue2),
+            chat: ch,
+            loading: false,
+            block: ch.blocked.includes(auth().currentUser.email),
+            showDeal: ch.deals.length > 0,
+          },
+          () => {
+            this.flatList.scrollToEnd({animated: true});
+          },
+        );
       } else {
         console.log('local chat not found');
       }
@@ -234,15 +241,22 @@ export default class ChatScreen extends React.PureComponent {
     }
   };
 
-  copyText = (e) => {
-    Clipboard.setString(e);
+  copyText = () => {
+    Clipboard.setString(this.state.showMessageMenu.message);
     Snackbar.show({
       text: 'Copied to Clipboard',
       duration: Snackbar.LENGTH_SHORT,
     });
+    this.setState({
+      showMessageMenu: {},
+    });
   };
 
   saveToGallery = (e, f) => {
+    Snackbar.show({
+      text: 'Downloading...',
+      duration: Snackbar.LENGTH_SHORT,
+    });
     var pdf_url = e;
     let PictureDir = RNFetchBlob.fs.dirs.DownloadDir;
     var date = new Date();
@@ -376,12 +390,12 @@ export default class ChatScreen extends React.PureComponent {
         var fileName = item.path;
         var str = fileName.split('react-native-image-crop-picker/');
         var name = str[str.length - 1];
-        if (item.size > 15242880) {
+        if (item.size > 20242880) {
           this.setState({
             attach: false,
           });
           Snackbar.show({
-            text: 'Video size is larger than 15mb!',
+            text: 'Video size is larger than 20mb!',
             duration: Snackbar.LENGTH_SHORT,
           });
         } else {
@@ -479,14 +493,19 @@ export default class ChatScreen extends React.PureComponent {
     console.log('RSMS');
     if (this.state.sending === false) {
       var message = this.state.message;
-      this.setState({
-        sending: true,
-        prevMessage: this.state.message,
-        prevFormat: 'message',
-        prevUrl: '',
-        prevName: '',
-        message: '',
-      });
+      this.setState(
+        {
+          sending: true,
+          prevMessage: this.state.message,
+          prevFormat: 'message',
+          prevUrl: '',
+          prevName: '',
+          message: '',
+        },
+        () => {
+          this.flatList.scrollToEnd({animated: true});
+        },
+      );
       var data = {
         name: '',
         url: '',
@@ -511,8 +530,8 @@ export default class ChatScreen extends React.PureComponent {
           },
         );
         var data2 = {
-          email2: auth().currentUser.email,
-          email1: this.state.user.email,
+          email1: auth().currentUser.email,
+          email2: this.state.user.email,
           id: this.state.chat._id,
         };
         var res2 = await axios.post(link + '/api/orderChat', data2);
@@ -526,13 +545,18 @@ export default class ChatScreen extends React.PureComponent {
   handleSendImage = async () => {
     console.log('RSI');
     if (this.state.sending === false) {
-      this.setState({
-        sending: true,
-        prevMessage: 'Image',
-        prevFormat: 'attach-photo',
-        prevUrl: this.state.image,
-        prevName: '',
-      });
+      this.setState(
+        {
+          sending: true,
+          prevMessage: 'Image',
+          prevFormat: 'attach-photo',
+          prevUrl: this.state.image,
+          prevName: '',
+        },
+        () => {
+          this.flatList.scrollToEnd({animated: true});
+        },
+      );
       var url = await this.handleUploadImage(this.state.image);
       console.log('225', url);
       var data = {
@@ -606,13 +630,18 @@ export default class ChatScreen extends React.PureComponent {
     console.log('RSI');
     if (this.state.sending === false) {
       var name = this.state.name;
-      this.setState({
-        sending: true,
-        prevMessage: 'Video',
-        prevFormat: 'attach-video',
-        prevUrl: this.state.video,
-        prevName: this.state.name,
-      });
+      this.setState(
+        {
+          sending: true,
+          prevMessage: 'Video',
+          prevFormat: 'attach-video',
+          prevUrl: this.state.video,
+          prevName: this.state.name,
+        },
+        () => {
+          this.flatList.scrollToEnd({animated: true});
+        },
+      );
       var url = await this.handleUploadVideo(this.state.video);
       console.log('225', url);
       var data = {
@@ -686,13 +715,18 @@ export default class ChatScreen extends React.PureComponent {
     console.log('RSI');
     if (this.state.sending === false) {
       var name = this.state.name;
-      this.setState({
-        sending: true,
-        prevMessage: 'Doc',
-        prevFormat: 'attach-doc',
-        prevUrl: this.state.pdf,
-        prevName: this.state.name,
-      });
+      this.setState(
+        {
+          sending: true,
+          prevMessage: 'Doc',
+          prevFormat: 'attach-doc',
+          prevUrl: this.state.pdf,
+          prevName: this.state.name,
+        },
+        () => {
+          this.flatList.scrollToEnd({animated: true});
+        },
+      );
       var url = await this.handleUploadDocument(this.state.pdf);
       console.log('225', url);
       var data = {
@@ -876,8 +910,18 @@ export default class ChatScreen extends React.PureComponent {
   };
 
   handleLetsMakeADeal = () => {
+    clearInterval(this.inter);
     this.setState({
       showDealForm: true,
+    });
+  };
+
+  handleStopMakeADeal = () => {
+    this.inter = setInterval(() => {
+      this.handleInit();
+    }, 3000);
+    this.setState({
+      showDealForm: false,
     });
   };
 
@@ -894,6 +938,9 @@ export default class ChatScreen extends React.PureComponent {
       status: true,
       chatId: this.state.chat._id,
     };
+    this.inter = setInterval(() => {
+      this.handleInit();
+    }, 3000);
     var res = await axios.post(link + '/api/meetingDeal', data);
     if (res.data !== null) {
       if (res.data.type === 'success') {
@@ -933,23 +980,6 @@ export default class ChatScreen extends React.PureComponent {
       if (res2.data !== null) {
         console.log('Ordered Chat');
       }
-    }
-  };
-
-  onChangeDatePicker = (e, date) => {
-    console.log(date);
-    if (mode === 'date') {
-      mode = 'time';
-      this.setState({
-        date: new Date(date),
-        showDate: true,
-      });
-    } else if (mode === 'time') {
-      mode = 'date';
-      this.setState({
-        time: new Date(date),
-        showDate: false,
-      });
     }
   };
 
@@ -1005,8 +1035,50 @@ export default class ChatScreen extends React.PureComponent {
           text: 'Rated User!',
           duration: Snackbar.LENGTH_SHORT,
         });
+        this.sendRatePushNotification(
+          'ViewProfile',
+          this.state.user._id,
+          'rate',
+        );
       }
     }
+  };
+
+  sendRatePushNotification = async (e, f, m) => {
+    console.log(this.state.currentUser);
+    const FIREBASE_API_KEY =
+      'AAAA-x7BxpY:APA91bGm_UWNpbo0o6aOfVkEaIqRLZAhdh0oCjs-RCxA2qsrYy3LjTzSRzVeoBycvhXT2w2qRZEL2e7nmKa3-kgBRCfUZEyffWlpU8fhOhwaELLC0RpNvUtM6GAdcdC8jhhfaWxq6req';
+    console.log(this.state.token);
+    const message = {
+      registration_ids: [this.state.user.pushToken],
+      notification: {
+        title: this.state.currentUser.name + ' has rated you.',
+        body: '',
+        vibrate: 1,
+        sound: 1,
+        show_in_foreground: false,
+        priority: 'high',
+        content_available: true,
+      },
+      data: {
+        type: e,
+        id: f,
+        date: new Date(),
+      },
+    };
+    var body = JSON.stringify(message);
+    let headers = new Headers({
+      'Content-Type': 'application/json',
+      Authorization: 'key=' + FIREBASE_API_KEY,
+    });
+
+    let response = await fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers,
+      body: body,
+    });
+    re = response.json();
+    console.log('174', re);
   };
 
   sendPushNotification = async (e, f, m) => {
@@ -1054,7 +1126,7 @@ export default class ChatScreen extends React.PureComponent {
       registration_ids: [this.state.user.pushToken],
       notification: {
         title: this.state.currentUser.name + ' ' + m + ' the request.',
-        body: this.state.message,
+        body: '',
         vibrate: 1,
         sound: 1,
         show_in_foreground: false,
@@ -1115,18 +1187,73 @@ export default class ChatScreen extends React.PureComponent {
     }
   };
 
-  handleHide = async (e) => {
+  handleHide = async () => {
     var data = {
       id: this.state.chat._id,
       user: auth().currentUser.email,
-      messageId: e,
+      messageId: this.state.showMessageMenu._id,
     };
     var res = await axios.post(link + '/api/hideChatMessage', data);
     if (res.data !== null) {
       this.setState({
-        chat: chat,
+        chat: res.data,
       });
     }
+    this.setState({
+      showMessageMenu: {},
+    });
+  };
+
+  showMessageMenu = (e) => {
+    this.setState({
+      showMessageMenu: e,
+    });
+  };
+
+  hideMessageMenu = () => {
+    this.setState({
+      showMessageMenu: {},
+    });
+  };
+
+  handleShare = (e) => {
+    const result = Share.share({
+      message: e,
+    });
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+        console.log(result);
+        this.setState({
+          showMessageMenu: {},
+        });
+      } else {
+        // shared
+        console.log(result);
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+      console.log(result);
+    }
+  };
+
+  handleBack = () => {
+    this.props.navigation.navigate('Main');
+  };
+
+  handleChangeDate = (e, date) => {
+    console.log(date);
+    this.setState({
+      date: date,
+      showDate: false,
+    });
+  };
+
+  handleChangeTime = (e, date) => {
+    this.setState({
+      time: date,
+      showTime: false,
+    });
   };
 
   render() {
@@ -1189,109 +1316,221 @@ export default class ChatScreen extends React.PureComponent {
             <View
               style={{
                 backgroundColor: colors.secondary,
-                paddingHorizontal: 10,
-                paddingVertical: 10,
+                height: 60,
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 width: '100%',
+                paddingRight: 10,
               }}>
               <View
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}>
-                <TouchableOpacity
-                  style={styles.headerIcon}
-                  onPress={() => this.props.navigation.pop()}>
-                  <Ionicons name="ios-close" size={30} color={colors.grey} />
-                </TouchableOpacity>
-                {this.state.loading ? (
-                  <View
-                    style={{
-                      width: '60%',
-                      paddingHorizontal: 5,
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      borderRadius: 5,
-                    }}>
-                    <SkeletonContent
-                      containerStyle={{width: '100%'}}
-                      boneColor={colors.primary}
-                      highlightColor={colors.darkText}
-                      isLoading={
-                        this.state.loadingProduct || this.state.loadingOwner
-                      }
-                      layout={[
-                        {
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          children: [
-                            {
-                              width: 40,
-                              height: 40,
-                              marginRight: 10,
-                              borderRadius: 20,
-                            },
-                            {
-                              width: 150,
-                              height: 20,
-                            },
-                          ],
-                        },
-                      ]}></SkeletonContent>
-                  </View>
-                ) : (
+                {this.state.showMessageMenu.id ? (
                   <View
                     style={{
                       flexDirection: 'row',
                       alignItems: 'center',
-                      justifyContent: 'center',
+                      width: '100%',
+                      justifyContent: 'space-between',
+                      paddingRight: 10,
                     }}>
+                    <TouchableOpacity
+                      style={styles.headerIcon}
+                      onPress={this.hideMessageMenu}>
+                      <Ionicons
+                        name="ios-close"
+                        size={30}
+                        color={colors.grey}
+                      />
+                    </TouchableOpacity>
                     <View
                       style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 20,
-                        backgroundColor: colors.grey,
+                        flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        marginLeft: 5,
+                        justifyContent: 'space-between',
                       }}>
-                      {this.state.user.photo ? (
-                        <Image
-                          source={{uri: this.state.user.photo}}
+                      <TouchableOpacity
+                        onPress={this.copyText}
+                        style={styles.headerIcon}>
+                        <Ionicons
+                          name="ios-copy-outline"
+                          size={26}
+                          color={colors.grey}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.setState({
+                            showDeleteMenu: true,
+                          });
+                        }}
+                        style={styles.headerIcon}>
+                        <Ionicons
+                          name="ios-trash"
+                          size={26}
+                          color={colors.grey}
+                        />
+                      </TouchableOpacity>
+                      {this.state.showMessageMenu.format === 'attach-video' ||
+                      this.state.showMessageMenu.format === 'attach-doc' ||
+                      this.state.showMessageMenu.format === 'attach-photo' ? (
+                        <>
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.handleShare(this.state.showMessageMenu.url)
+                            }
+                            style={styles.headerIcon}>
+                            <Ionicons
+                              name="share-social-outline"
+                              size={26}
+                              color={colors.grey}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.headerIcon}
+                            onPress={() => {
+                              if (
+                                this.state.showMessageMenu.format ===
+                                'attach-photo'
+                              ) {
+                                this.saveToGallery(
+                                  this.state.showMessageMenu.url,
+                                  '.jpg',
+                                );
+                              } else if (
+                                this.state.showMessageMenu.format ===
+                                'attach-video'
+                              ) {
+                                this.saveToGallery(
+                                  this.state.showMessageMenu.url,
+                                  this.state.showMessageMenu.name,
+                                );
+                              } else if (
+                                this.state.showMessageMenu.format ===
+                                'attach-doc'
+                              ) {
+                                this.saveToGallery(
+                                  this.state.showMessageMenu.url,
+                                  this.state.showMessageMenu.name,
+                                );
+                              }
+                            }}>
+                            <Ionicons
+                              name="download-outline"
+                              color={colors.grey}
+                              size={30}
+                            />
+                          </TouchableOpacity>
+                        </>
+                      ) : null}
+                    </View>
+                  </View>
+                ) : (
+                  <>
+                    <TouchableOpacity
+                      style={styles.headerIcon}
+                      onPress={this.handleBack}>
+                      <Ionicons
+                        name="ios-close"
+                        size={30}
+                        color={colors.grey}
+                      />
+                    </TouchableOpacity>
+                    {this.state.loading ? (
+                      <View
+                        style={{
+                          width: '60%',
+                          paddingHorizontal: 5,
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          borderRadius: 5,
+                        }}>
+                        <SkeletonContent
+                          containerStyle={{width: '100%'}}
+                          boneColor={colors.primary}
+                          highlightColor={colors.darkText}
+                          isLoading={
+                            this.state.loadingProduct || this.state.loadingOwner
+                          }
+                          layout={[
+                            {
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              children: [
+                                {
+                                  width: 40,
+                                  height: 40,
+                                  marginRight: 10,
+                                  borderRadius: 20,
+                                },
+                                {
+                                  width: 150,
+                                  height: 20,
+                                },
+                              ],
+                            },
+                          ]}></SkeletonContent>
+                      </View>
+                    ) : (
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <View
                           style={{
                             width: 40,
                             height: 40,
                             borderRadius: 20,
                             backgroundColor: colors.grey,
-                          }}
-                        />
-                      ) : (
-                        <Text style={styles.imageText}>
-                          {this.state.user.name.charAt(0).toUpperCase()}
-                        </Text>
-                      )}
-                    </View>
-                    <View>
-                      <Text style={styles.header}>{this.state.user.name}</Text>
-                      {this.state.user.active && !this.state.user.logout ? (
-                        <Text style={styles.headerStatus}>Online</Text>
-                      ) : null}
-                    </View>
-                  </View>
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginLeft: 5,
+                          }}>
+                          {this.state.user.photo ? (
+                            <Image
+                              source={{uri: this.state.user.photo}}
+                              style={{
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                                backgroundColor: colors.grey,
+                              }}
+                            />
+                          ) : (
+                            <Text style={styles.imageText}>
+                              {this.state.user.name.charAt(0).toUpperCase()}
+                            </Text>
+                          )}
+                        </View>
+                        <View>
+                          <Text style={styles.header}>
+                            {this.state.user.name}
+                          </Text>
+                          {this.state.user.active && !this.state.user.logout ? (
+                            <Text style={styles.headerStatus}>Online</Text>
+                          ) : null}
+                        </View>
+                      </View>
+                    )}
+                  </>
                 )}
               </View>
-              <TouchableOpacity
-                onPress={this.handleMenu}
-                style={styles.headerIcon}>
-                <Ionicons
-                  name="ios-ellipsis-vertical-outline"
-                  size={26}
-                  color={colors.grey}
-                />
-              </TouchableOpacity>
+              {this.state.showMessageMenu.id ? null : (
+                <TouchableOpacity
+                  onPress={this.handleMenu}
+                  style={styles.headerIcon}>
+                  <Ionicons
+                    name="ios-ellipsis-vertical-outline"
+                    size={26}
+                    color={colors.grey}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
             <View style={{width: '100%', flex: 1, marginVertical: 2}}>
               {this.state.loading ? (
@@ -1372,9 +1611,7 @@ export default class ChatScreen extends React.PureComponent {
                           item.format !== 'accept' &&
                           item.format !== 'reject' &&
                           item.format !== 'meeting' &&
-                          item.hide
-                            ? !item.hide.includes(auth().currentUser.email)
-                            : true
+                          !item.hide.includes(auth().currentUser.email)
                         ) {
                           return (
                             <Message
@@ -1385,6 +1622,7 @@ export default class ChatScreen extends React.PureComponent {
                               handleDocumentView={(url, type) =>
                                 this.handleDocumentView(url, type)
                               }
+                              data={item}
                               type={item.id === auth().currentUser.email}
                               message={item.message}
                               format={item.format}
@@ -1392,10 +1630,10 @@ export default class ChatScreen extends React.PureComponent {
                               name={item.name}
                               date={item.date}
                               read={item.read}
-                              saveToGallery={this.saveToGallery}
-                              copyText={this.copyText}
                               item={item}
-                              handleHide={this.handleHide}
+                              showMessageMenu={this.showMessageMenu}
+                              hideMessageMenu={this.hideMessageMenu}
+                              highlight={this.state.showMessageMenu}
                             />
                           );
                         } else if (item.format === 'accept') {
@@ -1443,7 +1681,11 @@ export default class ChatScreen extends React.PureComponent {
                                 color="#acadaa"
                               />
                               <Text style={styles.dealstatusMessage}>
-                                Request rejected on{' '}
+                                Request cancelled{' '}
+                                {item.id === auth().currentUser.email
+                                  ? 'by you'
+                                  : 'by ' + this.state.user.name}{' '}
+                                on{' '}
                                 <Moment element={Text} format="MMMM Do YYYY">
                                   {item.date}
                                 </Moment>
@@ -1456,21 +1698,32 @@ export default class ChatScreen extends React.PureComponent {
                               key={index}
                               style={{
                                 marginVertical: 5,
-                                width: '100%',
                                 alignItems: 'center',
                                 flexDirection: 'row',
                                 justifyContent: 'center',
-                                backgroundColor: colors.secondary,
                                 paddingVertical: 12,
                               }}>
-                              <Ionicons
-                                name="ios-megaphone"
-                                size={16}
-                                color="#acadaa"
-                              />
-                              <Text style={styles.dealstatusMessage}>
-                                New Meeting set
-                              </Text>
+                              <View
+                                style={{
+                                  backgroundColor: colors.secondary,
+                                  flexDirection: 'row',
+                                  paddingVertical: 5,
+                                  paddingHorizontal: 20,
+                                  borderRadius: 15,
+                                }}>
+                                <Ionicons
+                                  name="ios-megaphone"
+                                  size={16}
+                                  color={colors.grey}
+                                />
+                                <Text
+                                  style={[
+                                    styles.dealstatusMessage,
+                                    {color: colors.white, fontSize: 14},
+                                  ]}>
+                                  New meeting set
+                                </Text>
+                              </View>
                             </View>
                           );
                         } else if (item.format === 'deal-done') {
@@ -1512,120 +1765,333 @@ export default class ChatScreen extends React.PureComponent {
                 auth().currentUser.email ? (
                   <View style={styles.dealPop}>
                     <View style={styles.dealPopLeft}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.props.navigation.push('viewProfile', {
+                            id: this.state.user._id,
+                            location: this.props.location,
+                          })
+                        }>
+                        <Image
+                          source={{uri: this.state.user.photo}}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                            backgroundColor: colors.grey,
+                            marginLeft: 10,
+                          }}
+                        />
+                      </TouchableOpacity>
                       <View>
-                        <Text style={styles.dname}>{this.state.user.name}</Text>
-                        {this.state.chat.deals[0].dealStatus ? (
-                          <>
-                            {this.state.chat.deals[0].dealDone.includes(
-                              auth().currentUser.email,
-                            ) ? (
-                              <Text style={styles.dtype}>
-                                Deal successfully finished from your side
-                              </Text>
-                            ) : (
-                              <Text style={styles.dtype}>
-                                Meeting Set, have a look
-                              </Text>
-                            )}
-                          </>
-                        ) : (
-                          <>
-                            {this.state.chat.deals[0].status ? (
-                              <Text style={styles.dtype}>Ongoing deal</Text>
-                            ) : (
-                              <Text style={styles.dtype}>
-                                {this.state.chat.deals[0].varient === 'request'
-                                  ? 'Requested one of your product'
-                                  : 'Wants to exchnage with your product'}
-                              </Text>
-                            )}
-                          </>
-                        )}
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginLeft: 5,
+                          }}>
+                          <Text style={styles.dname}>
+                            {this.state.user.name}
+                          </Text>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: '#e5e5e5',
+                              fontFamily: 'Muli-Regular',
+                              marginHorizontal: 5,
+                              transform: [{translateY: -1.5}],
+                            }}>
+                            |
+                          </Text>
+                          {this.state.chat.deals[0].dealStatus ? (
+                            <>
+                              {this.state.chat.deals[0].dealDone.includes(
+                                auth().currentUser.email,
+                              ) ? (
+                                <Text style={styles.dtype}>Deal finished</Text>
+                              ) : (
+                                <Text style={styles.dtype}>
+                                  Meeting Set, have a look
+                                </Text>
+                              )}
+                            </>
+                          ) : (
+                            <>
+                              {this.state.chat.deals[0].status ? (
+                                <Text style={styles.dtype}>Ongoing deal</Text>
+                              ) : (
+                                <Text style={styles.dtype}>
+                                  Request Pending
+                                </Text>
+                              )}
+                            </>
+                          )}
+                        </View>
+                        <View style={{marginLeft: 5}}>
+                          {this.state.chat.deals[0].dealDone.includes(
+                            auth().currentUser.email,
+                          ) ? null : (
+                            <>
+                              {this.state.chat.deals[0].dealStatus ? (
+                                <Text style={styles.dtype}>
+                                  Next : have you{' '}
+                                  {this.state.chat.deals[0].category}d your
+                                  product, then click on Deal done.
+                                </Text>
+                              ) : (
+                                <>
+                                  {this.state.chat.deals[0].status ? (
+                                    <Text style={styles.dtype}>
+                                      Next : Make a deal
+                                    </Text>
+                                  ) : (
+                                    <Text style={styles.dtype}>
+                                      Next : Accept request
+                                    </Text>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </View>
                       </View>
                     </View>
                     <View style={styles.dealPopRight}>
-                      <TouchableOpacity
-                        style={styles.daction}
-                        onPress={() => {
-                          this.setState({showDealInfo: true});
-                        }}>
-                        <Ionicons
-                          name="ios-information-circle"
-                          size={30}
-                          color={colors.white}
-                        />
-                      </TouchableOpacity>
                       {this.state.chat.deals[0].dealDone.includes(
                         auth().currentUser.email,
                       ) ? null : (
-                        <TouchableOpacity
-                          style={styles.daction}
-                          onPress={() => {
-                            this.setState({showDealMenu: true});
-                          }}>
-                          <Ionicons
-                            name="ios-ellipsis-vertical-outline"
-                            size={30}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
+                        <>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginHorizontal: 5,
+                              marginTop: 5,
+                            }}>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0]
+                                    .status
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0]
+                                    .dealStatus
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0].dealDone.includes(
+                                    auth().currentUser.email,
+                                  )
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                          </View>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({showDealInfo: true});
+                            }}>
+                            <Ionicons
+                              name="ios-information-circle"
+                              size={30}
+                              color={colors.white}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({showDealMenu: true});
+                            }}>
+                            <Ionicons
+                              name="ios-ellipsis-vertical-outline"
+                              size={26}
+                              color={colors.grey}
+                            />
+                          </TouchableOpacity>
+                        </>
                       )}
                     </View>
                   </View>
                 ) : (
                   <View style={styles.dealPop}>
                     <View style={styles.dealPopLeft}>
-                      <View>
-                        <Text style={styles.dname}>{this.state.user.name}</Text>
-                        {this.state.chat.deals[0].dealStatus ? (
-                          <>
-                            {this.state.chat.deals[0].dealDone.includes(
-                              auth().currentUser.email,
-                            ) ? (
-                              <Text style={styles.dtype}>
-                                Deal successfully finished from your side
-                              </Text>
-                            ) : (
-                              <Text style={styles.dtype}>
-                                Meeting Set, have a look
-                              </Text>
-                            )}
-                          </>
-                        ) : (
-                          <Text style={styles.dtype}>
-                            {this.state.chat.deals[0].status
-                              ? 'Ongoing deal'
-                              : 'Request Pending'}
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.props.navigation.push('viewProfile', {
+                            id: this.state.user._id,
+                            location: this.props.location,
+                          })
+                        }>
+                        <Image
+                          source={{uri: this.state.user.photo}}
+                          style={{
+                            width: width * 0.1,
+                            height: width * 0.1,
+                            borderRadius: 20,
+                            backgroundColor: colors.grey,
+                            marginLeft: 10,
+                          }}
+                        />
+                      </TouchableOpacity>
+                      <View style={{width: '75%'}}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginLeft: 5,
+                            width: '100%',
+                          }}>
+                          <Text style={styles.dname}>
+                            {this.state.user.name}
                           </Text>
-                        )}
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: '#e5e5e5',
+                              fontFamily: 'Muli-Regular',
+                              marginHorizontal: 5,
+                              transform: [{translateY: -1.5}],
+                            }}>
+                            |
+                          </Text>
+                          {this.state.chat.deals[0].dealStatus ? (
+                            <>
+                              {this.state.chat.deals[0].dealDone.includes(
+                                auth().currentUser.email,
+                              ) ? (
+                                <Text style={styles.dtype}>Deal finished</Text>
+                              ) : (
+                                <Text style={styles.dtype}>
+                                  Meeting Set, have a look
+                                </Text>
+                              )}
+                            </>
+                          ) : (
+                            <Text style={styles.dtype}>
+                              {this.state.chat.deals[0].status
+                                ? 'Ongoing deal'
+                                : 'Request Pending'}
+                            </Text>
+                          )}
+                        </View>
+                        <View
+                          style={{
+                            marginLeft: 5,
+                            width: '100%',
+                          }}>
+                          {this.state.chat.deals[0].dealDone.includes(
+                            auth().currentUser.email,
+                          ) ? null : (
+                            <>
+                              {this.state.chat.deals[0].dealStatus ? (
+                                <Text style={styles.dtype}>
+                                  {this.state.chat.deals[0].varient ===
+                                  'exchange'
+                                    ? 'Next : have you' +
+                                      this.state.chat.deals[0].category +
+                                      'd the product, then click on Deal done.'
+                                    : 'Next : Did you recieve the product, then click on Deal done.'}
+                                </Text>
+                              ) : (
+                                <>
+                                  {this.state.chat.deals[0].status ? (
+                                    <Text style={styles.dtype}>
+                                      Next : Wait for {this.state.user.name} to
+                                      make a deal
+                                    </Text>
+                                  ) : (
+                                    <Text style={styles.dtype}>
+                                      Next : Wait for request to be accepted
+                                    </Text>
+                                  )}
+                                </>
+                              )}
+                            </>
+                          )}
+                        </View>
                       </View>
                     </View>
                     <View style={styles.dealPopRight}>
-                      <TouchableOpacity
-                        style={styles.daction}
-                        onPress={() => {
-                          this.setState({showDealInfo: true});
-                        }}>
-                        <Ionicons
-                          name="ios-information-circle"
-                          size={30}
-                          color={colors.white}
-                        />
-                      </TouchableOpacity>
                       {this.state.chat.deals[0].dealDone.includes(
                         auth().currentUser.email,
                       ) ? null : (
-                        <TouchableOpacity
-                          style={styles.daction}
-                          onPress={() => {
-                            this.setState({showDealMenu: true});
-                          }}>
-                          <Ionicons
-                            name="ios-ellipsis-vertical-outline"
-                            size={30}
-                            color={colors.baseline}
-                          />
-                        </TouchableOpacity>
+                        <>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginHorizontal: 5,
+                              marginTop: 5,
+                            }}>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0]
+                                    .status
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0]
+                                    .dealStatus
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                            <View
+                              style={[
+                                styles.status,
+                                {
+                                  backgroundColor: this.state.chat.deals[0].dealDone.includes(
+                                    auth().currentUser.email,
+                                  )
+                                    ? colors.baseline
+                                    : colors.grey,
+                                },
+                              ]}></View>
+                          </View>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({showDealInfo: true});
+                            }}>
+                            <Ionicons
+                              name="ios-information-circle"
+                              size={30}
+                              color={colors.white}
+                            />
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            style={styles.daction}
+                            onPress={() => {
+                              this.setState({showDealMenu: true});
+                            }}>
+                            <Ionicons
+                              name="ios-ellipsis-vertical-outline"
+                              size={30}
+                              color={colors.white}
+                            />
+                          </TouchableOpacity>
+                        </>
                       )}
                     </View>
                   </View>
@@ -1731,7 +2197,7 @@ export default class ChatScreen extends React.PureComponent {
                           width: '100%',
                           flexDirection: 'row',
                           alignItems: 'center',
-                          paddingVertical: 20,
+                          paddingVertical: 15,
                           justifyContent: 'center',
                           borderBottomColor: colors.grey,
                           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -1740,7 +2206,7 @@ export default class ChatScreen extends React.PureComponent {
                           style={{
                             fontFamily: 'Muli-Bold',
                             color: colors.white,
-                            fontSize: 16,
+                            fontSize: 14,
                           }}>
                           Unblock
                         </Text>
@@ -1757,7 +2223,7 @@ export default class ChatScreen extends React.PureComponent {
                           width: '100%',
                           flexDirection: 'row',
                           alignItems: 'center',
-                          paddingVertical: 20,
+                          paddingVertical: 15,
                           justifyContent: 'center',
                           borderBottomColor: colors.grey,
                           borderBottomWidth: StyleSheet.hairlineWidth,
@@ -1766,7 +2232,7 @@ export default class ChatScreen extends React.PureComponent {
                           style={{
                             fontFamily: 'Muli-Bold',
                             color: colors.white,
-                            fontSize: 16,
+                            fontSize: 14,
                           }}>
                           Block
                         </Text>
@@ -1784,14 +2250,14 @@ export default class ChatScreen extends React.PureComponent {
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingVertical: 20,
+                      paddingVertical: 15,
                       justifyContent: 'center',
                     }}>
                     <Text
                       style={{
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                       }}>
                       Clear Conversation
@@ -1835,7 +2301,7 @@ export default class ChatScreen extends React.PureComponent {
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingVertical: 20,
+                      paddingVertical: 15,
                       justifyContent: 'center',
                       borderBottomColor: colors.grey,
                       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -1844,7 +2310,7 @@ export default class ChatScreen extends React.PureComponent {
                       style={{
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                       }}>
                       Yes, clear conversation
@@ -1860,14 +2326,14 @@ export default class ChatScreen extends React.PureComponent {
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingVertical: 20,
+                      paddingVertical: 15,
                       justifyContent: 'center',
                     }}>
                     <Text
                       style={{
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                       }}>
                       No, dont clear conversation
@@ -1911,7 +2377,7 @@ export default class ChatScreen extends React.PureComponent {
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingVertical: 20,
+                      paddingVertical: 15,
                       justifyContent: 'center',
                       borderBottomColor: colors.grey,
                       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -1920,7 +2386,7 @@ export default class ChatScreen extends React.PureComponent {
                       style={{
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                       }}>
                       Yes, block user
@@ -1936,17 +2402,17 @@ export default class ChatScreen extends React.PureComponent {
                       width: '100%',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      paddingVertical: 20,
+                      paddingVertical: 15,
                       justifyContent: 'center',
                     }}>
                     <Text
                       style={{
                         fontFamily: 'Muli-Bold',
                         color: colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         textAlign: 'center',
                       }}>
-                      No, dont block user
+                      Cancel
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -2223,8 +2689,11 @@ export default class ChatScreen extends React.PureComponent {
                                     alignItems: 'center',
                                     paddingVertical: 10,
                                   }}>
-                                  <MiniCard
+                                  <Card3
                                     key={this.state.chat.deals[0].id1}
+                                    handleCardImageClick={(e, f) =>
+                                      this.handleCardImageClick(e, f)
+                                    }
                                     id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
@@ -2236,8 +2705,11 @@ export default class ChatScreen extends React.PureComponent {
                                       style={{transform: [{rotate: '90deg'}]}}
                                     />
                                   </View>
-                                  <MiniCard
+                                  <Card3
                                     key={this.state.chat.deals[0].id1}
+                                    handleCardImageClick={(e, f) =>
+                                      this.handleCardImageClick(e, f)
+                                    }
                                     id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
@@ -2261,16 +2733,11 @@ export default class ChatScreen extends React.PureComponent {
                                       {this.state.chat.deals[0].message}
                                     </Text>
                                   </View>
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-return-down-back"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '-90deg'}]}}
-                                    />
-                                  </View>
-                                  <MiniCard
+                                  <Card3
                                     key={this.state.chat.deals[0].id1}
+                                    handleCardImageClick={(e, f) =>
+                                      this.handleCardImageClick(e, f)
+                                    }
                                     id={this.state.chat.deals[0].id1}
                                     navigation={this.props.navigation}
                                   />
@@ -2463,14 +2930,6 @@ export default class ChatScreen extends React.PureComponent {
                                       {this.state.chat.deals[0].message}
                                     </Text>
                                   </View>
-                                  <View style={{marginVertical: 10}}>
-                                    <Ionicons
-                                      name="ios-return-down-back"
-                                      size={40}
-                                      color={colors.baseline}
-                                      style={{transform: [{rotate: '-90deg'}]}}
-                                    />
-                                  </View>
                                   <Card3
                                     key={this.state.chat.deals[0].id1}
                                     handleCardImageClick={(e, f) =>
@@ -2578,8 +3037,12 @@ export default class ChatScreen extends React.PureComponent {
                                         fontFamily: 'Muli-Bold',
                                         color: colors.white,
                                         fontSize: 16,
+                                        textAlign: 'center',
+                                        paddingHorizontal: 20,
                                       }}>
-                                      Lets make a deal
+                                      I am ready to{' '}
+                                      {this.state.chat.deals[0].category} my
+                                      product
                                     </Text>
                                   </TouchableOpacity>
                                 )}
@@ -2602,7 +3065,7 @@ export default class ChatScreen extends React.PureComponent {
                                     color: colors.white,
                                     fontSize: 16,
                                   }}>
-                                  Accept deal
+                                  Accept request
                                 </Text>
                               </TouchableOpacity>
                             )}
@@ -2634,26 +3097,32 @@ export default class ChatScreen extends React.PureComponent {
                                 </Text>
                               </TouchableOpacity>
                             ) : (
-                              <TouchableOpacity
-                                onPress={this.handleLetsMakeADeal}
-                                style={{
-                                  width: '100%',
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  paddingVertical: 15,
-                                  justifyContent: 'center',
-                                  borderBottomColor: colors.grey,
-                                  borderBottomWidth: StyleSheet.hairlineWidth,
-                                }}>
-                                <Text
-                                  style={{
-                                    fontFamily: 'Muli-Bold',
-                                    color: colors.white,
-                                    fontSize: 16,
-                                  }}>
-                                  Lets make a deal
-                                </Text>
-                              </TouchableOpacity>
+                              <>
+                                {this.state.chat.deals[0].initiate !==
+                                auth().currentUser.email ? (
+                                  <TouchableOpacity
+                                    onPress={this.handleLetsMakeADeal}
+                                    style={{
+                                      width: '100%',
+                                      flexDirection: 'row',
+                                      alignItems: 'center',
+                                      paddingVertical: 15,
+                                      justifyContent: 'center',
+                                      borderBottomColor: colors.grey,
+                                      borderBottomWidth:
+                                        StyleSheet.hairlineWidth,
+                                    }}>
+                                    <Text
+                                      style={{
+                                        fontFamily: 'Muli-Bold',
+                                        color: colors.white,
+                                        fontSize: 16,
+                                      }}>
+                                      Make a deal
+                                    </Text>
+                                  </TouchableOpacity>
+                                ) : null}
+                              </>
                             )}
                           </>
                         ) : null}
@@ -2676,8 +3145,8 @@ export default class ChatScreen extends React.PureComponent {
                             }}>
                             {this.state.chat.deals[0].initiate ===
                             auth().currentUser.email
-                              ? 'Cancel Request'
-                              : 'Reject deal'}
+                              ? 'Cancel request'
+                              : 'Reject request'}
                           </Text>
                         </TouchableOpacity>
                       </View>
@@ -2735,11 +3204,7 @@ export default class ChatScreen extends React.PureComponent {
                           }}>
                           <TouchableOpacity
                             style={{marginLeft: 20}}
-                            onPress={() =>
-                              this.setState({
-                                showDealForm: false,
-                              })
-                            }>
+                            onPress={this.handleStopMakeADeal}>
                             <Ionicons
                               name="ios-close"
                               size={30}
@@ -2789,21 +3254,53 @@ export default class ChatScreen extends React.PureComponent {
                           </View>
                           <View style={styles.inputGroup}>
                             <Text style={styles.inputGroupText}>Date</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(date) => this.setState({date})}
-                              value={this.state.date}></TextInput>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.setState({
+                                  showDate: true,
+                                });
+                              }}>
+                              <Text style={styles.input2Fake}>
+                                <Moment element={Text} format="DD-MM-YYYY">
+                                  {this.state.date}
+                                </Moment>
+                              </Text>
+                            </TouchableOpacity>
+                            {this.state.showDate ? (
+                              <DateTimePicker
+                                testID="dateTimePicker"
+                                value={this.state.date}
+                                mode={'date'}
+                                is24Hour={false}
+                                display="default"
+                                onChange={this.handleChangeDate}
+                              />
+                            ) : null}
                           </View>
                           <View style={styles.inputGroup}>
                             <Text style={styles.inputGroupText}>Time</Text>
-                            <TextInput
-                              style={styles.input2}
-                              autoCapitalize="none"
-                              maxLength={40}
-                              onChangeText={(time) => this.setState({time})}
-                              value={this.state.time}></TextInput>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.setState({
+                                  showTime: true,
+                                });
+                              }}>
+                              <Text style={styles.input2Fake}>
+                                <Moment element={Text} format="hh:mm a">
+                                  {this.state.time}
+                                </Moment>
+                              </Text>
+                            </TouchableOpacity>
+                            {this.state.showTime ? (
+                              <DateTimePicker
+                                testID="dateTimePicker"
+                                value={this.state.time}
+                                mode={'time'}
+                                is24Hour={false}
+                                display="default"
+                                onChange={this.handleChangeTime}
+                              />
+                            ) : null}
                           </View>
                           <TouchableOpacity
                             onPress={this.handleConfirmDeal}
@@ -3058,6 +3555,87 @@ export default class ChatScreen extends React.PureComponent {
                 </View>
               </View>
             </Modal>
+            <Modal isVisible={this.state.showDeleteMenu}>
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    showDeleteMenu: false,
+                  });
+                }}
+                style={{
+                  alignItems: 'center',
+                  width: '100%',
+                  justifyContent: 'center',
+                  flex: 1,
+                }}>
+                <View
+                  style={{
+                    width: '80%',
+                    backgroundColor: colors.secondary,
+                    borderRadius: 10,
+                    alignItems: 'center',
+                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState(
+                        {
+                          showDeleteMenu: false,
+                        },
+                        () => {
+                          this.handleHide();
+                        },
+                      );
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 15,
+                      justifyContent: 'center',
+                      borderBottomColor: colors.grey,
+                      borderBottomWidth: StyleSheet.hairlineWidth,
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 14,
+                        textAlign: 'center',
+                      }}>
+                      Yes, delete message
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      this.setState(
+                        {
+                          showDeleteMenu: false,
+                        },
+                        () => {
+                          this.hideMessageMenu();
+                        },
+                      );
+                    }}
+                    style={{
+                      width: '100%',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingVertical: 15,
+                      justifyContent: 'center',
+                    }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Muli-Bold',
+                        color: colors.white,
+                        fontSize: 14,
+                        textAlign: 'center',
+                      }}>
+                      Cancel
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+            </Modal>
           </View>
         )}
       </SafeAreaView>
@@ -3096,7 +3674,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 10,
+    marginLeft: 15,
   },
   list: {
     width: '100%',
@@ -3123,34 +3701,36 @@ const styles = StyleSheet.create({
   },
   dealPop: {
     width: '100%',
-    height: 60,
     backgroundColor: colors.darkText,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 5,
+    paddingVertical: 5,
+    minHeight: 60,
   },
   dealPopLeft: {
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    width: width * 0.6,
   },
   dname: {
     color: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
-    marginLeft: 10,
   },
   dtype: {
     color: colors.grey,
     fontSize: 12,
     fontFamily: 'Muli-Bold',
-    marginLeft: 10,
   },
   dealPopRight: {
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
+    width: width * 0.4,
+    justifyContent: 'flex-end',
   },
   daction: {
     marginHorizontal: 4,
@@ -3230,6 +3810,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
+  input2Fake: {
+    marginTop: 5,
+    height: 50,
+    backgroundColor: colors.white,
+    fontSize: 14,
+    fontFamily: 'Muli-Regular',
+    color: colors.darkText,
+    paddingHorizontal: 10,
+    textAlignVertical: 'center',
+    borderRadius: 3,
+  },
   inputArea: {
     marginTop: 5,
     backgroundColor: colors.white,
@@ -3270,8 +3861,14 @@ const styles = StyleSheet.create({
   },
   dealstatusMessage: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Muli-Regular',
     marginHorizontal: 5,
+  },
+  status: {
+    width: 8,
+    height: 8,
+    borderRadius: 2,
+    marginHorizontal: 2,
   },
 });

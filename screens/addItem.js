@@ -31,6 +31,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Moment from 'react-moment';
+import colors from '../appTheme';
 
 const {width, height} = Dimensions.get('window');
 export default class AddItem extends React.Component {
@@ -211,6 +212,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Could not access location service',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loadingLocation: false,
@@ -237,6 +239,7 @@ export default class AddItem extends React.Component {
         });
         Snackbar.show({
           text: 'Please turn on location services',
+          backgroundColor: colors.baseline,
         });
       },
       {
@@ -314,11 +317,13 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please select a type',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     } else if (this.state.wyh.replace(/ /g, '').length < 10) {
       Snackbar.show({
-        text: 'Please type a proper what do you have ?',
+        text: 'Please describe what do you have in atleast 10 characters ?',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -328,8 +333,10 @@ export default class AddItem extends React.Component {
       this.state.type === 1
     ) {
       Snackbar.show({
-        text: 'Please type a proper what exchnage with ?',
+        text:
+          'Please describe what to exchange with in atleast 10 characters ?',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -342,6 +349,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please select a share from date',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -354,6 +362,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please select a share to date',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -362,6 +371,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please select a product category',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -370,6 +380,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please add a product description of atleast 20 characters',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -378,6 +389,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please add a location',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -386,6 +398,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please, set a lower time for From ',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     } else if (
       this.state.images.length === 0 &&
@@ -394,6 +407,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Please add a image',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
       this.setState({
         loading: false,
@@ -558,6 +572,7 @@ export default class AddItem extends React.Component {
       Snackbar.show({
         text: 'Set a time higher than From Available Time',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     }
   };

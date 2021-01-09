@@ -291,6 +291,13 @@ export default class ViewProfileScreen extends React.Component {
                       <Image
                         source={{uri: this.state.currentUser.photo}}
                         style={styles.profileImage}
+                        onError={() => {
+                          var currentUser = this.state.currentUser;
+                          currentUser['photo'] = '';
+                          this.setState({
+                            currentUser,
+                          });
+                        }}
                       />
                     ) : (
                       <View style={styles.profileImageBox}>

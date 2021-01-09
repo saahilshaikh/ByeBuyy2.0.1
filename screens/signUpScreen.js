@@ -366,7 +366,7 @@ export default class SignUpScreen extends React.Component {
     });
     for (var i = 0; i < pushList.length; i++) {
       this.sendPushNotification(
-        'user',
+        'ViewProfile',
         id,
         pushList[i].pushToken,
         this.state.name,

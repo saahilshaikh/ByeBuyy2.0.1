@@ -94,6 +94,13 @@ export default class Card4 extends React.Component {
                       <Image
                         source={{uri: this.state.user.photo}}
                         style={styles.profileImage}
+                        onError={() => {
+                          var user = this.state.user;
+                          user['photo'] = '';
+                          this.setState({
+                            user,
+                          });
+                        }}
                       />
                     ) : (
                       <Text style={styles.imageText}>
@@ -210,20 +217,21 @@ const styles = StyleSheet.create({
   profile: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: width * 0.6,
   },
   profileBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: width * 0.12,
+    height: width * 0.12,
+    borderRadius: width * 0.12,
     backgroundColor: colors.grey,
     marginRight: 7,
     alignItems: 'center',
     justifyContent: 'center',
   },
   profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: width * 0.12,
+    height: width * 0.12,
+    borderRadius: width * 0.12,
     backgroundColor: colors.grey,
   },
   imageText: {
@@ -233,12 +241,13 @@ const styles = StyleSheet.create({
   },
   profileName: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Muli-Bold',
+    width: '100%',
   },
   time: {
     color: colors.grey,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Muli-Regular',
   },
   actionProfile: {
@@ -247,7 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   followAction: {
-    width: 100,
+    width: width * 0.27,
     height: 40,
     borderRadius: 5,
     backgroundColor: colors.darkText,
@@ -258,7 +267,7 @@ const styles = StyleSheet.create({
   },
   followActionText: {
     color: colors.white,
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Muli-Bold',
   },
   chatAction: {

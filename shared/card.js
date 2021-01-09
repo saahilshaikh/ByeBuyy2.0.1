@@ -615,11 +615,11 @@ export default class Card extends React.Component {
     if (auth().currentUser) {
       if (
         this.state.product.quantity > 0 &&
-        this.state.product.type !== 'give it for free'
+        this.state.product.type !== 'donate'
       ) {
         this.setState({request: !this.state.request});
       } else if (
-        this.state.product.type === 'give it for free' &&
+        this.state.product.type === 'donate' &&
         this.state.product.category === 'Food'
       ) {
         var d = Math.floor(
@@ -731,6 +731,7 @@ export default class Card extends React.Component {
               dealStatus: false,
               dealDone: [],
               chatId: id,
+              category: this.state.product.type,
             };
             var resDeal = await axios.post(link + '/api/makeDeal', data);
             if (resDeal.data !== null) {
@@ -904,6 +905,13 @@ export default class Card extends React.Component {
                                     <Image
                                       source={{uri: this.state.owner.photo}}
                                       style={styles.profileImage}
+                                      onError={() => {
+                                        var owner = this.state.owner;
+                                        owner['photo'] = '';
+                                        this.setState({
+                                          owner,
+                                        });
+                                      }}
                                     />
                                   </Grayscale>
                                 ) : (

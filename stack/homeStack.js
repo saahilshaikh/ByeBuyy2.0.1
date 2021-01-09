@@ -28,6 +28,7 @@ import ReferScreen from '../screens/referScreen';
 import DealDoneScreen from '../screens/dealDoneScreen';
 import DealInfoScreen from '../screens/dealInfoScreen';
 import ViewOtherUsersListScreen from '../screens/viewOtherUsers';
+import FeedbackScreen from '../screens/feedbackScreen';
 
 const Stack = createStackNavigator();
 
@@ -61,6 +62,7 @@ const HomeStack = () => {
       <Stack.Screen name="ViewDocument" component={ViewScreen} />
       <Stack.Screen name="Refer" component={ReferScreen} />
       <Stack.Screen name="About" component={AboutScreen} />
+      <Stack.Screen name="Feedback" component={FeedbackScreen} />
       <Stack.Screen name="Privacy" component={PrivacyPolicy} />
       <Stack.Screen name="Terms" component={Terms} />
       <Stack.Screen name="Deal" component={DealDoneScreen} />

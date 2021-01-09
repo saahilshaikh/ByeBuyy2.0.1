@@ -675,6 +675,13 @@ export default class ViewProductScreen extends React.Component {
                           <Image
                             source={{uri: this.state.owner.photo}}
                             style={styles.profileImage}
+                            onError={() => {
+                              var owner = this.state.owner;
+                              owner['photo'] = '';
+                              this.setState({
+                                owner,
+                              });
+                            }}
                           />
                         ) : (
                           <View style={styles.profileImageBox}>

@@ -83,14 +83,12 @@ export default class DealDoneScreen extends React.Component {
         <SafeAreaView style={styles.container}>
           <View
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: '#1B1F22',
               paddingHorizontal: 20,
               height: 60,
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
-              borderBottomColor: colors.grey,
-              borderBottomWidth: StyleSheet.hairlineWidth,
             }}>
             <TouchableOpacity onPress={this.handleBack}>
               <Ionicons

@@ -145,7 +145,6 @@ export default class ProductListScreen extends React.Component {
       this.state.locationType === 'All locations' &&
       this.state.activeCat === 'All'
     ) {
-      console.log('118,Checking New');
       var data = {
         mode: 'A',
         category: 'All',
@@ -251,6 +250,15 @@ export default class ProductListScreen extends React.Component {
           this.handleCategory(this.state.activeCat);
         },
       );
+    } else if (e === 'Nearby') {
+      this.setState(
+        {
+          showMode: 'N',
+        },
+        () => {
+          this.handleCategory(this.state.activeCat);
+        },
+      );
     } else {
       this.setState(
         {
@@ -304,21 +312,6 @@ export default class ProductListScreen extends React.Component {
             current: city + ',' + country,
             location: location,
             locationType: 'Current Location',
-          },
-          () => {
-            this.handleCategory('All');
-          },
-        );
-      } else if (type === 'nearby') {
-        var location = {
-          lat: lat,
-          long: long,
-        };
-        this.setState(
-          {
-            current: city + ',' + country,
-            location: location,
-            locationType: 'Nearby',
           },
           () => {
             this.handleCategory('All');
@@ -538,6 +531,7 @@ export default class ProductListScreen extends React.Component {
               {this.state.showMode === 'A' ? 'Show All' : null}
               {this.state.showMode === 'P' ? 'Show Products' : null}
               {this.state.showMode === 'R' ? 'Show Requests' : null}
+              {this.state.showMode === 'N' ? 'Show Nearby' : null}
             </Text>
             <MaterialCommunityIcons
               name="filter-menu"
@@ -752,9 +746,10 @@ export default class ProductListScreen extends React.Component {
                               this.handleCardImageClick(e, f)
                             }
                             item={item}
+                            key={item._id}
                             location={this.state.location}
                             navigation={this.props.navigation}
-                            nearby={this.state.locationType === 'Nearby'}
+                            nearby={this.state.showMode === 'N'}
                           />
                         ) : (
                           <>
@@ -765,9 +760,10 @@ export default class ProductListScreen extends React.Component {
                                   this.handleCardImageClick(e, f)
                                 }
                                 item={item}
+                                key={item._id}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
-                                nearby={this.state.locationType === 'Nearby'}
+                                nearby={this.state.showMode === 'N'}
                               />
                             ) : null}
                           </>
@@ -783,9 +779,10 @@ export default class ProductListScreen extends React.Component {
                               this.handleCardImageClick(e, f)
                             }
                             item={item}
+                            key={item._id}
                             location={this.state.location}
                             navigation={this.props.navigation}
-                            nearby={this.state.locationType === 'Nearby'}
+                            nearby={this.state.showMode === 'N'}
                           />
                         ) : (
                           <>
@@ -796,9 +793,10 @@ export default class ProductListScreen extends React.Component {
                                   this.handleCardImageClick(e, f)
                                 }
                                 item={item}
+                                key={item._id}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
-                                nearby={this.state.locationType === 'Nearby'}
+                                nearby={this.state.showMode === 'N'}
                               />
                             ) : null}
                           </>
@@ -907,10 +905,39 @@ export default class ProductListScreen extends React.Component {
                   onPress={() => {
                     this.setState(
                       {
-                        showType: 'Request',
+                        showType: 'Product',
                       },
                       () => {
-                        this.handleShow('Request');
+                        this.handleShow('Product');
+                      },
+                    );
+                  }}
+                  style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingVertical: 15,
+                    justifyContent: 'center',
+                    borderBottomColor: colors.grey,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                  }}>
+                  <Text
+                    style={{
+                      fontFamily: 'Muli-Bold',
+                      color: colors.white,
+                      fontSize: 14,
+                    }}>
+                    Show Requests Only
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState(
+                      {
+                        showType: 'Nearby',
+                      },
+                      () => {
+                        this.handleShow('Nearby');
                       },
                     );
                   }}
@@ -927,7 +954,7 @@ export default class ProductListScreen extends React.Component {
                       color: colors.white,
                       fontSize: 14,
                     }}>
-                    Show Requests Only
+                    Show Nearby Only
                   </Text>
                 </TouchableOpacity>
               </View>

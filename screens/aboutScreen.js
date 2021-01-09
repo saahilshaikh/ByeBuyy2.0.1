@@ -25,14 +25,12 @@ export default class AboutScreen extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: colors.primary,
+            backgroundColor: '#1B1F22',
             paddingHorizontal: 20,
             height: 60,
             flexDirection: 'row',
             alignItems: 'center',
             width: '100%',
-            borderBottomColor: colors.grey,
-            borderBottomWidth: StyleSheet.hairlineWidth,
           }}>
           <TouchableOpacity onPress={this.handleBack}>
             <Ionicons name="ios-arrow-back" size={30} color={colors.baseline} />
@@ -144,7 +142,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomColor: colors.grey,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    elevation: 3,
   },
   boxText: {
     fontSize: 16,

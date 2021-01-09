@@ -183,17 +183,6 @@ export default class LocationSelectorScreen extends React.Component {
     this.props.navigation.pop();
   };
 
-  handleNearby = () => {
-    this.props.route.params.handleLocation(
-      this.state.city,
-      this.state.country,
-      this.state.lat,
-      this.state.long,
-      'nearby',
-    );
-    this.props.navigation.pop();
-  };
-
   handleAllLocations = () => {
     this.props.route.params.handleLocation(
       '',
@@ -378,16 +367,15 @@ export default class LocationSelectorScreen extends React.Component {
                           <TouchableOpacity
                             onPress={this.handleRemoveHome}
                             style={{
-                              width: 40,
-                              height: 40,
+                              width: 30,
+                              height: 30,
                               alignItems: 'center',
                               justifyContent: 'center',
-                              backgroundColor: '#acadaa',
                               borderRadius: 3,
                             }}>
                             <Ionicons
                               name="ios-trash"
-                              size={25}
+                              size={20}
                               color={colors.baseline}
                             />
                           </TouchableOpacity>
@@ -452,27 +440,6 @@ export default class LocationSelectorScreen extends React.Component {
                         }}>
                         {this.state.city}, {this.state.country}
                       </Text>
-                    </TouchableOpacity>
-                  ) : null}
-                  {this.state.city ? (
-                    <TouchableOpacity
-                      onPress={this.handleNearby}
-                      style={{
-                        marginVertical: 5,
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}>
-                        <Text style={styles.topic}>Nearby</Text>
-                        <Ionicons
-                          style={{marginLeft: 5}}
-                          name="ios-location-outline"
-                          size={20}
-                          color={colors.baseline}
-                        />
-                      </View>
                     </TouchableOpacity>
                   ) : null}
                   {this.state.recentLocations.length > 0 ? (

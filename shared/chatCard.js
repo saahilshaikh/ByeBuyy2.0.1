@@ -214,7 +214,7 @@ export default class ChatCard extends React.Component {
 
   handleOpen = () => {
     this.props.handleRefreshCount();
-    this.props.navigation.push('Chat', {
+    this.props.navigation.navigate('Chat', {
       id: this.state.chat._id,
       location: this.props.location,
     });
