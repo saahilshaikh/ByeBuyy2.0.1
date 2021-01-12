@@ -53,6 +53,7 @@ export default class ChatScreen extends React.PureComponent {
       menu: false,
       message: '',
       sending: false,
+      progress: 0,
       attach: false,
       image: '',
       prevFormat: '',
@@ -80,7 +81,7 @@ export default class ChatScreen extends React.PureComponent {
       block: false,
       menu2: false,
       menu3: false,
-      progress: 0,
+
       showMessageMenu: {},
       showDeleteMenu: false,
     };
@@ -97,6 +98,7 @@ export default class ChatScreen extends React.PureComponent {
       if (chatValue !== null && chatValue2 !== null) {
         console.log('Local chat found');
         var ch = JSON.parse(chatValue);
+        ch['messages'] = ch.messages.reverse();
         this.setState(
           {
             user: JSON.parse(chatValue2),
@@ -106,7 +108,7 @@ export default class ChatScreen extends React.PureComponent {
             showDeal: ch.deals.length > 0,
           },
           () => {
-            this.flatList.scrollToEnd({animated: true});
+            // this.flatList.scrollToEnd({animated: true});
           },
         );
       } else {
@@ -115,7 +117,7 @@ export default class ChatScreen extends React.PureComponent {
       this.handleInit2();
       this.inter = setInterval(() => {
         this.handleInit();
-      }, 3000);
+      }, 1000);
     } else {
       clearInterval(this.inter);
     }
@@ -147,12 +149,14 @@ export default class ChatScreen extends React.PureComponent {
         };
         var res2 = await axios.post(link + '/api/user/single', data2);
         if (res2.data !== null && res2.data.name) {
-          this.storeData(this.props.route.params.id + 'chat', res.data);
+          var chat = res.data;
+          chat['messages'] = res.data.messages.reverse();
+          this.storeData(this.props.route.params.id + 'chat', chat);
           this.storeData(this.props.route.params.id + 'user', res2.data);
-          this.flatList.scrollToEnd({animated: true});
+          // this.flatList.scrollToEnd({animated: true});
           this.setState({
             user: res2.data,
-            chat: res.data,
+            chat: chat,
             loading: false,
             block: res.data.blocked.includes(auth().currentUser.email),
             showDeal: res.data.deals.length > 0,
@@ -204,11 +208,13 @@ export default class ChatScreen extends React.PureComponent {
         };
         var res2 = await axios.post(link + '/api/user/single', data2);
         if (res2.data !== null && res2.data.name) {
-          this.storeData(this.props.route.params.id + 'chat', res.data);
+          var chat = res.data;
+          chat['messages'] = res.data.messages.reverse();
+          this.storeData(this.props.route.params.id + 'chat', chat);
           this.storeData(this.props.route.params.id + 'user', res2.data);
           this.setState({
             user: res2.data,
-            chat: res.data,
+            chat: chat,
             loading: false,
             block: res.data.blocked.includes(auth().currentUser.email),
             showDeal: res.data.deals.length > 0,
@@ -455,37 +461,21 @@ export default class ChatScreen extends React.PureComponent {
         });
       } else {
         this.handleSendSimpleMessage();
-        this.sendPushNotification('Chat', this.state.chat._id, 'message');
       }
     } else if (e === 2) {
       this.handleSendImage();
-      this.sendPushNotification('Chat', this.state.chat._id, 'photo');
     } else if (e === 3) {
       this.handleSendVideo();
-      this.sendPushNotification('Chat', this.state.chat._id, 'video');
     } else if (e === 4) {
       this.handleSendDocument();
-      this.sendPushNotification('Chat', this.state.chat._id, 'document');
     } else if (e === 5) {
       this.handleSendAcceptMessage();
-      this.sendDealPushNotification('Chat', this.state.chat._id, 'accepted');
     } else if (e === 6) {
       this.handleSendDealDone();
-      this.sendDealPushNotification(
-        'Chat',
-        this.state.chat._id,
-        'accomplished',
-      );
     } else if (e === 7) {
       this.handleSendRejectMessage();
-      this.sendDealPushNotification('Chat', this.state.chat._id, 'rejected');
     } else if (e === 8) {
       this.handleSendMeeting();
-      this.sendDealPushNotification(
-        'Chat',
-        this.state.chat._id,
-        'set a new meeting for',
-      );
     }
   };
 
@@ -503,7 +493,7 @@ export default class ChatScreen extends React.PureComponent {
           message: '',
         },
         () => {
-          this.flatList.scrollToEnd({animated: true});
+          // this.flatList.scrollToEnd({animated: true});
         },
       );
       var data = {
@@ -526,7 +516,24 @@ export default class ChatScreen extends React.PureComponent {
           },
           async () => {
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            var title = this.state.currentUser.name + ' send you a message';
+            var noti = {
+              token: this.state.user.pushToken,
+              title: title,
+              body: '',
+              type: 'Chat',
+              id: this.state.chat._id,
+              date: new Date(),
+            };
+            var not = await axios.post(
+              link + '/api/sendPushNotification',
+              noti,
+            );
+            if (not.data.type === 'success') {
+              console.log('Send Noti');
+            }
+            // this.sendPushNotification('Chat', this.state.chat._id, 'message');
+            // this.flatList.scrollToEnd({animated: true});
           },
         );
         var data2 = {
@@ -554,7 +561,7 @@ export default class ChatScreen extends React.PureComponent {
           prevName: '',
         },
         () => {
-          this.flatList.scrollToEnd({animated: true});
+          // this.flatList.scrollToEnd({animated: true});
         },
       );
       var url = await this.handleUploadImage(this.state.image);
@@ -578,8 +585,25 @@ export default class ChatScreen extends React.PureComponent {
             prevName: '',
           },
           async () => {
+            // this.sendPushNotification('Chat', this.state.chat._id, 'photo');
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            var title = this.state.currentUser.name + ' send you an image';
+            var noti = {
+              token: this.state.user.pushToken,
+              title: title,
+              body: '',
+              type: 'Chat',
+              id: this.state.chat._id,
+              date: new Date(),
+            };
+            var not = await axios.post(
+              link + '/api/sendPushNotification',
+              noti,
+            );
+            if (not.data.type === 'success') {
+              console.log('Send Noti');
+            }
+            // this.flatList.scrollToEnd({animated: true});
           },
         );
         var data2 = {
@@ -639,7 +663,7 @@ export default class ChatScreen extends React.PureComponent {
           prevName: this.state.name,
         },
         () => {
-          this.flatList.scrollToEnd({animated: true});
+          // this.flatList.scrollToEnd({animated: true});
         },
       );
       var url = await this.handleUploadVideo(this.state.video);
@@ -663,8 +687,25 @@ export default class ChatScreen extends React.PureComponent {
             prevName: '',
           },
           async () => {
+            // this.sendPushNotification('Chat', this.state.chat._id, 'video');
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            var title = this.state.currentUser.name + ' send you a video';
+            var noti = {
+              token: this.state.user.pushToken,
+              title: title,
+              body: '',
+              type: 'Chat',
+              id: this.state.chat._id,
+              date: new Date(),
+            };
+            var not = await axios.post(
+              link + '/api/sendPushNotification',
+              noti,
+            );
+            if (not.data.type === 'success') {
+              console.log('Send Noti');
+            }
+            // this.flatList.scrollToEnd({animated: true});
           },
         );
         var data2 = {
@@ -724,7 +765,7 @@ export default class ChatScreen extends React.PureComponent {
           prevName: this.state.name,
         },
         () => {
-          this.flatList.scrollToEnd({animated: true});
+          // this.flatList.scrollToEnd({animated: true});
         },
       );
       var url = await this.handleUploadDocument(this.state.pdf);
@@ -748,8 +789,25 @@ export default class ChatScreen extends React.PureComponent {
             prevName: '',
           },
           async () => {
+            // this.sendPushNotification('Chat', this.state.chat._id, 'document');
             await this.handleInit();
-            this.flatList.scrollToEnd({animated: true});
+            var title = this.state.currentUser.name + ' send you a document';
+            var noti = {
+              token: this.state.user.pushToken,
+              title: title,
+              body: '',
+              type: 'Chat',
+              id: this.state.chat._id,
+              date: new Date(),
+            };
+            var not = await axios.post(
+              link + '/api/sendPushNotification',
+              noti,
+            );
+            if (not.data.type === 'success') {
+              console.log('Send Noti');
+            }
+            // this.flatList.scrollToEnd({animated: true});
           },
         );
         var data2 = {
@@ -808,7 +866,21 @@ export default class ChatScreen extends React.PureComponent {
     };
     var res = await axios.post(link + '/api/sendMesssage', data);
     if (res.data !== null) {
+      // this.sendDealPushNotification('Chat', this.state.chat._id, 'accepted');
       console.log('Accepted');
+      var title = this.state.currentUser.name + ' accepted your request.';
+      var noti = {
+        token: this.state.user.pushToken,
+        title: title,
+        body: '',
+        type: 'Chat',
+        id: this.state.chat._id,
+        date: new Date(),
+      };
+      var not = await axios.post(link + '/api/sendPushNotification', noti);
+      if (not.data.type === 'success') {
+        console.log('Send Noti');
+      }
       var data2 = {
         email2: auth().currentUser.email,
         email1: this.state.user.email,
@@ -833,7 +905,21 @@ export default class ChatScreen extends React.PureComponent {
     };
     var res = await axios.post(link + '/api/sendMesssage', data);
     if (res.data !== null) {
+      // this.sendDealPushNotification('Chat', this.state.chat._id, 'rejected');
       console.log('Rejected');
+      var title = this.state.currentUser.name + ' rejected the request.';
+      var noti = {
+        token: this.state.user.pushToken,
+        title: title,
+        body: '',
+        type: 'Chat',
+        id: this.state.chat._id,
+        date: new Date(),
+      };
+      var not = await axios.post(link + '/api/sendPushNotification', noti);
+      if (not.data.type === 'success') {
+        console.log('Send Noti');
+      }
       var data2 = {
         email2: auth().currentUser.email,
         email1: this.state.user.email,
@@ -858,6 +944,24 @@ export default class ChatScreen extends React.PureComponent {
     };
     var res = await axios.post(link + '/api/sendMesssage', data);
     if (res.data !== null) {
+      // this.sendDealPushNotification(
+      //   'Chat',
+      //   this.state.chat._id,
+      //   'accomplished',
+      // );
+      var title = this.state.currentUser.name + ' accomplished your request.';
+      var noti = {
+        token: this.state.user.pushToken,
+        title: title,
+        body: '',
+        type: 'Chat',
+        id: this.state.chat._id,
+        date: new Date(),
+      };
+      var not = await axios.post(link + '/api/sendPushNotification', noti);
+      if (not.data.type === 'success') {
+        console.log('Send Noti');
+      }
       console.log('deal-done');
       var data2 = {
         email2: auth().currentUser.email,
@@ -970,6 +1074,25 @@ export default class ChatScreen extends React.PureComponent {
     };
     var res = await axios.post(link + '/api/sendMesssage', data);
     if (res.data !== null) {
+      // this.sendDealPushNotification(
+      //   'Chat',
+      //   this.state.chat._id,
+      //   'set a new meeting for',
+      // );
+      var title =
+        this.state.currentUser.name + ' set a new meeting for your request.';
+      var noti = {
+        token: this.state.user.pushToken,
+        title: title,
+        body: '',
+        type: 'Chat',
+        id: this.state.chat._id,
+        date: new Date(),
+      };
+      var not = await axios.post(link + '/api/sendPushNotification', noti);
+      if (not.data.type === 'success') {
+        console.log('Send Noti');
+      }
       console.log('Meeting Set');
       var data2 = {
         email2: auth().currentUser.email,
@@ -1579,12 +1702,13 @@ export default class ChatScreen extends React.PureComponent {
               ) : (
                 <View style={styles.list}>
                   <FlatList
-                    ListFooterComponent={this.renderFooter}
+                    ListHeaderComponent={this.renderFooter}
                     initialNumToRender={500}
                     ref={(ref) => (this.flatList = ref)}
                     style={{width: '100%', flex: 1}}
                     data={this.state.chat.messages}
-                    windowSize={10}
+                    inverted={true}
+                    // windowSize={10}
                     keyExtractor={(item, index) => index.toString()}
                     contentContainerStyle={{
                       flexGrow: 1,

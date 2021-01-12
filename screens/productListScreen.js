@@ -367,6 +367,8 @@ export default class ProductListScreen extends React.Component {
     console.log('reached End');
     if (this.state.loadmore && !this.state.loadingMore) {
       this.handleViewMore();
+    } else {
+      return null;
     }
   };
 
@@ -686,7 +688,7 @@ export default class ProductListScreen extends React.Component {
   };
 
   render() {
-    const keyExtractor = (item, index) => item._id.toString();
+    const keyExtractor = (item, index) => index.toString();
     return (
       <View style={styles.container}>
         <View style={styles.list}>
@@ -725,17 +727,19 @@ export default class ProductListScreen extends React.Component {
                 ListHeaderComponent={this.renderHeader}
                 style={{width: '100%'}}
                 data={this.state.showProducts}
-                onEndReached={this.handleReachedEnd}
+                onEndReached={
+                  this.state.loadmore ? this.handleReachedEnd : null
+                }
+                disableVirtualization
                 keyExtractor={keyExtractor}
                 onEndReachedThreshold={30}
-                windowSize={3}
                 refreshControl={
                   <RefreshControl
                     refreshing={this.state.refreshing}
                     onRefresh={this.handleRefresh}
                   />
                 }
-                renderItem={({item}) => (
+                renderItem={({item, index}) => (
                   <>
                     {item.varient === 'Product' ? (
                       <>
@@ -746,7 +750,7 @@ export default class ProductListScreen extends React.Component {
                               this.handleCardImageClick(e, f)
                             }
                             item={item}
-                            key={item._id}
+                            key={index}
                             location={this.state.location}
                             navigation={this.props.navigation}
                             nearby={this.state.showMode === 'N'}
@@ -760,7 +764,7 @@ export default class ProductListScreen extends React.Component {
                                   this.handleCardImageClick(e, f)
                                 }
                                 item={item}
-                                key={item._id}
+                                key={index}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
                                 nearby={this.state.showMode === 'N'}
@@ -779,7 +783,7 @@ export default class ProductListScreen extends React.Component {
                               this.handleCardImageClick(e, f)
                             }
                             item={item}
-                            key={item._id}
+                            key={index}
                             location={this.state.location}
                             navigation={this.props.navigation}
                             nearby={this.state.showMode === 'N'}
@@ -793,7 +797,7 @@ export default class ProductListScreen extends React.Component {
                                   this.handleCardImageClick(e, f)
                                 }
                                 item={item}
-                                key={item._id}
+                                key={index}
                                 location={this.state.location}
                                 navigation={this.props.navigation}
                                 nearby={this.state.showMode === 'N'}

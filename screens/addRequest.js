@@ -385,9 +385,7 @@ export default class AddRequest extends React.Component {
   };
 
   handleDesc = (desc) => {
-    if (desc.includes('I am looking for ')) {
-      this.setState({desc});
-    }
+    this.setState({desc});
   };
 
   render() {
@@ -543,7 +541,7 @@ export default class AddRequest extends React.Component {
                       ) : null}
                       <View style={styles.inputGroup}>
                         <Text style={styles.inputGroupText}>
-                          What do you want to request ?
+                          Describe what are you looking for..?
                         </Text>
                         <TextInput
                           style={styles.inputArea}

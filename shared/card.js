@@ -904,7 +904,7 @@ export default class Card extends React.Component {
                                   <Grayscale>
                                     <Image
                                       source={{uri: this.state.owner.photo}}
-                                      style={styles.profileImage}
+                                      style={[styles.profileImage]}
                                       onError={() => {
                                         var owner = this.state.owner;
                                         owner['photo'] = '';
@@ -959,15 +959,36 @@ export default class Card extends React.Component {
                               ) : null}
                             </Text>
                           </TouchableOpacity>
+                          {this.state.product.quantity === 0 &&
+                          this.state.product.category !== 'Food' ? (
+                            <View
+                              style={{
+                                backgroundColor: colors.darkText,
+                                paddingHorizontal: 5,
+                                paddingVertical: 2,
+                                borderRadius: 2,
+                                marginLeft: 10,
+                              }}>
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                  textTransform: 'capitalize',
+                                }}>
+                                {this.state.product.type + 'd'}
+                              </Text>
+                            </View>
+                          ) : null}
                           {this.state.showExpired &&
                           this.state.product.category === 'Food' ? (
                             <View
                               style={{
-                                backgroundColor: '#d65a31',
+                                backgroundColor: colors.darkText,
                                 paddingHorizontal: 5,
                                 paddingVertical: 2,
                                 borderRadius: 2,
-                                marginLeft: 5,
+                                marginLeft: 10,
                               }}>
                               <Text
                                 style={{
@@ -1079,7 +1100,11 @@ export default class Card extends React.Component {
                                       }}>
                                       <Ionicons
                                         name="ios-navigate"
-                                        color={colors.baseline}
+                                        color={
+                                          this.state.product.quantity === 0
+                                            ? colors.grey
+                                            : colors.baseline
+                                        }
                                         size={14}
                                         style={{marginRight: 5}}
                                       />
@@ -1146,7 +1171,10 @@ export default class Card extends React.Component {
                             <Text
                               style={{
                                 fontFamily: 'Muli-Regular',
-                                color: colors.baseline,
+                                color:
+                                  this.state.product.quantity > 0
+                                    ? colors.baseline
+                                    : colors.grey,
                                 fontSize: 16,
                               }}>
                               &#x20b9; {this.state.product.value}
@@ -1371,7 +1399,10 @@ export default class Card extends React.Component {
                                         style={styles.imageBox}>
                                         <Image
                                           source={{uri: image.image}}
-                                          style={styles.imageBox}
+                                          style={[
+                                            styles.imageBox,
+                                            {opacity: 0.5},
+                                          ]}
                                         />
                                       </TouchableOpacity>
                                     </Grayscale>
@@ -1421,7 +1452,10 @@ export default class Card extends React.Component {
                                       source={{
                                         uri: this.state.product.images[0].image,
                                       }}
-                                      style={styles.imageBoxOne}
+                                      style={[
+                                        styles.imageBoxOne,
+                                        {opacity: 0.5},
+                                      ]}
                                     />
                                   </Grayscale>
                                 ) : (
@@ -1534,7 +1568,7 @@ export default class Card extends React.Component {
                                       justifyContent: 'center',
                                       marginRight: 10,
                                       borderRadius: 5,
-                                      backgroundColor: colors.baseline,
+                                      backgroundColor: colors.darkText,
                                     }}>
                                     <Text
                                       style={{

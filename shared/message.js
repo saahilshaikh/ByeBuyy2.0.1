@@ -195,10 +195,12 @@ class Message extends React.Component {
                   justifyContent: 'space-between',
                 }}>
                 {this.props.loading ? (
-                  <Progress.Pie
+                  <Progress.Circle
                     progress={this.props.progress / 100}
                     size={15}
                     color="#d65a31"
+                    borderWidth={0}
+                    thickness={2}
                   />
                 ) : (
                   <Text
