@@ -12,7 +12,7 @@ import colors from '../appTheme';
 import MiniCard from '../shared/mincard';
 import Moment from 'react-moment';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class DealInfoScreen extends React.Component {
   handleBack = () => {
@@ -25,14 +25,13 @@ export default class DealInfoScreen extends React.Component {
         <SafeAreaView style={styles.container}>
           <View
             style={{
-              backgroundColor: colors.primary,
+              backgroundColor: colors.secondary,
               paddingHorizontal: 20,
               height: 60,
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
-              borderBottomColor: colors.grey,
-              borderBottomWidth: StyleSheet.hairlineWidth,
+              elevation: 3,
             }}>
             <TouchableOpacity onPress={this.handleBack}>
               <Ionicons
@@ -51,12 +50,12 @@ export default class DealInfoScreen extends React.Component {
               <Text style={styles.header}>Deal Info</Text>
             </View>
           </View>
-          <View style={{width: '100%', alignItems: 'center'}}>
+          <View style={{ width: '100%', alignItems: 'center' }}>
             <View
               style={{
                 width: '95%',
                 alignItems: 'center',
-                backgroundColor: '#1B1F22',
+                // backgroundColor: '#1B1F22',
                 marginVertical: 10,
                 borderRadius: 10,
                 paddingVertical: 10,
@@ -72,12 +71,12 @@ export default class DealInfoScreen extends React.Component {
                     id={this.props.route.params.item.id1}
                     navigation={this.props.navigation}
                   />
-                  <View style={{marginVertical: 10}}>
+                  <View style={{ marginVertical: 10 }}>
                     <Ionicons
                       name="ios-repeat"
                       size={40}
                       color={colors.baseline}
-                      style={{transform: [{rotate: '90deg'}]}}
+                      style={{ transform: [{ rotate: '90deg' }] }}
                     />
                   </View>
                   <MiniCard
@@ -86,35 +85,28 @@ export default class DealInfoScreen extends React.Component {
                   />
                 </View>
               ) : (
-                <View
-                  style={{
-                    width: '90%',
-                    alignItems: 'center',
-                    paddingVertical: 10,
-                  }}>
-                  <View style={{width: '100%', padding: 10}}>
-                    <Text style={styles.dSubHeader}>
-                      Reason stated for this product :
-                    </Text>
-                    <Text style={styles.dMessage}>
-                      {this.props.route.params.item.message}
-                    </Text>
-                  </View>
-                  <View style={{marginVertical: 10}}>
-                    <Ionicons
-                      name="ios-return-down-back"
-                      size={40}
-                      color={colors.baseline}
-                      style={{transform: [{rotate: '-90deg'}]}}
+                  <View
+                    style={{
+                      width: '90%',
+                      alignItems: 'center',
+                      paddingVertical: 10,
+                    }}>
+                    <MiniCard
+                      id={this.props.route.params.item.id1}
+                      navigation={this.props.navigation}
                     />
+                    <View style={{ width: '100%', padding: 10 }}>
+                      <Text style={styles.dSubHeader}>
+                        Reason stated for this product :
+                    </Text>
+                      <Text style={styles.dMessage}>
+                        {this.props.route.params.item.message}
+                      </Text>
+                    </View>
+
                   </View>
-                  <MiniCard
-                    id={this.props.route.params.item.id1}
-                    navigation={this.props.navigation}
-                  />
-                </View>
-              )}
-              <View style={{width: '90%', paddingVertical: 10}}>
+                )}
+              <View style={{ width: '90%', paddingVertical: 10 }}>
                 <Text style={styles.dSubHeader}>Logs</Text>
                 {this.props.route.params.item.logs.map((item) => {
                   return (
@@ -149,7 +141,7 @@ export default class DealInfoScreen extends React.Component {
                   </Text>
                 </View>
               </View>
-              <View style={{width: '90%', paddingVertical: 10}}>
+              <View style={{ width: '90%', paddingVertical: 10 }}>
                 <Text style={styles.dSubHeader}>Meeting Info</Text>
                 <View
                   style={{
@@ -215,7 +207,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     position: 'relative',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   header: {
     color: colors.baseline,
@@ -241,7 +233,7 @@ const styles = StyleSheet.create({
   dealPop: {
     width: '100%',
     height: 60,
-    backgroundColor: colors.darkText,
+    backgroundColor: colors.secondary,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -273,7 +265,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   dealInfoHeader: {
-    color: colors.white,
+    color: colors.darkText,
     fontSize: 16,
     fontFamily: 'Muli-Bold',
     marginLeft: 10,
@@ -284,18 +276,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Muli-Bold',
   },
   dMessage: {
-    color: colors.grey,
+    color: colors.darkText,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
   },
   dlogHead: {
-    color: colors.grey,
+    color: colors.darkText,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
     marginRight: 5,
   },
   dlogDate: {
-    color: colors.grey,
+    color: colors.darkText,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
     marginLeft: 5,

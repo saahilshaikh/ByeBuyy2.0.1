@@ -20,7 +20,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import Snackbar from 'react-native-snackbar';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class LocationSelectorScreen extends React.Component {
   constructor() {
@@ -76,27 +76,25 @@ export default class LocationSelectorScreen extends React.Component {
       {
         place: e,
       },
-      () => {
+      async () => {
         if (this.state.place.length > 2) {
           this.setState({
             loading: true,
           });
-          fetch(
-            'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=' +
-              this.state.place +
-              '&types=(cities)&key=AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ',
-          )
-            .then((response) => response.json())
-            .then(async (json) => {
-              var result = [];
-              json.predictions.map((item) => {
-                result.push(item.description);
-              });
-              this.setState({
-                loading: false,
-                result: result,
-              });
-            });
+          var data = {
+            c: this.state.place
+          }
+          console.log(data);
+          var response = await axios.post(link + '/api/locationAuto', data);
+          console.log(response.data.data.predictions);
+          var result = [];
+          response.data.data.predictions.map((item) => {
+            result.push(item.description);
+          });
+          this.setState({
+            loading: false,
+            result: result,
+          });
         } else {
           this.setState({
             result: [],
@@ -218,23 +216,24 @@ export default class LocationSelectorScreen extends React.Component {
   };
 
   handleGeoCoder = async (position) => {
-    await Geocoder.from(position.coords.latitude, position.coords.longitude)
-      .then((json) => {
-        var country = '',
-          city = '';
-        json.results[0].address_components.map((item) => {
-          if (item.types.includes('administrative_area_level_2')) {
-            city = item.long_name;
-          } else if (item.types.includes('country')) {
-            country = item.long_name;
-          }
-        });
-        this.setState({
-          city: city,
-          country: country,
-        });
-      })
-      .catch((error) => console.warn(error));
+    var data = {
+      lat: position.coords.latitude,
+      long: position.coords.longitude
+    }
+    var response = await axios.post(link + '/api/getLocation', data);
+    if (response.data) {
+      response.data.data.results[0].address_components.map((item) => {
+        if (item.types.includes('administrative_area_level_2')) {
+          city = item.long_name;
+        } else if (item.types.includes('country')) {
+          country = item.long_name;
+        }
+      });
+      this.setState({
+        city: city,
+        country: country,
+      });
+    }
   };
 
   render() {
@@ -261,12 +260,12 @@ export default class LocationSelectorScreen extends React.Component {
                 {this.state.loading ? (
                   <ActivityIndicator size="small" color={colors.baseline} />
                 ) : (
-                  <Ionicons
-                    name="ios-location-outline"
-                    size={26}
-                    color={colors.grey}
-                  />
-                )}
+                    <Ionicons
+                      name="ios-location-outline"
+                      size={26}
+                      color={colors.grey}
+                    />
+                  )}
               </View>
               <TextInput
                 style={styles.input}
@@ -284,12 +283,12 @@ export default class LocationSelectorScreen extends React.Component {
                   justifyContent: 'center',
                   borderRadius: 10,
                 }}>
-                <Ionicons name="ios-close" size={35} color={colors.baseline} />
+                <Ionicons name="ios-close" size={30} color={colors.baseline} />
               </TouchableOpacity>
             </View>
           </View>
           <ScrollView
-            style={{width: '100%', flex: 1}}
+            style={{ width: '100%', flex: 1 }}
             keyboardShouldPersistTaps="handled">
             <View style={styles.box}>
               {this.state.result.map((item) => {
@@ -303,7 +302,7 @@ export default class LocationSelectorScreen extends React.Component {
                     }}>
                     <Text style={styles.topic}>{item}</Text>
                     <Ionicons
-                      style={{marginLeft: 5}}
+                      style={{ marginLeft: 5 }}
                       name="ios-location-outline"
                       size={20}
                       color={colors.baseline}
@@ -322,7 +321,7 @@ export default class LocationSelectorScreen extends React.Component {
                     }}>
                     <Text style={styles.topic}>All locations</Text>
                     <Ionicons
-                      style={{marginLeft: 5}}
+                      style={{ marginLeft: 5 }}
                       name="ios-location-outline"
                       size={20}
                       color={colors.baseline}
@@ -348,7 +347,7 @@ export default class LocationSelectorScreen extends React.Component {
                               }}>
                               <Text style={styles.topic}>Home</Text>
                               <Ionicons
-                                style={{marginLeft: 5}}
+                                style={{ marginLeft: 5 }}
                                 name="ios-location-outline"
                                 size={20}
                                 color={colors.baseline}
@@ -381,35 +380,35 @@ export default class LocationSelectorScreen extends React.Component {
                           </TouchableOpacity>
                         </TouchableOpacity>
                       ) : (
-                        <TouchableOpacity
-                          onPress={this.handleSetHome}
-                          style={{
-                            marginVertical: 5,
-                          }}>
-                          <View
+                          <TouchableOpacity
+                            onPress={this.handleSetHome}
                             style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
+                              marginVertical: 5,
                             }}>
-                            <Text style={styles.topic}>Home</Text>
-                            <Ionicons
-                              style={{marginLeft: 5}}
-                              name="ios-location-outline"
-                              size={20}
-                              color={colors.baseline}
-                            />
-                          </View>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              fontFamily: 'Muli-Regular',
-                              color: '#acadaa',
-                              marginLeft: 10,
-                            }}>
-                            Home not set, set current location as home
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Text style={styles.topic}>Home</Text>
+                              <Ionicons
+                                style={{ marginLeft: 5 }}
+                                name="ios-location-outline"
+                                size={20}
+                                color={colors.baseline}
+                              />
+                            </View>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Regular',
+                                color: '#acadaa',
+                                marginLeft: 10,
+                              }}>
+                              Home not set, set current location as home
                           </Text>
-                        </TouchableOpacity>
-                      )}
+                          </TouchableOpacity>
+                        )}
                     </>
                   ) : null}
                   {this.state.city ? (
@@ -425,7 +424,7 @@ export default class LocationSelectorScreen extends React.Component {
                         }}>
                         <Text style={styles.topic}>Current City</Text>
                         <Ionicons
-                          style={{marginLeft: 5}}
+                          style={{ marginLeft: 5 }}
                           name="ios-location-outline"
                           size={20}
                           color={colors.baseline}
@@ -463,7 +462,7 @@ export default class LocationSelectorScreen extends React.Component {
                             }}>
                             <Text style={styles.topic}>{item}</Text>
                             <Ionicons
-                              style={{marginLeft: 5}}
+                              style={{ marginLeft: 5 }}
                               name="ios-location-outline"
                               size={20}
                               color={colors.baseline}
@@ -493,19 +492,21 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     paddingVertical: 5,
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     alignItems: 'center',
     borderBottomColor: colors.grey,
     borderBottomWidth: StyleSheet.hairlineWidth,
+    height: 60,
+    elevation: 3
   },
   input: {
     width: width - 110,
     height: 40,
     padding: 0,
     fontSize: 16,
-    color: colors.white,
+    color: colors.darkText,
     fontFamily: 'Muli-Regular',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.white,
     borderRadius: 10,
     paddingHorizontal: 10,
   },

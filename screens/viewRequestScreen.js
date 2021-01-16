@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import Moment from 'react-moment';
 import Modal from 'react-native-modal';
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
@@ -29,7 +29,7 @@ import link from '../fetchPath';
 import CommentCard from '../shared/commentCard';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 var inter;
 export default class ViewRequestScreen extends React.Component {
@@ -182,16 +182,16 @@ export default class ViewRequestScreen extends React.Component {
     var a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.deg2rad(lat1)) *
-        Math.cos(this.deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
   };
 
   handleMenu = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   handleLike = async () => {
@@ -566,11 +566,11 @@ export default class ViewRequestScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {!this.state.loadingProduct && !this.state.loadingOwner ? (
           <>
             {this.state.NF === false ? (
-              <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
                 <View style={styles.item}>
                   <View style={styles.top}>
                     <View style={styles.profile}>
@@ -583,7 +583,7 @@ export default class ViewRequestScreen extends React.Component {
                         style={styles.profileBox}>
                         {this.state.owner.photo ? (
                           <Image
-                            source={{uri: this.state.owner.photo}}
+                            source={{ uri: this.state.owner.photo }}
                             style={styles.profileImage}
                             onError={() => {
                               var owner = this.state.owner;
@@ -594,16 +594,16 @@ export default class ViewRequestScreen extends React.Component {
                             }}
                           />
                         ) : (
-                          <View style={styles.profileImageBox}>
-                            <Text style={styles.imageText}>
-                              {this.state.owner.name.charAt(0).toUpperCase()}
-                            </Text>
-                          </View>
-                        )}
+                            <View style={styles.profileImageBox}>
+                              <Text style={styles.imageText}>
+                                {this.state.owner.name.charAt(0).toUpperCase()}
+                              </Text>
+                            </View>
+                          )}
                         {this.state.owner.active &
-                        (this.state.owner.logout === false) ? (
-                          <View style={styles.active}></View>
-                        ) : null}
+                          (this.state.owner.logout === false) ? (
+                            <View style={styles.active}></View>
+                          ) : null}
                       </TouchableOpacity>
                       <View>
                         <Text style={styles.profileName}>
@@ -623,35 +623,35 @@ export default class ViewRequestScreen extends React.Component {
                           {auth().currentUser ? (
                             <>
                               {auth().currentUser.email ===
-                              this.state.product.owner ? null : (
-                                <View style={styles.tagBox}>
-                                  <Ionicons
-                                    name="ios-location-outline"
-                                    size={14}
-                                    color={colors.white}
-                                  />
-                                  <Text style={styles.tag}>
-                                    {this.state.product.tag}
-                                  </Text>
-                                </View>
-                              )}
+                                this.state.product.owner ? null : (
+                                  <View style={styles.tagBox}>
+                                    <Ionicons
+                                      name="ios-location-outline"
+                                      size={14}
+                                      color={colors.white}
+                                    />
+                                    <Text style={styles.tag}>
+                                      {this.state.product.tag}
+                                    </Text>
+                                  </View>
+                                )}
                             </>
                           ) : (
-                            <View style={styles.tagBox}>
-                              <Ionicons
-                                name="ios-location-outline"
-                                size={14}
-                                color={colors.white}
-                              />
-                              <Text style={styles.tag}>
-                                {this.state.product.tag}
-                              </Text>
-                            </View>
-                          )}
+                              <View style={styles.tagBox}>
+                                <Ionicons
+                                  name="ios-location-outline"
+                                  size={14}
+                                  color={colors.white}
+                                />
+                                <Text style={styles.tag}>
+                                  {this.state.product.tag}
+                                </Text>
+                              </View>
+                            )}
                         </>
                       ) : null}
                     </View>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         width: 40,
                         height: 40,
@@ -665,16 +665,16 @@ export default class ViewRequestScreen extends React.Component {
                         size={22}
                         color={colors.white}
                       />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View style={styles.middle}>
                     <Text style={styles.type}>{this.state.product.type}</Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Ionicons
                         name="ios-location-outline"
                         size={14}
                         color={colors.white}
-                        style={{marginRight: 5}}
+                        style={{ marginRight: 5 }}
                       />
                       <Text style={styles.location}>
                         {this.state.product.city +
@@ -693,7 +693,7 @@ export default class ViewRequestScreen extends React.Component {
                     </Text>
                   </View>
                   <View style={styles.bottom}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <TouchableOpacity
                         onPress={this.handleLike}
                         style={{
@@ -707,18 +707,18 @@ export default class ViewRequestScreen extends React.Component {
                             name="like1"
                             size={24}
                             color={colors.baseline}
-                            style={{marginRight: 7}}
+                            style={{ marginRight: 7 }}
                           />
                         ) : (
-                          <AntDesign
-                            name="like2"
-                            size={24}
-                            color={colors.grey}
-                            style={{marginRight: 7}}
-                          />
-                        )}
+                            <AntDesign
+                              name="like2"
+                              size={26}
+                              color={colors.grey}
+                              style={{ marginRight: 7 }}
+                            />
+                          )}
                         {this.state.product.likes.length > 0 ? (
-                          <Text style={{fontSize: 16, color: colors.grey}}>
+                          <Text style={{ fontSize: 16, color: colors.grey }}>
                             {this.state.product.likes.length > 1000
                               ? this.state.product.likes.length / 1000 + 'K'
                               : this.state.product.likes.length}
@@ -741,140 +741,141 @@ export default class ViewRequestScreen extends React.Component {
                           name="ios-chatbubble-outline"
                           size={28}
                           color={colors.grey}
-                          style={{marginHorizontal: 7}}
+                          style={{ marginHorizontal: 7 }}
                         />
                         {this.state.product.comments.length > 0 ? (
-                          <Text style={{fontSize: 16, color: colors.grey}}>
+                          <Text style={{ fontSize: 16, color: colors.grey }}>
                             {this.state.product.comments.length > 1000
                               ? this.state.product.comments.length / 1000 + 'K'
                               : this.state.product.comments.length}
                           </Text>
                         ) : null}
                       </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => this.handleShare(this.state.product.id)}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}>
+                        <Ionicons
+                          name="share-social-outline"
+                          size={28}
+                          color={colors.grey}
+                          style={{ marginHorizontal: 5 }}
+                        />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                      onPress={() => this.handleShare(this.state.product.id)}
-                      style={{
-                        width: 40,
-                        height: 40,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      <Ionicons
-                        name="share-social-outline"
-                        size={28}
-                        color={colors.grey}
-                        style={{marginHorizontal: 5}}
-                      />
-                    </TouchableOpacity>
+
                   </View>
                 </View>
               </View>
             ) : (
-              <View
-                style={{
-                  width: '100%',
-                  flex: 1,
-                  alignItems: 'center',
-                }}>
-                <Lottieview
-                  source={require('../assets/16656-empty-state.json')}
-                  autoPlay={true}
-                  loop={false}
+                <View
                   style={{
-                    width: 300,
-                    height: 250,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.grey,
-                    fontSize: 20,
+                    width: '100%',
+                    flex: 1,
+                    alignItems: 'center',
                   }}>
-                  Nothing Found
+                  <Lottieview
+                    source={require('../assets/16656-empty-state.json')}
+                    autoPlay={true}
+                    loop={false}
+                    style={{
+                      width: 300,
+                      height: 250,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontFamily: 'Muli-Bold',
+                      color: colors.grey,
+                      fontSize: 20,
+                    }}>
+                    Nothing Found
                 </Text>
-              </View>
-            )}
+                </View>
+              )}
           </>
         ) : (
-          <View
-            style={{
-              width: '95%',
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              alignItems: 'center',
-              backgroundColor: colors.primary,
-              justifyContent: 'space-between',
-              borderRadius: 10,
-              elevation: 3,
-              marginVertical: 10,
-            }}>
-            <SkeletonContent
-              containerStyle={{width: '100%'}}
-              boneColor={colors.primary}
-              highlightColor={colors.darkText}
-              isLoading={this.state.loadingProduct || this.state.loadingOwner}
-              layout={[
-                {
-                  flexDirection: 'row',
-                  marginTop: 10,
-                  alignItems: 'center',
-                  children: [
-                    {
-                      width: 40,
-                      height: 40,
-                      marginRight: 10,
-                      borderRadius: 20,
-                    },
-                    {
-                      width: 150,
-                      height: 20,
-                    },
-                  ],
-                },
-                {
-                  flexDirection: 'column',
-                  marginTop: 10,
-                  children: [
-                    {
-                      width: '100%',
-                      height: 30,
-                    },
-                    {
-                      flexDirection: 'row',
-                      marginVertical: 10,
-                      justifyContent: 'space-between',
-                      children: [
-                        {
-                          width: width * 0.42,
-                          height: 150,
-                        },
-                        {
-                          width: width * 0.42,
-                          height: 150,
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  children: [
-                    {
-                      width: 80,
-                      height: 30,
-                    },
-                    {
-                      width: 80,
-                      height: 30,
-                    },
-                  ],
-                },
-              ]}></SkeletonContent>
-          </View>
-        )}
+            <View
+              style={{
+                width: '95%',
+                paddingVertical: 10,
+                paddingHorizontal: 15,
+                alignItems: 'center',
+                backgroundColor: colors.primary,
+                justifyContent: 'space-between',
+                borderRadius: 10,
+                elevation: 3,
+                marginVertical: 10,
+              }}>
+              <SkeletonContent
+                containerStyle={{ width: '100%' }}
+                boneColor={colors.primary}
+                highlightColor={colors.darkText}
+                isLoading={this.state.loadingProduct || this.state.loadingOwner}
+                layout={[
+                  {
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    alignItems: 'center',
+                    children: [
+                      {
+                        width: 40,
+                        height: 40,
+                        marginRight: 10,
+                        borderRadius: 20,
+                      },
+                      {
+                        width: 150,
+                        height: 20,
+                      },
+                    ],
+                  },
+                  {
+                    flexDirection: 'column',
+                    marginTop: 10,
+                    children: [
+                      {
+                        width: '100%',
+                        height: 30,
+                      },
+                      {
+                        flexDirection: 'row',
+                        marginVertical: 10,
+                        justifyContent: 'space-between',
+                        children: [
+                          {
+                            width: width * 0.42,
+                            height: 150,
+                          },
+                          {
+                            width: width * 0.42,
+                            height: 150,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    children: [
+                      {
+                        width: 80,
+                        height: 30,
+                      },
+                      {
+                        width: 80,
+                        height: 30,
+                      },
+                    ],
+                  },
+                ]}></SkeletonContent>
+            </View>
+          )}
       </View>
     );
   };
@@ -883,19 +884,19 @@ export default class ViewRequestScreen extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <View style={{alignItems: 'center', flexDirection: 'row'}}>
+          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
             <TouchableOpacity style={styles.action} onPress={this.handeGoBack}>
               <Ionicons
                 name="ios-arrow-back"
                 size={30}
-                style={{color: colors.baseline}}
+                style={{ color: colors.baseline }}
               />
             </TouchableOpacity>
             <Text style={styles.headerText}>Request Info</Text>
           </View>
         </View>
         {this.state.tags.length > 0 ? (
-          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+          <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
             {this.state.tags &&
               this.state.tags.map((tag) => {
                 return (
@@ -910,16 +911,16 @@ export default class ViewRequestScreen extends React.Component {
                     <View style={styles.profileBox}>
                       {tag.photo ? (
                         <Image
-                          source={{uri: tag.photo}}
+                          source={{ uri: tag.photo }}
                           style={styles.profileImage}
                         />
                       ) : (
-                        <View style={styles.profileImageBox}>
-                          <Text style={styles.imageText}>
-                            {tag.name.charAt(0).toUpperCase()}
-                          </Text>
-                        </View>
-                      )}
+                          <View style={styles.profileImageBox}>
+                            <Text style={styles.imageText}>
+                              {tag.name.charAt(0).toUpperCase()}
+                            </Text>
+                          </View>
+                        )}
                     </View>
                     <View>
                       <Text style={styles.profileName}>{tag.name}</Text>
@@ -929,8 +930,8 @@ export default class ViewRequestScreen extends React.Component {
               })}
           </View>
         ) : (
-          <View style={{width: '100%', flex: 1}}>{this.renderHeader()}</View>
-        )}
+            <View style={{ width: '100%', flex: 1 }}>{this.renderHeader()}</View>
+          )}
         <Modal isVisible={this.state.isModalVisible}>
           <View
             style={{
@@ -943,32 +944,32 @@ export default class ViewRequestScreen extends React.Component {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner ===
+                      this.state.product.owner ===
                       auth().currentUser.email ? null : (
-                      <TouchableOpacity
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: '#acadaa',
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Text
+                        <TouchableOpacity
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: '#acadaa',
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Report Inappropriate
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                            }}>
+                            Report Inappropriate
                         </Text>
-                      </TouchableOpacity>
-                    )}
+                        </TouchableOpacity>
+                      )}
                   </>
                 ) : null}
                 {/* {
@@ -1044,33 +1045,33 @@ export default class ViewRequestScreen extends React.Component {
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner === auth().currentUser.email ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            isModalVisible: false,
-                          });
-                          this.handleRemovePost(this.state.product.id);
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Text
+                      this.state.product.owner === auth().currentUser.email ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              isModalVisible: false,
+                            });
+                            this.handleRemovePost(this.state.product.id);
+                          }}
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Remove Post
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                            }}>
+                            Remove Post
                         </Text>
-                      </TouchableOpacity>
-                    ) : null}
+                        </TouchableOpacity>
+                      ) : null}
                   </>
                 ) : null}
               </View>
@@ -1121,7 +1122,7 @@ export default class ViewRequestScreen extends React.Component {
                   paddingVertical: 10,
                 }}>
                 <TouchableOpacity
-                  style={{marginLeft: 20}}
+                  style={{ marginLeft: 20 }}
                   onPress={() =>
                     this.setState({
                       reportForm: false,
@@ -1223,7 +1224,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 50,
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     elevation: 3,
     justifyContent: 'space-between',
   },
@@ -1237,7 +1238,7 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     justifyContent: 'space-between',
     borderColor: colors.darkText,
     borderWidth: 1,

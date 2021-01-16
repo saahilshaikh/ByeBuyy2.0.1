@@ -15,7 +15,7 @@ import auth from '@react-native-firebase/auth';
 import LottieView from 'lottie-react-native';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ForgotScreen extends React.Component {
   constructor() {
@@ -83,30 +83,30 @@ export default class ForgotScreen extends React.Component {
             onPress={() => this.props.navigation.pop()}>
             <Ionicons
               name="ios-arrow-back"
-              size={40}
-              style={{color: colors.baseline}}
+              size={30}
+              style={{ color: colors.baseline }}
             />
           </TouchableOpacity>
           <Text
             style={{
               fontSize: 28,
               marginBottom: 60,
-              color: colors.white,
+              color: colors.darkText,
               fontFamily: 'Muli-Bold',
             }}>
             Forgot Password
           </Text>
           {this.state.success ? (
-            <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
               <LottieView
                 source={require('../assets/433-checked-done.json')}
-                style={{width: 200, height: 200}}
+                style={{ width: 200, height: 200 }}
                 autoPlay={true}
                 loop={true}
               />
               <Text
                 style={{
-                  color: colors.grey,
+                  color: colors.darkText,
                   textAlign: 'center',
                   fontSize: 16,
                   fontFamily: 'Muli-Regular',
@@ -121,38 +121,38 @@ export default class ForgotScreen extends React.Component {
               </Text>
             </View>
           ) : (
-            <>
-              <Text style={styles.error}>{this.state.error}</Text>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputHeader}>Email</Text>
-                <TextInput
-                  value={this.state.email}
-                  onChangeText={(text) => {
-                    this.setState({
-                      email: text,
-                    });
-                  }}
-                  onSubmitEditing={this.handleSignIn}
-                  style={styles.input}></TextInput>
-              </View>
-              {this.state.loading ? (
-                <ActivityIndicator size="large" color={colors.baseline} />
-              ) : (
-                <TouchableOpacity
-                  onPress={this.handleSignIn}
-                  style={styles.button}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: colors.white,
-                      fontFamily: 'Muli-Bold',
-                    }}>
-                    Reset Password
+              <>
+                <Text style={styles.error}>{this.state.error}</Text>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputHeader}>Email</Text>
+                  <TextInput
+                    value={this.state.email}
+                    onChangeText={(text) => {
+                      this.setState({
+                        email: text,
+                      });
+                    }}
+                    onSubmitEditing={this.handleSignIn}
+                    style={styles.input}></TextInput>
+                </View>
+                {this.state.loading ? (
+                  <ActivityIndicator size="large" color={colors.baseline} />
+                ) : (
+                    <TouchableOpacity
+                      onPress={this.handleSignIn}
+                      style={styles.button}>
+                      <Text
+                        style={{
+                          fontSize: 14,
+                          color: colors.secondary,
+                          fontFamily: 'Muli-Bold',
+                        }}>
+                        Reset Password
                   </Text>
-                </TouchableOpacity>
-              )}
-            </>
-          )}
+                    </TouchableOpacity>
+                  )}
+              </>
+            )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   inputContainer: {
     width: '100%',
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey,
     fontSize: 16,
     fontFamily: 'Muli-Regular',
-    color: colors.white,
+    color: colors.darkText,
     height: 50,
     justifyContent: 'center',
   },
@@ -208,5 +208,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     borderRadius: 25,
     backgroundColor: colors.secondary,
+    elevation: 3,
+    marginLeft: 5
   },
 });

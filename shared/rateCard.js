@@ -15,7 +15,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class RateCard extends React.Component {
   constructor() {
@@ -65,16 +65,16 @@ export default class RateCard extends React.Component {
                   style={styles.left}>
                   {this.state.user.photo ? (
                     <Image
-                      source={{uri: this.state.user.photo}}
+                      source={{ uri: this.state.user.photo }}
                       style={styles.profileImage}
                     />
                   ) : (
-                    <View style={styles.profileImageBox}>
-                      <Text style={styles.imageText}>
-                        {this.state.user.name.charAt(0).toUpperCase()}
-                      </Text>
-                    </View>
-                  )}
+                      <View style={styles.profileImageBox}>
+                        <Text style={styles.imageText}>
+                          {this.state.user.name.charAt(0).toUpperCase()}
+                        </Text>
+                      </View>
+                    )}
                 </TouchableOpacity>
                 <View style={styles.right}>
                   <Text style={styles.name}>{this.state.user.name}</Text>
@@ -107,56 +107,56 @@ export default class RateCard extends React.Component {
             )}
           </>
         ) : (
-          <View
-            style={{
-              width: '95%',
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              alignItems: 'center',
-              backgroundColor: '#1B1F22',
-              justifyContent: 'space-between',
-              borderRadius: 10,
-              marginBottom: 10,
-              elevation: 3,
-            }}>
-            <SkeletonContent
-              containerStyle={{width: '100%'}}
-              boneColor={colors.primary}
-              highlightColor={colors.darkText}
-              isLoading={true}
-              layout={[
-                {
-                  flexDirection: 'row',
-                  marginTop: 10,
-                  alignItems: 'center',
-                  children: [
-                    {
-                      width: 40,
-                      height: 40,
-                      marginRight: 10,
-                      borderRadius: 20,
-                    },
-                    {
-                      width: 150,
-                      height: 20,
-                    },
-                  ],
-                },
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                  marginLeft: 50,
-                  children: [
-                    {
-                      width: 80,
-                      height: 30,
-                    },
-                  ],
-                },
-              ]}></SkeletonContent>
-          </View>
-        )}
+            <View
+              style={{
+                width: '95%',
+                paddingVertical: 10,
+                paddingHorizontal: 15,
+                alignItems: 'center',
+                // backgroundColor: '#1B1F22',
+                justifyContent: 'space-between',
+                borderRadius: 10,
+                marginBottom: 10,
+                // elevation: 3,
+              }}>
+              <SkeletonContent
+                containerStyle={{ width: '100%' }}
+                boneColor={colors.grey}
+                highlightColor={colors.darkText}
+                isLoading={true}
+                layout={[
+                  {
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    alignItems: 'center',
+                    children: [
+                      {
+                        width: 40,
+                        height: 40,
+                        marginRight: 10,
+                        borderRadius: 20,
+                      },
+                      {
+                        width: 150,
+                        height: 20,
+                      },
+                    ],
+                  },
+                  {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    marginTop: 10,
+                    marginLeft: 50,
+                    children: [
+                      {
+                        width: 80,
+                        height: 30,
+                      },
+                    ],
+                  },
+                ]}></SkeletonContent>
+            </View>
+          )}
       </>
     );
   }
@@ -164,13 +164,13 @@ export default class RateCard extends React.Component {
 
 const styles = StyleSheet.create({
   ratingContainer: {
-    paddingVertical: 15,
+    paddingVertical: 12,
     paddingHorizontal: 15,
     width: '95%',
-    backgroundColor: colors.secondary,
+    // backgroundColor: colors.primary2,
     borderRadius: 5,
-    marginBottom: 10,
-    elevation: 3,
+    marginBottom: 2,
+    // elevation: 3,
     flexDirection: 'row',
   },
   left: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   rateText: {
-    color: colors.white,
+    color: colors.grey,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
   },

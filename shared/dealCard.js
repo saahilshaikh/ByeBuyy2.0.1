@@ -11,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../appTheme';
 import Moment from 'react-moment';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class DealCard extends React.Component {
   constructor() {
@@ -30,8 +30,8 @@ export default class DealCard extends React.Component {
             marginBottom: 10,
           }}>
           <Text style={styles.itemDate}>
-            Deal accomplished on{' '}
-            <Moment element={Text} fromNow>
+            Deal accomplished on{' \n'}
+            <Moment element={Text} format="DD-MM-YYYY, hh:mm a">
               {this.props.item.date}
             </Moment>
           </Text>
@@ -59,14 +59,16 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     justifyContent: 'space-between',
     elevation: 3,
     borderRadius: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.grey
   },
   itemDate: {
     fontFamily: 'Muli-Bold',
-    color: colors.grey,
+    color: colors.darkText,
     fontSize: 14,
   },
 });

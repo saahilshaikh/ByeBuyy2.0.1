@@ -46,19 +46,20 @@ class PrivacyPolicy extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: colors.primary,
+            backgroundColor: colors.primary2,
             paddingHorizontal: 20,
             height: 60,
             flexDirection: 'row',
             alignItems: 'center',
             width: '100%',
+            elevation: 3
           }}>
           <TouchableOpacity
             onPress={this.handleBack}>
             <Ionicons
               name="ios-arrow-back"
               size={30}
-              color="#d65a31"
+              color={colors.baseline}
             />
           </TouchableOpacity>
           <View
@@ -99,7 +100,7 @@ class PrivacyPolicy extends React.Component {
                 progressTintColor: colors.white,
               }}
               source={{ uri: this.state.url, cache: true }}
-              style={{ width: width, height: height - 100 }}
+              style={{ width: width, flex: 1 }}
             />
           )}
       </SafeAreaView>

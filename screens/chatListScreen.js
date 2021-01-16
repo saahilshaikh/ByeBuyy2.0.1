@@ -38,18 +38,19 @@ export default class ChatListScreen extends React.Component {
 
   async componentDidMount() {
     if (auth().currentUser) {
-      var chatListValue = await AsyncStorage.getItem(
-        auth().currentUser.email + 'chatList',
-      );
-      if (chatListValue !== null) {
-        this.setState({
-          chats: JSON.parse(chatListValue),
-          loading: false,
-        });
-        this.handleInit();
-      } else {
-        this.handleInit();
-      }
+      // var chatListValue = await AsyncStorage.getItem(
+      //   auth().currentUser.email + 'chatList',
+      // );
+      // if (chatListValue !== null) {
+      //   console.log("local chatlist", JSON.parse(chatListValue))
+      //   this.setState({
+      //     chats: JSON.parse(chatListValue),
+      //     loading: false,
+      //   });
+      //   this.handleInit();
+      // } else {
+      this.handleInit();
+      // }
     }
   }
 

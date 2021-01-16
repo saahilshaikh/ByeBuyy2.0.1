@@ -15,7 +15,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ViewUsersListScreen extends React.Component {
   constructor() {
@@ -85,7 +85,7 @@ export default class ViewUsersListScreen extends React.Component {
               </Text>
             </View>
           </View>
-          <ScrollView style={{width: '100%', flex: 1, paddingVertical: 10}}>
+          <ScrollView style={{ width: '100%', flex: 1, paddingVertical: 10 }}>
             {!this.state.loading ? (
               <>
                 {this.state.data &&
@@ -102,8 +102,8 @@ export default class ViewUsersListScreen extends React.Component {
                   })}
               </>
             ) : (
-              <ActivityIndicator size="large" color={colors.baseline} />
-            )}
+                <ActivityIndicator size="large" color={colors.baseline} />
+              )}
           </ScrollView>
         </SafeAreaView>
         <SafeAreaView></SafeAreaView>
@@ -121,8 +121,11 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     paddingVertical: 5,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     alignItems: 'center',
+    elevation: 3,
+    height: 60,
+    alignItems: 'center'
   },
   headerText: {
     fontFamily: 'Muli-Bold',

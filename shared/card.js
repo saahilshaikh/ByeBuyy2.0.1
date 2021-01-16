@@ -29,9 +29,9 @@ import ImageView from 'react-native-image-viewing';
 import Card3 from './card3';
 import CountDownTimer from 'react-native-countdown-timer-hooks';
 
-import {Grayscale} from 'react-native-color-matrix-image-filters';
+import { Grayscale } from 'react-native-color-matrix-image-filters';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class Card extends React.Component {
   inter = null;
@@ -179,7 +179,7 @@ export default class Card extends React.Component {
               );
               var d2 = Math.floor(
                 (new Date(product.from).getTime() - new Date().getTime()) /
-                  1000,
+                1000,
               );
               this.setState({
                 showExpired: d < 0 ? true : false,
@@ -402,9 +402,9 @@ export default class Card extends React.Component {
     var a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.deg2rad(lat1)) *
-        Math.cos(this.deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
@@ -478,10 +478,21 @@ export default class Card extends React.Component {
     };
     var res = await axios.post(link + '/api/notifications/check', data);
     if (res.data.length === 0) {
-      this.sendLikedPushNotification('Product', this.state.product.id);
       var res2 = await axios.post(link + '/api/notifications/add', data);
       if (res2.data !== null) {
-        console.log(res.data);
+        var title = this.state.currentUser.name + ' liked your product';
+        var noti = {
+          token: this.state.owner.pushToken,
+          title: title,
+          body: 'Tap here to see the details',
+          type: 'Product',
+          id: this.state.product.id,
+          date: new Date(),
+        };
+        var not = await axios.post(link + '/api/sendPushNotification', noti);
+        if (not.data.type === 'success') {
+          console.log('Send Noti');
+        }
       }
     }
   };
@@ -529,7 +540,7 @@ export default class Card extends React.Component {
   };
 
   handleMenu = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   handleRemovePost = async () => {
@@ -614,17 +625,16 @@ export default class Card extends React.Component {
   handleRequest = () => {
     if (auth().currentUser) {
       if (
-        this.state.product.quantity > 0 &&
-        this.state.product.type !== 'donate'
+        this.state.product.quantity > 0
       ) {
-        this.setState({request: !this.state.request});
+        this.setState({ request: !this.state.request });
       } else if (
         this.state.product.type === 'donate' &&
         this.state.product.category === 'Food'
       ) {
         var d = Math.floor(
           (new Date(this.state.product.to).getTime() - new Date().getTime()) /
-            1000,
+          1000,
         );
         if (d < 0) {
           Snackbar.show({
@@ -632,7 +642,7 @@ export default class Card extends React.Component {
             duration: Snackbar.LENGTH_SHORT,
           });
         } else {
-          this.setState({request: !this.state.request});
+          this.setState({ request: !this.state.request });
         }
       } else {
         Snackbar.show({
@@ -766,13 +776,14 @@ export default class Card extends React.Component {
               dealStatus: false,
               dealDone: [],
               chatId: id,
+              category: this.state.product.type,
             };
             var resDeal = await axios.post(link + '/api/makeDeal', data);
             if (resDeal.data !== null) {
               if (resDeal.data.type === 'success') {
                 this.handleSendSimpleMessage(
                   id,
-                  'I want to exchnage with my product',
+                  'I want to exchange with my product',
                 );
                 this.setState({
                   request: false,
@@ -864,26 +875,26 @@ export default class Card extends React.Component {
   render() {
     return (
       <>
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
           {!this.state.loadingProduct ? (
             <>
               {this.state.NF === false ? (
-                <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
                   <View
                     style={
                       this.state.product.quantity === 0 ||
-                      (this.state.product.type.toLowerCase() === 'donate' &&
-                        this.state.product.category === 'Food' &&
-                        (Math.floor(
-                          (new Date(this.state.product.from).getTime() -
-                            new Date().getTime()) /
-                            1000,
-                        ) > 0 ||
-                          Math.floor(
-                            (new Date(this.state.product.to).getTime() -
+                        (this.state.product.type.toLowerCase() === 'donate' &&
+                          this.state.product.category === 'Food' &&
+                          (Math.floor(
+                            (new Date(this.state.product.from).getTime() -
                               new Date().getTime()) /
+                            1000,
+                          ) > 0 ||
+                            Math.floor(
+                              (new Date(this.state.product.to).getTime() -
+                                new Date().getTime()) /
                               1000,
-                          ) < 0))
+                            ) < 0))
                         ? styles.itemInActive
                         : styles.item
                     }>
@@ -900,11 +911,27 @@ export default class Card extends React.Component {
                             style={styles.profileBox}>
                             {this.state.owner.photo ? (
                               <>
-                                {this.state.product.quantity === 0 ? (
-                                  <Grayscale>
+                                {this.state.product.quantity === 0 || (this.state.product.type.toLowerCase() === 'donate' &&
+                                  this.state.product.category === 'Food' &&
+                                  this.state.showExpired === false &&
+                                  this.state.showTimer === true) || (this.state.showExpired &&
+                                    this.state.product.category === 'Food') ? (
+                                    <Grayscale>
+                                      <Image
+                                        source={{ uri: this.state.owner.photo }}
+                                        style={[styles.profileImage]}
+                                        onError={() => {
+                                          var owner = this.state.owner;
+                                          owner['photo'] = '';
+                                          this.setState({
+                                            owner,
+                                          });
+                                        }}
+                                      />
+                                    </Grayscale>
+                                  ) : (
                                     <Image
-                                      source={{uri: this.state.owner.photo}}
-                                      style={[styles.profileImage]}
+                                      source={{ uri: this.state.owner.photo }}
                                       onError={() => {
                                         var owner = this.state.owner;
                                         owner['photo'] = '';
@@ -912,28 +939,23 @@ export default class Card extends React.Component {
                                           owner,
                                         });
                                       }}
+                                      style={styles.profileImage}
                                     />
-                                  </Grayscale>
-                                ) : (
-                                  <Image
-                                    source={{uri: this.state.owner.photo}}
-                                    style={styles.profileImage}
-                                  />
-                                )}
+                                  )}
                               </>
                             ) : (
-                              <View style={styles.profileImageBox}>
-                                <Text style={styles.imageText}>
-                                  {this.state.owner.name
-                                    .charAt(0)
-                                    .toUpperCase()}
-                                </Text>
-                              </View>
-                            )}
+                                <View style={styles.profileImageBox}>
+                                  <Text style={styles.imageText}>
+                                    {this.state.owner.name
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </Text>
+                                </View>
+                              )}
                             {this.state.owner.active &
-                            (this.state.owner.logout === false) ? (
-                              <View style={styles.active}></View>
-                            ) : null}
+                              (this.state.owner.logout === false) ? (
+                                <View style={styles.active}></View>
+                              ) : null}
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() =>
@@ -942,7 +964,7 @@ export default class Card extends React.Component {
                                 location: this.props.location,
                               })
                             }
-                            style={{marginLeft: 5}}>
+                            style={{ marginLeft: 5 }}>
                             <Text style={styles.profileName}>
                               {this.state.owner.name}
                             </Text>
@@ -960,85 +982,83 @@ export default class Card extends React.Component {
                             </Text>
                           </TouchableOpacity>
                           {this.state.product.quantity === 0 &&
-                          this.state.product.category !== 'Food' ? (
-                            <View
-                              style={{
-                                backgroundColor: colors.darkText,
-                                paddingHorizontal: 5,
-                                paddingVertical: 2,
-                                borderRadius: 2,
-                                marginLeft: 10,
-                              }}>
-                              <Text
+                            this.state.product.category !== 'Food' ? (
+                              <View
                                 style={{
-                                  fontSize: 14,
-                                  fontFamily: 'Muli-Bold',
-                                  color: colors.white,
-                                  textTransform: 'capitalize',
+                                  backgroundColor: colors.darkText,
+                                  paddingHorizontal: 5,
+                                  paddingVertical: 2,
+                                  borderRadius: 2,
+                                  marginLeft: 10,
                                 }}>
-                                {this.state.product.type + 'd'}
-                              </Text>
-                            </View>
-                          ) : null}
+                                <Text
+                                  style={{
+                                    fontSize: 14,
+                                    fontFamily: 'Muli-Bold',
+                                    color: colors.white,
+                                    textTransform: 'capitalize',
+                                  }}>
+                                  {this.state.product.type !== 'lend' ? this.state.product.type + 'd' : 'lent'}
+                                </Text>
+                              </View>
+                            ) : null}
                           {this.state.showExpired &&
-                          this.state.product.category === 'Food' ? (
-                            <View
-                              style={{
-                                backgroundColor: colors.darkText,
-                                paddingHorizontal: 5,
-                                paddingVertical: 2,
-                                borderRadius: 2,
-                                marginLeft: 10,
-                              }}>
-                              <Text
+                            this.state.product.category === 'Food' ? (
+                              <View
                                 style={{
-                                  fontSize: 14,
-                                  fontFamily: 'Muli-Bold',
-                                  color: colors.white,
+                                  backgroundColor: colors.darkText,
+                                  paddingHorizontal: 5,
+                                  paddingVertical: 2,
+                                  borderRadius: 2,
+                                  marginLeft: 10,
                                 }}>
-                                Expired
+                                <Text
+                                  style={{
+                                    fontSize: 14,
+                                    fontFamily: 'Muli-Bold',
+                                    color: colors.white,
+                                  }}>
+                                  Expired
                               </Text>
-                            </View>
-                          ) : null}
+                              </View>
+                            ) : null}
                         </View>
                       ) : (
-                        <View
-                          style={{
-                            width: '100%',
-                            padding: 5,
-                            alignItems: 'center',
-                            backgroundColor: colors.primary,
-                            justifyContent: 'space-between',
-                            elevation: 3,
-                            borderTopColor: colors.grey,
-                            borderBottomColor: colors.grey,
-                          }}>
-                          <SkeletonContent
-                            containerStyle={{width: '100%'}}
-                            boneColor={colors.primary}
-                            highlightColor={colors.darkText}
-                            isLoading={true}
-                            layout={[
-                              {
-                                flexDirection: 'row',
-                                marginTop: 10,
-                                alignItems: 'center',
-                                children: [
-                                  {
-                                    width: 50,
-                                    height: 50,
-                                    marginRight: 10,
-                                    borderRadius: 25,
-                                  },
-                                  {
-                                    width: 150,
-                                    height: 20,
-                                  },
-                                ],
-                              },
-                            ]}></SkeletonContent>
-                        </View>
-                      )}
+                          <View
+                            style={{
+                              width: '100%',
+                              padding: 5,
+                              alignItems: 'center',
+                              backgroundColor: colors.primary2,
+                              justifyContent: 'space-between',
+                              elevation: 3,
+                            }}>
+                            <SkeletonContent
+                              containerStyle={{ width: '100%' }}
+                              boneColor={colors.primary}
+                              highlightColor={colors.darkText}
+                              isLoading={true}
+                              layout={[
+                                {
+                                  flexDirection: 'row',
+                                  marginTop: 10,
+                                  alignItems: 'center',
+                                  children: [
+                                    {
+                                      width: 50,
+                                      height: 50,
+                                      marginRight: 10,
+                                      borderRadius: 25,
+                                    },
+                                    {
+                                      width: 150,
+                                      height: 20,
+                                    },
+                                  ],
+                                },
+                              ]}></SkeletonContent>
+                          </View>
+                        )}
                       {auth().currentUser ? (
                         <TouchableOpacity
                           style={{
@@ -1058,20 +1078,20 @@ export default class Card extends React.Component {
                       ) : null}
                     </View>
                     <View style={styles.middle}>
-                      <View style={{width: '100%'}}>
+                      <View style={{ width: '100%' }}>
                         <Text style={styles.type}>
                           {this.state.product.type.toLowerCase() === 'donate'
                             ? 'Free'
                             : this.state.product.type}{' '}
                           |{' '}
                           {this.state.product.category === 'Books' &&
-                          this.state.product.subcategory
+                            this.state.product.subcategory
                             ? this.state.product.subcategory + ' | '
                             : null}
                           {this.state.product.category}
                         </Text>
                         <View
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Image
                             source={{
                               uri:
@@ -1079,7 +1099,7 @@ export default class Card extends React.Component {
                                 this.state.product.code +
                                 '/flat/64.png',
                             }}
-                            style={{width: 20, height: 15, marginRight: 5}}
+                            style={{ width: 20, height: 15, marginRight: 5 }}
                           />
                           <Text style={styles.location}>
                             {this.state.product.city +
@@ -1091,96 +1111,95 @@ export default class Card extends React.Component {
                               {auth().currentUser ? (
                                 <>
                                   {this.state.product.owner !==
-                                  auth().currentUser.email ? (
-                                    <View
-                                      style={{
-                                        flexDirection: 'row',
-                                        alignItems: 'center',
-                                        marginLeft: 5,
-                                      }}>
-                                      <Ionicons
-                                        name="ios-navigate"
-                                        color={
-                                          this.state.product.quantity === 0
-                                            ? colors.grey
-                                            : colors.baseline
-                                        }
-                                        size={14}
-                                        style={{marginRight: 5}}
-                                      />
-                                      <Text style={styles.location}>
-                                        {this.state.product.distance > 1
-                                          ? Math.round(
+                                    auth().currentUser.email ? (
+                                      <View
+                                        style={{
+                                          flexDirection: 'row',
+                                          alignItems: 'center',
+                                          marginLeft: 5,
+                                        }}>
+                                        <Ionicons
+                                          name="ios-navigate"
+                                          color={
+                                            this.state.product.quantity === 0 || (this.state.showExpired &&
+                                              this.state.product.category === 'Food')
+                                              ? colors.grey
+                                              : colors.baseline
+                                          }
+                                          size={14}
+                                          style={{ marginRight: 5 }}
+                                        />
+                                        <Text style={styles.location}>
+                                          {this.state.product.distance > 1
+                                            ? Math.round(
                                               this.state.product.distance,
                                             ) + ' km'
-                                          : (
+                                            : (
                                               this.state.product.distance * 1000
                                             ).toFixed(2) + ' m'}
-                                      </Text>
-                                    </View>
-                                  ) : null}
+                                        </Text>
+                                      </View>
+                                    ) : null}
                                 </>
                               ) : (
-                                <View
-                                  style={{
-                                    flexDirection: 'row',
-                                    alignItems: 'center',
-                                    marginLeft: 5,
-                                  }}>
-                                  <Ionicons
-                                    name="ios-navigate"
-                                    color={
-                                      this.state.product.quantity === 0
-                                        ? colors.grey
-                                        : colors.baseline
-                                    }
-                                    size={14}
-                                    style={{marginRight: 5}}
-                                  />
-                                  <Text style={styles.location}>
-                                    {this.state.product.distance > 1
-                                      ? Math.round(
+                                  <View
+                                    style={{
+                                      flexDirection: 'row',
+                                      alignItems: 'center',
+                                      marginLeft: 5,
+                                    }}>
+                                    <Ionicons
+                                      name="ios-navigate"
+                                      color={
+                                        this.state.product.quantity === 0 || (this.state.showExpired &&
+                                          this.state.product.category === 'Food')
+                                          ? colors.grey
+                                          : colors.baseline
+                                      }
+                                      size={14}
+                                      style={{ marginRight: 5 }}
+                                    />
+                                    <Text style={styles.location}>
+                                      {this.state.product.distance > 1
+                                        ? Math.round(
                                           this.state.product.distance,
                                         ) + ' km'
-                                      : (
+                                        : (
                                           this.state.product.distance * 1000
                                         ).toFixed(2) + ' m'}
-                                  </Text>
-                                </View>
-                              )}
+                                    </Text>
+                                  </View>
+                                )}
                             </>
                           ) : null}
                         </View>
                         {this.state.product.type === 'exchange' &&
-                        this.state.product.value ? (
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              marginVertical: 5,
-                            }}>
-                            <Text
+                          this.state.product.value ? (
+                            <View
                               style={{
-                                fontFamily: 'Muli-Regular',
-                                color: colors.white,
-                                fontSize: 16,
-                                marginRight: 5,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                marginVertical: 5,
                               }}>
-                              Value :
+                              <Text
+                                style={{
+                                  fontFamily: 'Muli-Regular',
+                                  color: colors.grey,
+                                  fontSize: 16,
+                                  marginRight: 5,
+                                }}>
+                                Value :
                             </Text>
-                            <Text
-                              style={{
-                                fontFamily: 'Muli-Regular',
-                                color:
-                                  this.state.product.quantity > 0
-                                    ? colors.baseline
-                                    : colors.grey,
-                                fontSize: 16,
-                              }}>
-                              &#x20b9; {this.state.product.value}
-                            </Text>
-                          </View>
-                        ) : null}
+                              <Text
+                                style={{
+                                  fontFamily: 'Muli-Regular',
+                                  color: colors.grey,
+                                  fontSize: 16,
+                                }}>
+                                ${this.state.product.value}
+                              </Text>
+                            </View>
+                          ) : null}
                         <Text style={styles.title}>
                           Ready to {this.state.product.type}{' '}
                           {this.state.product.what}{' '}
@@ -1189,97 +1208,93 @@ export default class Card extends React.Component {
                             : null}
                         </Text>
                         {this.state.product.type.toLowerCase() === 'donate' &&
-                        this.state.product.category === 'Food' &&
-                        this.state.showExpired === false &&
-                        this.state.showTimer === true ? (
-                          <View
-                            style={{
-                              width: '100%',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              marginVertical: 5,
-                            }}>
-                            <Text
+                          this.state.product.category === 'Food' &&
+                          this.state.showExpired === false &&
+                          this.state.showTimer === true ? (
+                            <View
                               style={{
-                                fontSize: 14,
-                                fontFamily: 'Muli-Bold',
-                                color: colors.white,
-                                marginLeft: 5,
+                                width: '100%',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginVertical: 5,
                               }}>
-                              Available in
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                }}>
+                                Available in
                             </Text>
-                            <CountDownTimer
-                              timestamp={Math.floor(
-                                (new Date(this.state.product.from).getTime() -
-                                  new Date().getTime()) /
+                              <CountDownTimer
+                                timestamp={Math.floor(
+                                  (new Date(this.state.product.from).getTime() -
+                                    new Date().getTime()) /
                                   1000,
-                              )}
-                              timerCallback={() => {
-                                this.setState({
-                                  showTimer: false,
-                                });
-                              }}
-                              containerStyle={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderRadius: 35,
-                              }}
-                              textStyle={{
-                                fontSize: 14,
-                                fontFamily: 'Muli-Bold',
-                                color: colors.white,
-                                marginLeft: 5,
-                                color: colors.grey,
-                              }}
-                            />
-                          </View>
-                        ) : null}
+                                )}
+                                timerCallback={() => {
+                                  this.setState({
+                                    showTimer: false,
+                                  });
+                                }}
+                                containerStyle={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  borderRadius: 35,
+                                }}
+                                textStyle={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  marginLeft: 5,
+                                  color: colors.grey,
+                                }}
+                              />
+                            </View>
+                          ) : null}
                         {this.state.product.type.toLowerCase() === 'donate' &&
-                        this.state.product.category === 'Food' &&
-                        this.state.showExpired === false &&
-                        this.state.showTimer === false ? (
-                          <View
-                            style={{
-                              width: '100%',
-                              flexDirection: 'row',
-                              justifyContent: 'space-between',
-                              marginVertical: 5,
-                            }}>
-                            <Text
+                          this.state.product.category === 'Food' &&
+                          this.state.showExpired === false &&
+                          this.state.showTimer === false ? (
+                            <View
                               style={{
-                                fontSize: 14,
-                                fontFamily: 'Muli-Bold',
-                                color: colors.white,
-                                marginLeft: 5,
+                                width: '100%',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                                marginVertical: 5,
                               }}>
-                              Available for
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                }}>
+                                Available for
                             </Text>
-                            <CountDownTimer
-                              timestamp={Math.floor(
-                                (new Date(this.state.product.to).getTime() -
-                                  new Date().getTime()) /
+                              <CountDownTimer
+                                timestamp={Math.floor(
+                                  (new Date(this.state.product.to).getTime() -
+                                    new Date().getTime()) /
                                   1000,
-                              )}
-                              timerCallback={() => {
-                                this.setState({
-                                  showExpired: true,
-                                });
-                              }}
-                              containerStyle={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderRadius: 35,
-                              }}
-                              textStyle={{
-                                fontSize: 14,
-                                fontFamily: 'Muli-Bold',
-                                color: colors.white,
-                                marginLeft: 5,
-                                color: '#d65a31',
-                              }}
-                            />
-                          </View>
-                        ) : null}
+                                )}
+                                timerCallback={() => {
+                                  this.setState({
+                                    showExpired: true,
+                                  });
+                                }}
+                                containerStyle={{
+                                  justifyContent: 'center',
+                                  alignItems: 'center',
+                                  borderRadius: 35,
+                                }}
+                                textStyle={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  marginLeft: 5,
+                                  color: colors.baseline
+                                }}
+                              />
+                            </View>
+                          ) : null}
                         {this.state.viewmore ? (
                           <>
                             <Text style={styles.subHeader}>
@@ -1361,16 +1376,13 @@ export default class Card extends React.Component {
                         ) : null}
                         <TouchableOpacity
                           onPress={() =>
-                            this.setState({viewmore: !this.state.viewmore})
+                            this.setState({ viewmore: !this.state.viewmore })
                           }>
                           <Text
                             style={[
                               styles.viewMoreText,
                               {
-                                color:
-                                  this.state.product.quantity === 0
-                                    ? '#e5e5e5'
-                                    : colors.baseline,
+                                color: colors.grey
                               },
                             ]}>
                             {this.state.viewmore ? 'view less' : 'view more'}
@@ -1380,14 +1392,72 @@ export default class Card extends React.Component {
                       <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
-                        style={{marginVertical: 10, width: '100%'}}>
+                        style={{ marginVertical: 10, width: '100%' }}>
                         {this.state.product.images.length > 1 ? (
                           <>
                             {this.state.product.images.map((image, index) => {
                               return (
                                 <>
-                                  {this.state.product.quantity === 0 ? (
-                                    <Grayscale>
+                                  {this.state.product.quantity === 0 || (this.state.product.type.toLowerCase() === 'donate' &&
+                                    this.state.product.category === 'Food' &&
+                                    this.state.showExpired === false &&
+                                    this.state.showTimer === true) || (this.state.showExpired &&
+                                      this.state.product.category === 'Food') ? (
+                                      <View style={[styles.imageBox, { position: 'relative', justifyContent: 'center', alignItems: 'center' }]}>
+                                        <Grayscale>
+                                          <TouchableOpacity
+                                            onPress={() =>
+                                              this.handleCardImageClick(
+                                                this.state.product.images,
+                                                image.index,
+                                              )
+                                            }
+                                            key={index}
+                                            style={styles.imageBox}>
+                                            <Image
+                                              source={{ uri: image.image }}
+                                              style={[
+                                                styles.imageBox,
+                                                { opacity: 0.5 },
+                                              ]}
+                                            />
+                                          </TouchableOpacity>
+                                        </Grayscale>
+                                        {
+                                          this.state.product.type === 'exchange' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/be.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'lend' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bl.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'donate' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bd.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                      </View>
+                                    ) : (
                                       <TouchableOpacity
                                         onPress={() =>
                                           this.handleCardImageClick(
@@ -1398,83 +1468,165 @@ export default class Card extends React.Component {
                                         key={index}
                                         style={styles.imageBox}>
                                         <Image
-                                          source={{uri: image.image}}
-                                          style={[
-                                            styles.imageBox,
-                                            {opacity: 0.5},
-                                          ]}
+                                          source={{ uri: image.image }}
+                                          style={styles.imageBox}
                                         />
                                       </TouchableOpacity>
-                                    </Grayscale>
-                                  ) : (
-                                    <TouchableOpacity
-                                      onPress={() =>
-                                        this.handleCardImageClick(
-                                          this.state.product.images,
-                                          image.index,
-                                        )
-                                      }
-                                      key={index}
-                                      style={styles.imageBox}>
-                                      <Image
-                                        source={{uri: image.image}}
-                                        style={styles.imageBox}
-                                      />
-                                    </TouchableOpacity>
-                                  )}
+                                    )}
                                 </>
                               );
                             })}
                           </>
                         ) : (
-                          <>
-                            {this.state.product.images.length === 0 &&
-                            this.state.product.category === 'Food' ? (
-                              <Image
-                                source={{
-                                  uri:
-                                    'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
-                                }}
-                                style={styles.imageBoxOne}
-                              />
-                            ) : (
-                              <TouchableOpacity
-                                onPress={() =>
-                                  this.handleCardImageClick(
-                                    this.state.product.images,
-                                    this.state.product.images[0].index,
-                                  )
-                                }
-                                style={styles.imageBoxOne}>
-                                {this.state.product.quantity === 0 ? (
-                                  <Grayscale>
-                                    <Image
-                                      source={{
-                                        uri: this.state.product.images[0].image,
-                                      }}
-                                      style={[
-                                        styles.imageBoxOne,
-                                        {opacity: 0.5},
-                                      ]}
-                                    />
-                                  </Grayscale>
+                            <>
+                              {this.state.product.images.length === 0 &&
+                                this.state.product.category === 'Food' ? (
+                                  <View style={[
+                                    styles.imageBoxOne,
+                                    { position: 'relative', justifyContent: 'center', alignItems: 'center' },
+                                  ]}>
+                                    {this.state.product.quantity === 0 ||
+                                      (this.state.product.type.toLowerCase() === 'donate' &&
+                                        this.state.product.category === 'Food' &&
+                                        this.state.showExpired === false &&
+                                        this.state.showTimer === true) || (this.state.showExpired &&
+                                          this.state.product.category === 'Food')
+                                      ?
+                                      <>
+                                        <Grayscale>
+                                          <Image
+                                            source={{
+                                              uri:
+                                                'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
+                                            }}
+                                            style={styles.imageBoxOne}
+                                          />
+                                        </Grayscale>
+                                        {
+                                          this.state.product.type === 'exchange' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/be.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'lend' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bl.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'donate' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bd.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                      </>
+                                      :
+                                      <Image
+                                        source={{
+                                          uri:
+                                            'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
+                                        }}
+                                        style={styles.imageBoxOne}
+                                      />
+                                    }
+
+                                  </View>
                                 ) : (
-                                  <Image
-                                    source={{
-                                      uri: this.state.product.images[0].image,
-                                    }}
-                                    style={styles.imageBoxOne}
-                                  />
+                                  <TouchableOpacity
+                                    onPress={() =>
+                                      this.handleCardImageClick(
+                                        this.state.product.images,
+                                        this.state.product.images[0].index,
+                                      )
+                                    }
+                                    style={styles.imageBoxOne}>
+                                    {this.state.product.quantity === 0 || (this.state.product.type.toLowerCase() === 'donate' &&
+                                      this.state.product.category === 'Food' &&
+                                      this.state.showExpired === false &&
+                                      this.state.showTimer === true) || (this.state.showExpired &&
+                                        this.state.product.category === 'Food') ? (
+                                        <View style={[
+                                          styles.imageBoxOne,
+                                          { position: 'relative', justifyContent: 'center', alignItems: 'center' },
+                                        ]}>
+                                          <Grayscale>
+                                            <Image
+                                              source={{
+                                                uri: this.state.product.images[0].image,
+                                              }}
+                                              style={[
+                                                styles.imageBoxOne,
+                                                { opacity: 0.5 },
+                                              ]}
+                                            />
+                                          </Grayscale>
+                                          {
+                                            this.state.product.type === 'exchange' && this.state.product.quantity === 0
+                                              ?
+                                              <Image
+                                                source={require('../assets/images/be.png')}
+                                                resizeMode="contain"
+                                                style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                              />
+                                              :
+                                              null
+                                          }
+                                          {
+                                            this.state.product.type === 'lend' && this.state.product.quantity === 0
+                                              ?
+                                              <Image
+                                                source={require('../assets/images/bl.png')}
+                                                resizeMode="contain"
+                                                style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                              />
+                                              :
+                                              null
+                                          }
+                                          {
+                                            this.state.product.type === 'donate' && this.state.product.quantity === 0
+                                              ?
+                                              <Image
+                                                source={require('../assets/images/bd.png')}
+                                                resizeMode="contain"
+                                                style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                              />
+                                              :
+                                              null
+                                          }
+                                        </View>
+                                      ) : (
+                                        <Image
+                                          source={{
+                                            uri: this.state.product.images[0].image,
+                                          }}
+                                          style={styles.imageBoxOne}
+                                        />
+                                      )}
+                                  </TouchableOpacity>
                                 )}
-                              </TouchableOpacity>
-                            )}
-                          </>
-                        )}
+                            </>
+                          )}
                       </ScrollView>
                     </View>
                     <View style={styles.bottom}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity
                           onPress={this.handleLike}
                           style={{
@@ -1488,18 +1640,18 @@ export default class Card extends React.Component {
                               name="like1"
                               size={28}
                               color={colors.baseline}
-                              style={{marginRight: 7}}
+                              style={{ marginRight: 7 }}
                             />
                           ) : (
-                            <AntDesign
-                              name="like2"
-                              size={28}
-                              color={colors.grey}
-                              style={{marginRight: 7}}
-                            />
-                          )}
+                              <AntDesign
+                                name="like2"
+                                size={28}
+                                color={colors.grey}
+                                style={{ marginRight: 7 }}
+                              />
+                            )}
                           {this.state.product.likes.length > 0 ? (
-                            <Text style={{fontSize: 16, color: colors.grey}}>
+                            <Text style={{ fontSize: 16, color: colors.grey }}>
                               {this.state.product.likes.length > 1000
                                 ? this.state.product.likes.length / 1000 + 'K'
                                 : this.state.product.likes.length}
@@ -1523,13 +1675,13 @@ export default class Card extends React.Component {
                             name="ios-chatbubble-outline"
                             size={28}
                             color={colors.grey}
-                            style={{marginHorizontal: 7}}
+                            style={{ marginHorizontal: 7 }}
                           />
                           {this.state.product.comments.length > 0 ? (
-                            <Text style={{fontSize: 16, color: colors.grey}}>
+                            <Text style={{ fontSize: 16, color: colors.grey }}>
                               {this.state.product.comments.length > 1000
                                 ? this.state.product.comments.length / 1000 +
-                                  'K'
+                                'K'
                                 : this.state.product.comments.length}
                             </Text>
                           ) : null}
@@ -1538,12 +1690,12 @@ export default class Card extends React.Component {
                           onPress={() =>
                             this.handleShare(this.state.product.id)
                           }
-                          style={{flexDirection: 'row', alignItems: 'center'}}>
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
                           <Ionicons
                             name="share-social-outline"
                             size={26}
                             color={colors.grey}
-                            style={{marginHorizontal: 7}}
+                            style={{ marginHorizontal: 7 }}
                           />
                         </TouchableOpacity>
                       </View>
@@ -1555,148 +1707,148 @@ export default class Card extends React.Component {
                         {auth().currentUser ? (
                           <>
                             {auth().currentUser.email !==
-                            this.state.owner.email ? (
-                              <View style={styles.requestContainer}>
-                                {this.state.product.quantity !== 0 ? (
-                                  <TouchableOpacity
-                                    onPress={this.handleRequest}
-                                    style={{
-                                      flexDirection: 'row',
-                                      paddingVertical: 6,
-                                      paddingHorizontal: 8,
-                                      alignItems: 'center',
-                                      justifyContent: 'center',
-                                      marginRight: 10,
-                                      borderRadius: 5,
-                                      backgroundColor: colors.darkText,
-                                    }}>
-                                    <Text
+                              this.state.owner.email ? (
+                                <View style={styles.requestContainer}>
+                                  {this.state.product.quantity !== 0 ? (
+                                    <TouchableOpacity
+                                      onPress={this.handleRequest}
                                       style={{
-                                        fontFamily: 'Muli-Bold',
-                                        fontSize: 14,
-                                        color: colors.white,
+                                        flexDirection: 'row',
+                                        paddingVertical: 6,
+                                        paddingHorizontal: 8,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        marginRight: 10,
+                                        borderRadius: 5,
+                                        backgroundColor: colors.darkText,
                                       }}>
-                                      Request
+                                      <Text
+                                        style={{
+                                          fontFamily: 'Muli-Bold',
+                                          fontSize: 14,
+                                          color: colors.white,
+                                        }}>
+                                        Request
                                     </Text>
-                                  </TouchableOpacity>
-                                ) : null}
-                              </View>
-                            ) : null}
+                                    </TouchableOpacity>
+                                  ) : null}
+                                </View>
+                              ) : null}
                           </>
                         ) : (
-                          <View style={styles.requestContainer}>
-                            {this.state.product.quantity !== 0 ? (
-                              <TouchableOpacity
-                                onPress={this.handleRequest}
-                                style={{
-                                  flexDirection: 'row',
-                                  paddingVertical: 6,
-                                  paddingHorizontal: 8,
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  marginRight: 10,
-                                  borderRadius: 5,
-                                  backgroundColor: colors.baseline,
-                                }}>
-                                <Text
+                            <View style={styles.requestContainer}>
+                              {this.state.product.quantity !== 0 ? (
+                                <TouchableOpacity
+                                  onPress={this.handleRequest}
                                   style={{
-                                    fontFamily: 'Muli-Bold',
-                                    fontSize: 14,
-                                    color: colors.white,
+                                    flexDirection: 'row',
+                                    paddingVertical: 6,
+                                    paddingHorizontal: 8,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginRight: 10,
+                                    borderRadius: 5,
+                                    backgroundColor: colors.darkText,
                                   }}>
-                                  Request
-                                </Text>
-                              </TouchableOpacity>
-                            ) : null}
-                          </View>
-                        )}
+                                  <Text
+                                    style={{
+                                      fontFamily: 'Muli-Bold',
+                                      fontSize: 14,
+                                      color: colors.white,
+                                    }}>
+                                    Request
+                                    </Text>
+                                </TouchableOpacity>
+                              ) : null}
+                            </View>
+                          )}
                       </View>
                     </View>
                   </View>
                 </View>
               ) : (
-                <></>
-              )}
+                  <></>
+                )}
             </>
           ) : (
-            <View
-              style={{
-                width: '95%',
-                padding: 15,
-                alignItems: 'center',
-                backgroundColor: '#1B1F22',
-                justifyContent: 'space-between',
-                elevation: 3,
-                borderWidth: 1,
-                borderColor: colors.darkText,
-                borderRadius: 10,
-                marginBottom: 10,
-              }}>
-              <SkeletonContent
-                containerStyle={{width: '100%'}}
-                boneColor={colors.primary}
-                highlightColor={colors.darkText}
-                isLoading={true}
-                layout={[
-                  {
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    alignItems: 'center',
-                    children: [
-                      {
-                        width: 50,
-                        height: 50,
-                        marginRight: 10,
-                        borderRadius: 25,
-                      },
-                      {
-                        width: 150,
-                        height: 20,
-                      },
-                    ],
-                  },
-                  {
-                    flexDirection: 'column',
-                    marginTop: 10,
-                    children: [
-                      {
-                        width: '100%',
-                        height: 30,
-                      },
-                      {
-                        flexDirection: 'row',
-                        marginVertical: 10,
-                        justifyContent: 'space-between',
-                        children: [
-                          {
-                            width: width * 0.42,
-                            height: 150,
-                          },
-                          {
-                            width: width * 0.42,
-                            height: 150,
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    children: [
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                    ],
-                  },
-                ]}></SkeletonContent>
-            </View>
-          )}
+              <View
+                style={{
+                  width: '95%',
+                  padding: 15,
+                  alignItems: 'center',
+                  backgroundColor: colors.primary2,
+                  justifyContent: 'space-between',
+                  elevation: 3,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.grey,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                }}>
+                <SkeletonContent
+                  containerStyle={{ width: '100%' }}
+                  boneColor={colors.primary}
+                  highlightColor={colors.darkText}
+                  isLoading={true}
+                  layout={[
+                    {
+                      flexDirection: 'row',
+                      marginTop: 10,
+                      alignItems: 'center',
+                      children: [
+                        {
+                          width: 50,
+                          height: 50,
+                          marginRight: 10,
+                          borderRadius: 25,
+                        },
+                        {
+                          width: 150,
+                          height: 20,
+                        },
+                      ],
+                    },
+                    {
+                      flexDirection: 'column',
+                      marginTop: 10,
+                      children: [
+                        {
+                          width: '100%',
+                          height: 30,
+                        },
+                        {
+                          flexDirection: 'row',
+                          marginVertical: 10,
+                          justifyContent: 'space-between',
+                          children: [
+                            {
+                              width: width * 0.42,
+                              height: 150,
+                            },
+                            {
+                              width: width * 0.42,
+                              height: 150,
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    {
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      children: [
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                      ],
+                    },
+                  ]}></SkeletonContent>
+              </View>
+            )}
         </View>
         <Modal isVisible={this.state.isModalVisible}>
           <TouchableOpacity
@@ -1714,49 +1866,49 @@ export default class Card extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner ===
+                      this.state.product.owner ===
                       auth().currentUser.email ? null : (
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.setState({
-                            reportForm: true,
-                            isModalVisible: false,
-                          })
-                        }
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Ionicons
-                          name="ios-flag"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.setState({
+                              reportForm: true,
+                              isModalVisible: false,
+                            })
+                          }
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Report
+                          <Ionicons
+                            name="ios-flag"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Report
                         </Text>
-                      </TouchableOpacity>
-                    )}
+                        </TouchableOpacity>
+                      )}
                   </>
                 ) : null}
                 {auth().currentUser ? (
@@ -1786,8 +1938,8 @@ export default class Card extends React.Component {
                     <Fontisto
                       name="bookmark-alt"
                       size={22}
-                      color={colors.grey}
-                      style={{marginRight: 20}}
+                      color={colors.white}
+                      style={{ marginRight: 20 }}
                     />
                     <Text
                       style={{
@@ -1803,80 +1955,80 @@ export default class Card extends React.Component {
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner === auth().currentUser.email ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            isModalVisible: false,
-                          });
-                          this.props.navigation.navigate('EditItem', {
-                            id: this.state.product.id,
-                            handleRefresh: this.handleInit,
-                          });
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Ionicons
-                          name="ios-brush"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                      this.state.product.owner === auth().currentUser.email && this.state.product.quantity > 0 ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              isModalVisible: false,
+                            });
+                            this.props.navigation.navigate('EditItem', {
+                              id: this.state.product.id,
+                              handleRefresh: this.handleInit,
+                            });
+                          }}
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Edit
+                          <Ionicons
+                            name="ios-brush"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Edit
                         </Text>
-                      </TouchableOpacity>
-                    ) : null}
+                        </TouchableOpacity>
+                      ) : null}
                   </>
                 ) : null}
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner === auth().currentUser.email ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            isModalVisible: false,
-                            menu2: true,
-                          });
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                        }}>
-                        <Ionicons
-                          name="ios-trash"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                      this.state.product.owner === auth().currentUser.email ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              isModalVisible: false,
+                              menu2: true,
+                            });
+                          }}
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
                           }}>
-                          Remove
+                          <Ionicons
+                            name="ios-trash"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Remove
                         </Text>
-                      </TouchableOpacity>
-                    ) : null}
+                        </TouchableOpacity>
+                      ) : null}
                   </>
                 ) : null}
               </View>
@@ -1899,7 +2051,7 @@ export default class Card extends React.Component {
             <View
               style={{
                 width: '90%',
-                backgroundColor: colors.primary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -1985,7 +2137,7 @@ export default class Card extends React.Component {
             <View
               style={{
                 width: '60%',
-                backgroundColor: colors.primary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -1999,13 +2151,13 @@ export default class Card extends React.Component {
                 }}>
                 <Text style={styles.reportheader}>Reported</Text>
               </View>
-              <View style={{width: '100%', alignItems: 'center'}}>
-                <View style={{width: 80, height: 80}}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
+                <View style={{ width: 80, height: 80 }}>
                   <LottieView
                     source={require('../assets/433-checked-done.json')}
                     autoPlay={true}
                     loop={false}
-                    style={{transform: [{scale: 1.5}]}}
+                    style={{ transform: [{ scale: 1.5 }] }}
                   />
                 </View>
               </View>
@@ -2028,11 +2180,11 @@ export default class Card extends React.Component {
             <View
               style={{
                 width: '100%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%', marginTop: 10}}>
+              <View style={{ width: '100%', marginTop: 10 }}>
                 <View
                   style={{
                     width: '100%',
@@ -2064,7 +2216,8 @@ export default class Card extends React.Component {
                         <Text
                           style={{
                             fontFamily: 'Muli-Bold',
-                            color: colors.white,
+                            color: this.state.tab === 1
+                              ? colors.white : colors.grey,
                             fontSize: 12,
                             textAlign: 'center',
                           }}>
@@ -2085,7 +2238,8 @@ export default class Card extends React.Component {
                         <Text
                           style={{
                             fontFamily: 'Muli-Bold',
-                            color: colors.white,
+                            color: this.state.tab === 2
+                              ? colors.white : colors.grey,
                             fontSize: 12,
                             textAlign: 'center',
                           }}>
@@ -2095,71 +2249,72 @@ export default class Card extends React.Component {
                     </View>
                   ) : null}
                 </View>
-                <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
                   {this.state.tab === 1 ? (
-                    <View style={{width: '100%', alignItems: 'center'}}>
+                    <View style={{ width: '100%', alignItems: 'center' }}>
                       <View style={styles.inputGroup}>
                         <Text style={styles.inputGroupText}>
                           State a reason why you want this product?
                         </Text>
                         <TextInput
                           style={styles.inputArea}
+                          placeholder="Type a reason..."
                           autoCapitalize="none"
                           multiline={true}
                           maxLength={300}
-                          onChangeText={(desc) => this.setState({desc})}
+                          onChangeText={(desc) => this.setState({ desc })}
                           value={this.state.desc}></TextInput>
                       </View>
                     </View>
                   ) : null}
                   {this.state.tab === 2 &&
-                  this.state.product.type === 'exchange' ? (
-                    <View
-                      style={{
-                        width: '100%',
-                        alignItems: 'center',
-                        height: height * 0.6,
-                      }}>
-                      <ScrollView
-                        style={{width: '100%', flex: 1, paddingVertical: 10}}>
-                        {this.state.productList.map((product) => {
-                          return (
-                            <TouchableOpacity
-                              onPress={() => this.handleSelectCard(product._id)}
-                              style={styles.activeproduct}>
-                              <Card3
-                                key={product._id}
-                                handleCardImageClick={(e, f) =>
-                                  this.handleCardImageClick(e, f)
-                                }
-                                id={product._id}
-                                navigation={this.props.navigation}
-                              />
-                              {product._id === this.state.selectId ? (
-                                <>
-                                  <View
-                                    style={styles.activeproductOverlay}></View>
-                                  <Ionicons
-                                    name="checkmark-circle"
-                                    size={25}
-                                    color={colors.baseline}
-                                    style={styles.activeproductIcon}
-                                  />
-                                </>
-                              ) : (
-                                <Ionicons
-                                  name="checkmark-circle-outline"
-                                  size={25}
-                                  color={colors.grey}
-                                  style={styles.activeproductIcon}
+                    this.state.product.type === 'exchange' ? (
+                      <View
+                        style={{
+                          width: '100%',
+                          alignItems: 'center',
+                          height: height * 0.6,
+                        }}>
+                        <ScrollView
+                          style={{ width: '100%', flex: 1, paddingVertical: 10 }}>
+                          {this.state.productList.map((product) => {
+                            return (
+                              <TouchableOpacity
+                                onPress={() => this.handleSelectCard(product._id)}
+                                style={styles.activeproduct}>
+                                <Card3
+                                  key={product._id}
+                                  handleCardImageClick={(e, f) =>
+                                    this.handleCardImageClick(e, f)
+                                  }
+                                  id={product._id}
+                                  navigation={this.props.navigation}
                                 />
-                              )}
-                            </TouchableOpacity>
-                          );
-                        })}
-                      </ScrollView>
-                    </View>
-                  ) : null}
+                                {product._id === this.state.selectId ? (
+                                  <>
+                                    <View
+                                      style={styles.activeproductOverlay}></View>
+                                    <Ionicons
+                                      name="checkmark-circle"
+                                      size={25}
+                                      color={colors.baseline}
+                                      style={styles.activeproductIcon}
+                                    />
+                                  </>
+                                ) : (
+                                    <Ionicons
+                                      name="checkmark-circle-outline"
+                                      size={25}
+                                      color={colors.grey}
+                                      style={styles.activeproductIcon}
+                                    />
+                                  )}
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </ScrollView>
+                      </View>
+                    ) : null}
                   <TouchableOpacity
                     style={styles.requestButton}
                     onPress={this.handleRequestProduct}>
@@ -2174,7 +2329,7 @@ export default class Card extends React.Component {
           images={this.state.images}
           imageIndex={this.state.imageIndex}
           visible={this.state.showImage}
-          onRequestClose={() => this.setState({showImage: false})}
+          onRequestClose={() => this.setState({ showImage: false })}
           swipeToCloseEnabled={false}
           doubleTapToZoomEnabled={true}
           presentationStyle="fullScreen"
@@ -2196,7 +2351,7 @@ export default class Card extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -2259,22 +2414,26 @@ const styles = StyleSheet.create({
   item: {
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     justifyContent: 'space-between',
     elevation: 3,
     borderRadius: 10,
     marginBottom: 10,
     position: 'relative',
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.grey
   },
   itemInActive: {
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#282828',
+    backgroundColor: colors.secondary,
     justifyContent: 'space-between',
     elevation: 3,
     borderRadius: 10,
     marginBottom: 10,
     position: 'relative',
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.grey
   },
   top: {
     flexDirection: 'row',
@@ -2352,7 +2511,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   tag: {
-    color: colors.white,
+    color: colors.grey,
     fontSize: 12,
     fontFamily: 'Muli-Bold',
   },
@@ -2412,12 +2571,12 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     width: '100%',
     padding: 10,
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     borderRadius: 5,
   },
   reportText: {
     color: colors.white,
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Muli-Bold',
   },
   subHeader: {
@@ -2498,7 +2657,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 38,
     height: 2,
-    transform: [{rotate: '45deg'}],
+    transform: [{ rotate: '45deg' }],
     backgroundColor: colors.grey,
   },
   requestButton: {

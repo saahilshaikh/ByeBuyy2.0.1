@@ -9,10 +9,10 @@ import {
   Image,
 } from 'react-native';
 import LottieView from 'lottie-react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const AskLocationPermissionScreen = (props) => {
   return (
@@ -60,7 +60,7 @@ const AskLocationPermissionScreen = (props) => {
           <Text
             style={[
               styles.buttomText,
-              {textDecorationLine: 'underline', fontSize: 14},
+              { textDecorationLine: 'underline', fontSize: 14, color: colors.baseline },
             ]}>
             Deny Access
           </Text>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   subheader: {
     width: 0.8 * width,
     fontFamily: 'Muli-Regular',
-    color: '#e5e5e5',
+    color: colors.white,
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'center',
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     width: 240,
     height: 50,
     borderRadius: 5,
-    backgroundColor: colors.white,
+    backgroundColor: colors.baseline,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   buttomText: {
     fontSize: 16,
     fontFamily: 'Muli-Bold',
-    color: colors.baseline,
+    color: colors.white,
   },
 });
 

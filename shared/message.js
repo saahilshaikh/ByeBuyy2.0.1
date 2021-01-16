@@ -18,8 +18,9 @@ import colors from '../appTheme';
 import Modal from 'react-native-modal';
 import * as Progress from 'react-native-progress';
 import Hyperlink from 'react-native-hyperlink';
+import { color } from 'react-native-reanimated';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 class Message extends React.Component {
   constructor() {
@@ -55,7 +56,7 @@ class Message extends React.Component {
               style={{
                 borderRadius: 5,
                 backgroundColor: this.props.type
-                  ? colors.secondary
+                  ? colors.primary2
                   : colors.white,
                 padding: 8,
                 borderBottomRightRadius: this.props.type ? 0 : 5,
@@ -63,20 +64,20 @@ class Message extends React.Component {
                 maxWidth: 340,
               }}>
               {this.props.format === 'attach-video' ||
-              this.props.format === 'attach-doc' ||
-              this.props.format === 'attach-photo' ? null : (
-                <Hyperlink linkStyle={{color: '#2980b9'}} linkDefault={true}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      marginBottom: 5,
-                      fontFamily: 'Muli-Regular',
-                      color: this.props.type ? colors.white : colors.darkText,
-                    }}>
-                    {this.props.message}
-                  </Text>
-                </Hyperlink>
-              )}
+                this.props.format === 'attach-doc' ||
+                this.props.format === 'attach-photo' ? null : (
+                  <Hyperlink linkStyle={{ color: '#2980b9' }} linkDefault={true}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        marginBottom: 5,
+                        fontFamily: 'Muli-Regular',
+                        color: this.props.type ? colors.white : colors.darkText,
+                      }}>
+                      {this.props.message}
+                    </Text>
+                  </Hyperlink>
+                )}
               {this.props.format === 'post-product' ? (
                 <View style={styles.post}>
                   <MiniCard
@@ -111,8 +112,8 @@ class Message extends React.Component {
                     marginTop: 5,
                   }}>
                   <Image
-                    source={{uri: this.props.url}}
-                    style={{width: '100%', height: '100%', borderRadius: 3}}
+                    source={{ uri: this.props.url }}
+                    style={{ width: '100%', height: '100%', borderRadius: 3 }}
                     resizeMode="contain"
                   />
                 </TouchableOpacity>
@@ -197,40 +198,41 @@ class Message extends React.Component {
                 {this.props.loading ? (
                   <Progress.Circle
                     progress={this.props.progress / 100}
-                    size={15}
-                    color="#d65a31"
+                    size={16}
+                    color={colors.baseline}
                     borderWidth={0}
-                    thickness={2}
+                    thickness={2.5}
+                    unfilledColor={colors.darkText}
                   />
                 ) : (
-                  <Text
-                    style={{
-                      fontSize: 10,
-                      fontFamily: 'Muli-Regular',
-                      color: this.props.type ? colors.white : colors.secondary,
-                    }}>
-                    <Moment element={Text} format="DD-MM-YYYY, h:mm a">
-                      {this.props.date}
-                    </Moment>
-                  </Text>
-                )}
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        fontFamily: 'Muli-Regular',
+                        color: this.props.type ? colors.white : colors.darkText,
+                      }}>
+                      <Moment element={Text} format="DD-MM-YYYY, h:mm a">
+                        {this.props.date}
+                      </Moment>
+                    </Text>
+                  )}
                 {this.props.type ? (
                   <>
                     {this.props.read === true ? (
                       <Ionicons
                         name="ios-checkmark-done"
                         size={16}
-                        color={colors.grey}
-                        style={{marginLeft: 5}}
+                        color={colors.baseline}
+                        style={{ marginLeft: 5 }}
                       />
                     ) : (
-                      <Ionicons
-                        name="checkmark"
-                        size={16}
-                        color={colors.grey}
-                        style={{marginLeft: 5}}
-                      />
-                    )}
+                        <Ionicons
+                          name="checkmark"
+                          size={16}
+                          color={colors.grey}
+                          style={{ marginLeft: 5 }}
+                        />
+                      )}
                   </>
                 ) : null}
               </View>
@@ -248,7 +250,7 @@ class Message extends React.Component {
                   width: 10,
                   height: '100%',
                   backgroundColor: this.props.type
-                    ? colors.secondary
+                    ? colors.primary2
                     : colors.white,
                 }}></View>
               <View
@@ -265,9 +267,9 @@ class Message extends React.Component {
             </View>
           </TouchableOpacity>
           {this.props.highlight &&
-          this.props.highlight._id === this.props.data._id ? (
-            <View style={styles.highlight}></View>
-          ) : null}
+            this.props.highlight._id === this.props.data._id ? (
+              <View style={styles.highlight}></View>
+            ) : null}
         </TouchableOpacity>
       </>
     );

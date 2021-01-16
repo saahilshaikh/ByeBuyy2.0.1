@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
-import {CommonActions} from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class SignInScreen extends React.Component {
   constructor() {
@@ -66,9 +66,13 @@ export default class SignInScreen extends React.Component {
           const re = await axios.post(link + '/api/user/signup', data2);
           if (re.data.type === 'success') {
             console.log(re.data.success);
+            var data2 = {
+              email: this.state.email,
+            };
+            var res2 = await axios.post(link + '/api/user/active', data2);
             this.props.navigation.dispatch(
               CommonActions.reset({
-                routes: [{name: 'Main'}],
+                routes: [{ name: 'Main' }],
               }),
             );
           } else {
@@ -123,8 +127,8 @@ export default class SignInScreen extends React.Component {
             onPress={() => this.props.navigation.pop()}>
             <Ionicons
               name="ios-arrow-back"
-              size={40}
-              style={{color: colors.baseline}}
+              size={30}
+              style={{ color: colors.baseline }}
             />
           </TouchableOpacity>
           <Text
@@ -140,79 +144,79 @@ export default class SignInScreen extends React.Component {
           {this.state.loading ? (
             <ActivityIndicator size="large" color={colors.baseline} />
           ) : (
-            <>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputHeader}>Email</Text>
-                <TextInput
-                  value={this.state.email}
-                  onChangeText={(text) => {
-                    this.setState({
-                      email: text,
-                    });
-                  }}
-                  onSubmitEditing={() => {
-                    this.secondTextInput.focus();
-                  }}
-                  style={styles.input}></TextInput>
-              </View>
-              <View style={styles.inputContainer}>
-                <Text style={styles.inputHeader}>Password</Text>
-                <TextInput
-                  value={this.state.password}
-                  onChangeText={(text) => {
-                    this.setState({
-                      password: text,
-                    });
-                  }}
-                  ref={(input) => {
-                    this.secondTextInput = input;
-                  }}
-                  onSubmitEditing={this.handleSignIn}
-                  style={[styles.input, {paddingRight: 40}]}
-                  secureTextEntry={!this.state.show}></TextInput>
+              <>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputHeader}>Email</Text>
+                  <TextInput
+                    value={this.state.email}
+                    onChangeText={(text) => {
+                      this.setState({
+                        email: text,
+                      });
+                    }}
+                    onSubmitEditing={() => {
+                      this.secondTextInput.focus();
+                    }}
+                    style={styles.input}></TextInput>
+                </View>
+                <View style={styles.inputContainer}>
+                  <Text style={styles.inputHeader}>Password</Text>
+                  <TextInput
+                    value={this.state.password}
+                    onChangeText={(text) => {
+                      this.setState({
+                        password: text,
+                      });
+                    }}
+                    ref={(input) => {
+                      this.secondTextInput = input;
+                    }}
+                    onSubmitEditing={this.handleSignIn}
+                    style={[styles.input, { paddingRight: 40 }]}
+                    secureTextEntry={!this.state.show}></TextInput>
+                  <TouchableOpacity
+                    onPress={() => this.setState({ show: !this.state.show })}
+                    style={styles.passwordIcon}>
+                    {this.state.show ? (
+                      <Ionicons
+                        name="ios-eye"
+                        size={20}
+                        style={{ color: colors.grey }}
+                      />
+                    ) : (
+                        <Ionicons
+                          name="ios-eye-off"
+                          size={20}
+                          style={{ color: colors.grey }}
+                        />
+                      )}
+                  </TouchableOpacity>
+                </View>
                 <TouchableOpacity
-                  onPress={() => this.setState({show: !this.state.show})}
-                  style={styles.passwordIcon}>
-                  {this.state.show ? (
-                    <Ionicons
-                      name="ios-eye"
-                      size={20}
-                      style={{color: colors.grey}}
-                    />
-                  ) : (
-                    <Ionicons
-                      name="ios-eye-off"
-                      size={20}
-                      style={{color: colors.grey}}
-                    />
-                  )}
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                onPress={this.handleSignIn}
-                style={styles.button}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.white,
-                    fontFamily: 'Muli-Bold',
-                  }}>
-                  Login
+                  onPress={this.handleSignIn}
+                  style={styles.button}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: colors.white,
+                      fontFamily: 'Muli-Bold',
+                    }}>
+                    Login
                 </Text>
-              </TouchableOpacity>
-            </>
-          )}
+                </TouchableOpacity>
+              </>
+            )}
           {!this.state.loading ? (
             <>
-              <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
                 <Text
                   onPress={() => {
-                    this.setState({error: ''});
+                    this.setState({ error: '' });
                     this.props.navigation.navigate('Forgot');
                   }}
                   style={{
                     fontSize: 14,
-                    color: colors.grey,
+                    color: colors.white,
                     fontFamily: 'Muli-Bold',
                   }}>
                   Forgot your password?
@@ -277,7 +281,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     borderRadius: 25,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
+    elevation: 3,
+    marginLeft: 5
   },
   passwordIcon: {
     position: 'absolute',

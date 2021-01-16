@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import auth from '@react-native-firebase/auth';
-import {CommonActions} from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import Snackbar from 'react-native-snackbar';
 import colors from '../appTheme';
 import SelectInput from 'react-native-select-input-ios';
@@ -23,7 +23,7 @@ import LottieView from 'lottie-react-native';
 var otpGenerator = require('otp-generator');
 import Contacts from 'react-native-contacts';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class SignUpScreen extends React.Component {
   constructor() {
@@ -42,9 +42,9 @@ export default class SignUpScreen extends React.Component {
       uname: '',
       name: '',
       profs: [
-        {label: 'Select a type', value: ''},
-        {label: 'Student', value: 'Student'},
-        {label: 'Non-Student', value: 'Non-Student'},
+        { label: 'Select a type', value: '' },
+        { label: 'Student', value: 'Student' },
+        { label: 'Non-Student', value: 'Non-Student' },
       ],
       prof: '',
       profStudent: '',
@@ -353,7 +353,7 @@ export default class SignUpScreen extends React.Component {
     }
   };
 
-  handleNotifyOthers = (id) => {
+  handleNotifyOthers = async (id) => {
     this.setState({
       showSuccess: true,
       loading: false,
@@ -365,17 +365,37 @@ export default class SignUpScreen extends React.Component {
       }
     });
     for (var i = 0; i < pushList.length; i++) {
-      this.sendPushNotification(
-        'ViewProfile',
-        id,
-        pushList[i].pushToken,
-        this.state.name,
+      // this.sendPushNotification(
+      //   'ViewProfile',
+      //   id,
+      //   pushList[i].pushToken,
+      //   this.state.name,
+      // );
+      var title = this.state.name + 'just joined Byebuyy';
+      var noti = {
+        token: pushList[i].pushToken,
+        title: title,
+        body: 'One of your contact just joined Byebuyy as ' + this.state.name,
+        type: 'ViewProfile',
+        id: id,
+        date: new Date(),
+      };
+      var not = await axios.post(
+        link + '/api/sendPushNotification',
+        noti,
       );
+      if (not.data.type === 'success') {
+        console.log('Send Noti');
+      }
     }
+    var data2 = {
+      email: this.state.email,
+    };
+    var res2 = await axios.post(link + '/api/user/active', data2);
     setTimeout(() => {
       this.props.navigation.dispatch(
         CommonActions.reset({
-          routes: [{name: 'Main'}],
+          routes: [{ name: 'Main' }],
         }),
       );
     }, 5000);
@@ -429,12 +449,12 @@ export default class SignUpScreen extends React.Component {
               flex: 1,
               justifyContent: 'center',
             }}>
-            <View style={{width: 200, height: 200}}>
+            <View style={{ width: 200, height: 200 }}>
               <LottieView
                 source={require('../assets/433-checked-done.json')}
                 autoPlay={true}
                 loop={false}
-                style={{transform: [{scale: 1.35}]}}
+                style={{ transform: [{ scale: 1.35 }] }}
               />
             </View>
             <Text
@@ -449,302 +469,308 @@ export default class SignUpScreen extends React.Component {
             </Text>
           </View>
         ) : (
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            style={{
-              width: '100%',
-              paddingHorizontal: 40,
-            }}>
-            <TouchableOpacity
-              style={styles.action}
-              onPress={() => this.props.navigation.pop()}>
-              <Ionicons
-                name="ios-arrow-back"
-                size={40}
-                style={{color: colors.baseline}}
-              />
-            </TouchableOpacity>
-            <Text
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
               style={{
-                fontSize: 28,
-                fontFamily: 'Muli-Regular',
-                marginBottom: 20,
-                color: colors.white,
+                width: '100%',
+                paddingHorizontal: 40,
               }}>
-              {this.state.loading ? 'Signing you up' : 'Sign Up'}
-            </Text>
-            {this.state.loading ? (
-              <ActivityIndicator size="large" color={colors.baseline} />
-            ) : (
-              <>
-                {this.state.showVerfiy === false ? (
+              <TouchableOpacity
+                style={styles.action}
+                onPress={() => this.props.navigation.pop()}>
+                <Ionicons
+                  name="ios-arrow-back"
+                  size={30}
+                  style={{ color: colors.baseline }}
+                />
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 28,
+                  fontFamily: 'Muli-Regular',
+                  marginBottom: 20,
+                  color: colors.white,
+                }}>
+                {this.state.loading ? 'Signing you up' : 'Sign Up'}
+              </Text>
+              {this.state.loading ? (
+                <ActivityIndicator size="large" color={colors.baseline} />
+              ) : (
                   <>
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>Full Name</Text>
-                      <TextInput
-                        value={this.state.name}
-                        onChangeText={(text) => {
-                          this.setState({
-                            name: text,
-                          });
-                        }}
-                        onSubmitEditing={() => {
-                          this.secondTextInput.focus();
-                        }}
-                        onSubmitEditing={() => this.secondTextInput.focus()}
-                        maxLength={25}
-                        style={styles.input}></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>User Name</Text>
-                      <TextInput
-                        value={this.state.uname}
-                        onChangeText={(text) => {
-                          this.setState({
-                            uname: text.replace(' ', ''),
-                          });
-                        }}
-                        onSubmitEditing={() => {
-                          this.thirdTextInput.focus();
-                        }}
-                        ref={(input) => {
-                          this.secondTextInput = input;
-                        }}
-                        maxLength={20}
-                        style={styles.input}></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>Email</Text>
-                      <TextInput
-                        value={this.state.email}
-                        onChangeText={(text) => {
-                          this.setState({
-                            email: text,
-                          });
-                        }}
-                        onSubmitEditing={() => {
-                          this.fourthTextInput.focus();
-                        }}
-                        ref={(input) => {
-                          this.thirdTextInput = input;
-                        }}
-                        style={styles.input}></TextInput>
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>Password</Text>
-                      <TextInput
-                        value={this.state.password}
-                        onChangeText={(text) => {
-                          this.setState({
-                            password: text,
-                          });
-                        }}
-                        ref={(input) => {
-                          this.fourthTextInput = input;
-                        }}
-                        style={[styles.input, {paddingRight: 40}]}
-                        secureTextEntry={!this.state.show}></TextInput>
-                      <TouchableOpacity
-                        onPress={() => this.setState({show: !this.state.show})}
-                        style={styles.passwordIcon}>
-                        {this.state.show ? (
-                          <Ionicons
-                            name="ios-eye"
-                            size={20}
-                            style={{color: colors.grey}}
-                          />
-                        ) : (
-                          <Ionicons
-                            name="ios-eye-off"
-                            size={20}
-                            style={{color: colors.grey}}
-                          />
-                        )}
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>Profession</Text>
-                      <View style={{width: '100%'}}>
-                        <SelectInput
-                          value={this.state.prof}
-                          options={this.state.profs}
-                          onCancelEditing={() => console.log('onCancel')}
-                          onSubmitEditing={(e) => {
-                            this.setState({
-                              prof: e,
-                            });
-                          }}
-                          style={styles.input}
-                          labelStyle={{fontSize: 16, color: colors.white}}
-                        />
-                      </View>
-                    </View>
-                    {this.state.prof === 'Student' ? (
-                      <View style={styles.inputContainer}>
-                        <Text style={styles.inputHeader}>Institution</Text>
-                        <TextInput
-                          value={this.state.profStudent}
-                          onChangeText={(text) => {
-                            this.setState({
-                              profStudent: text,
-                            });
-                          }}
-                          maxLength={21}
-                          style={styles.input}></TextInput>
-                      </View>
-                    ) : null}
-                    <View style={styles.inputContainer}>
-                      <Text style={styles.inputHeader}>Referrel Code</Text>
-                      <TextInput
-                        value={this.state.referrelCode}
-                        onChangeText={(text) => {
-                          this.setState({
-                            referrelCode: text,
-                          });
-                        }}
-                        maxLength={50}
-                        style={styles.input}></TextInput>
-                    </View>
-                    <View
-                      style={[
-                        styles.inputContainer,
-                        {flexDirection: 'row', margin: 0, alignItems: 'center'},
-                      ]}>
-                      {this.state.accept ? (
-                        <Ionicons
-                          onPress={() => this.setState({accept: false})}
-                          name="ios-radio-button-on"
-                          size={(6 / 100) * width}
-                          style={{color: colors.baseline, marginRight: 15}}
-                        />
-                      ) : (
-                        <Ionicons
-                          onPress={() => this.setState({accept: true})}
-                          name="ios-radio-button-off"
-                          size={(6 / 100) * width}
-                          style={{color: colors.grey, marginRight: 15}}
-                        />
-                      )}
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.grey,
-                          width: '90%',
-                          fontFamily: 'Muli-Regular',
-                        }}>
-                        I accept{' '}
-                        <Text
-                          onPress={() =>
-                            this.props.navigation.navigate('Privacy')
-                          }
-                          style={{color: colors.baseline}}>
-                          Privacy Policy
+                    {this.state.showVerfiy === false ? (
+                      <>
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>Full Name</Text>
+                          <TextInput
+                            value={this.state.name}
+                            onChangeText={(text) => {
+                              this.setState({
+                                name: text,
+                              });
+                            }}
+                            onSubmitEditing={() => {
+                              this.secondTextInput.focus();
+                            }}
+                            onSubmitEditing={() => this.secondTextInput.focus()}
+                            maxLength={25}
+                            style={styles.input}></TextInput>
+                        </View>
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>User Name</Text>
+                          <TextInput
+                            autoCapitalize='none'
+                            value={this.state.uname}
+                            onChangeText={(text) => {
+                              this.setState({
+                                uname: text.replace(' ', ''),
+                              });
+                            }}
+                            onSubmitEditing={() => {
+                              this.thirdTextInput.focus();
+                            }}
+                            ref={(input) => {
+                              this.secondTextInput = input;
+                            }}
+                            maxLength={20}
+                            style={styles.input}></TextInput>
+                        </View>
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>Email</Text>
+                          <TextInput
+                            autoCapitalize='none'
+                            value={this.state.email}
+                            onChangeText={(text) => {
+                              this.setState({
+                                email: text,
+                              });
+                            }}
+                            onSubmitEditing={() => {
+                              this.fourthTextInput.focus();
+                            }}
+                            ref={(input) => {
+                              this.thirdTextInput = input;
+                            }}
+                            style={styles.input}></TextInput>
+                        </View>
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>Password</Text>
+                          <TextInput
+                            value={this.state.password}
+                            onChangeText={(text) => {
+                              this.setState({
+                                password: text,
+                              });
+                            }}
+                            ref={(input) => {
+                              this.fourthTextInput = input;
+                            }}
+                            style={[styles.input, { paddingRight: 40 }]}
+                            secureTextEntry={!this.state.show}></TextInput>
+                          <TouchableOpacity
+                            onPress={() => this.setState({ show: !this.state.show })}
+                            style={styles.passwordIcon}>
+                            {this.state.show ? (
+                              <Ionicons
+                                name="ios-eye"
+                                size={20}
+                                style={{ color: colors.grey }}
+                              />
+                            ) : (
+                                <Ionicons
+                                  name="ios-eye-off"
+                                  size={20}
+                                  style={{ color: colors.grey }}
+                                />
+                              )}
+                          </TouchableOpacity>
+                        </View>
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>Profession</Text>
+                          <View style={{ width: '100%' }}>
+                            <SelectInput
+                              value={this.state.prof}
+                              options={this.state.profs}
+                              onCancelEditing={() => console.log('onCancel')}
+                              onSubmitEditing={(e) => {
+                                this.setState({
+                                  prof: e,
+                                });
+                              }}
+                              style={styles.input}
+                              labelStyle={{ fontSize: 16, color: colors.white }}
+                            />
+                          </View>
+                        </View>
+                        {this.state.prof === 'Student' ? (
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.inputHeader}>Institution</Text>
+                            <TextInput
+                              value={this.state.profStudent}
+                              onChangeText={(text) => {
+                                this.setState({
+                                  profStudent: text,
+                                });
+                              }}
+                              maxLength={21}
+                              style={styles.input}></TextInput>
+                          </View>
+                        ) : null}
+                        <View style={styles.inputContainer}>
+                          <Text style={styles.inputHeader}>Referrel Code</Text>
+                          <TextInput
+                            value={this.state.referrelCode}
+                            onChangeText={(text) => {
+                              this.setState({
+                                referrelCode: text,
+                              });
+                            }}
+                            maxLength={50}
+                            style={styles.input}></TextInput>
+                        </View>
+                        <View
+                          style={[
+                            styles.inputContainer,
+                            { flexDirection: 'row', margin: 0, alignItems: 'center' },
+                          ]}>
+                          {this.state.accept ? (
+                            <Ionicons
+                              onPress={() => this.setState({ accept: false })}
+                              name="ios-radio-button-on"
+                              size={(6 / 100) * width}
+                              style={{ color: colors.baseline, marginRight: 15 }}
+                            />
+                          ) : (
+                              <Ionicons
+                                onPress={() => this.setState({ accept: true })}
+                                name="ios-radio-button-off"
+                                size={(6 / 100) * width}
+                                style={{ color: colors.grey, marginRight: 15 }}
+                              />
+                            )}
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: colors.white,
+                              width: '90%',
+                              fontFamily: 'Muli-Regular',
+                            }}>
+                            I accept{' '}
+                            <Text
+                              onPress={() =>
+                                this.props.navigation.navigate('Privacy')
+                              }
+                              style={{ color: colors.baseline }}>
+                              Privacy Policy
                         </Text>{' '}
                         &{' '}
-                        <Text
-                          onPress={() =>
-                            this.props.navigation.navigate('Terms')
-                          }
-                          style={{color: colors.baseline}}>
-                          Terms and Conditions
+                            <Text
+                              onPress={() =>
+                                this.props.navigation.navigate('Terms')
+                              }
+                              style={{ color: colors.baseline }}>
+                              Terms and Conditions
                         </Text>
                         .
                       </Text>
-                    </View>
-                    <TouchableOpacity
-                      onPress={this.handleSignUp}
-                      style={styles.button}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.white,
-                          fontFamily: 'Muli-Bold',
-                        }}>
-                        Sign Up
+                        </View>
+                        <TouchableOpacity
+                          onPress={this.handleSignUp}
+                          style={styles.button}>
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              color: colors.white,
+                              fontFamily: 'Muli-Bold',
+                            }}>
+                            Sign Up
                       </Text>
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <>
-                    <Text style={styles.subHeader}>
-                      Please enter the 4 digit code send to your email
+                        </TouchableOpacity>
+                      </>
+                    ) : (
+                        <>
+                          <Text style={styles.subHeader}>
+                            Please enter the 4 digit code send to your email
                     </Text>
-                    <View style={styles.codeContainer}>
-                      <TextInput
-                        keyboardType="phone-pad"
-                        onChangeText={(text) => {
-                          this.setState({
-                            c1: text,
-                          });
-                          this.child2.current.focus();
-                        }}
-                        onSubmitEditing={() => {
-                          this.child2.current.focus();
-                        }}
-                        value={this.state.c1}
-                        style={styles.code}
-                        ref={this.child1}
-                      />
-                      <TextInput
-                        keyboardType="phone-pad"
-                        onChangeText={(text) => {
-                          this.setState({
-                            c2: text,
-                          });
-                          this.child3.current.focus();
-                        }}
-                        onSubmitEditing={() => {
-                          this.child3.current.focus();
-                        }}
-                        value={this.state.c2}
-                        style={styles.code}
-                        ref={this.child2}
-                      />
-                      <TextInput
-                        keyboardType="phone-pad"
-                        onChangeText={(text) => {
-                          this.setState({
-                            c3: text,
-                          });
-                          this.child4.current.focus();
-                        }}
-                        onSubmitEditing={() => {
-                          this.child4.current.focus();
-                        }}
-                        value={this.state.c3}
-                        style={styles.code}
-                        ref={this.child3}
-                      />
-                      <TextInput
-                        keyboardType="phone-pad"
-                        onChangeText={(text) => {
-                          this.setState({
-                            c4: text,
-                          });
-                        }}
-                        value={this.state.c4}
-                        style={styles.code}
-                        ref={this.child4}
-                      />
-                    </View>
-                    <TouchableOpacity
-                      onPress={this.handleVerfiy}
-                      style={styles.button}>
-                      <Text
-                        style={{
-                          fontSize: 14,
-                          color: colors.white,
-                          fontFamily: 'Muli-Bold',
-                        }}>
-                        Verify
+                          <View style={styles.codeContainer}>
+                            <TextInput
+                              keyboardType="phone-pad"
+                              onChangeText={(text) => {
+                                this.setState({
+                                  c1: text,
+                                });
+                                this.child2.current.focus();
+                              }}
+                              onSubmitEditing={() => {
+                                this.child2.current.focus();
+                              }}
+                              value={this.state.c1}
+                              style={styles.code}
+                              ref={this.child1}
+                              maxLength={1}
+                            />
+                            <TextInput
+                              keyboardType="phone-pad"
+                              onChangeText={(text) => {
+                                this.setState({
+                                  c2: text,
+                                });
+                                this.child3.current.focus();
+                              }}
+                              onSubmitEditing={() => {
+                                this.child3.current.focus();
+                              }}
+                              value={this.state.c2}
+                              style={styles.code}
+                              ref={this.child2}
+                              maxLength={1}
+                            />
+                            <TextInput
+                              keyboardType="phone-pad"
+                              onChangeText={(text) => {
+                                this.setState({
+                                  c3: text,
+                                });
+                                this.child4.current.focus();
+                              }}
+                              onSubmitEditing={() => {
+                                this.child4.current.focus();
+                              }}
+                              value={this.state.c3}
+                              style={styles.code}
+                              ref={this.child3}
+                              maxLength={1}
+                            />
+                            <TextInput
+                              keyboardType="phone-pad"
+                              onChangeText={(text) => {
+                                this.setState({
+                                  c4: text,
+                                });
+                              }}
+                              value={this.state.c4}
+                              style={styles.code}
+                              ref={this.child4}
+                              maxLength={1}
+                            />
+                          </View>
+                          <TouchableOpacity
+                            onPress={this.handleVerfiy}
+                            style={styles.button}>
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                color: colors.white,
+                                fontFamily: 'Muli-Bold',
+                              }}>
+                              Verify
                       </Text>
-                    </TouchableOpacity>
+                          </TouchableOpacity>
+                        </>
+                      )}
                   </>
                 )}
-              </>
-            )}
-          </ScrollView>
-        )}
+            </ScrollView>
+          )}
       </SafeAreaView>
     );
   }
@@ -793,7 +819,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     borderRadius: 25,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
+    elevation: 5,
+    marginLeft: 5
   },
   passwordIcon: {
     position: 'absolute',

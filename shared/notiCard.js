@@ -15,7 +15,7 @@ import link from '../fetchPath';
 import auth from '@react-native-firebase/auth';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 export default class NotiCard extends React.Component {
   constructor() {
     super();
@@ -95,21 +95,20 @@ export default class NotiCard extends React.Component {
               paddingVertical: 10,
               paddingHorizontal: 15,
               alignItems: 'center',
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary2,
               justifyContent: 'space-between',
-              borderRadius: 10,
+              borderRadius: 5,
               marginVertical: 5,
-              elevation: 3,
+              // elevation: 3,
             }}>
             <SkeletonContent
-              containerStyle={{width: '100%'}}
+              containerStyle={{ width: '100%' }}
               boneColor={colors.primary}
               highlightColor={colors.darkText}
               isLoading={true}
               layout={[
                 {
                   flexDirection: 'row',
-                  marginTop: 10,
                   alignItems: 'center',
                   children: [
                     {
@@ -127,174 +126,195 @@ export default class NotiCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <>
-            {this.state.hide === false ? (
-              <View style={this.state.read ? styles.itemRead : styles.item}>
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.navigation.navigate('viewProfile', {
-                      id: this.state.user._id,
-                      location: {},
-                    });
-                  }}
-                  style={styles.profileBox}>
-                  {this.state.user.photo ? (
-                    <Image
-                      source={{uri: this.state.user.photo}}
-                      style={styles.profileImage}
-                    />
-                  ) : (
-                    <View style={styles.profileImageBox}>
-                      <Text style={styles.imageText}>
-                        {this.state.user.name &&
-                          this.state.user.name.charAt(0).toUpperCase()}
-                      </Text>
-                    </View>
-                  )}
-                </TouchableOpacity>
-                {this.state.data.type === 'Product' ? (
+            <>
+              {this.state.hide === false ? (
+                <View style={styles.item}>
                   <TouchableOpacity
                     onPress={() => {
-                      this.handleOpen();
-                      this.state.data.action === 'Comment' ||
-                      this.state.data.action === 'Reply'
-                        ? this.props.navigation.navigate('viewComment', {
-                            id: this.state.data.id,
-                            location: this.props.location,
-                          })
-                        : this.props.navigation.navigate('viewProduct', {
-                            id: this.state.data.id,
-                            location: this.props.location,
-                          });
-                    }}
-                    style={{width: '85%'}}>
-                    {this.state.data.action === 'Like' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} liked your product
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Reply' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} replied to your comment
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Comment' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} commented on your product
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Tag' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} tagged in a product
-                      </Text>
-                    ) : null}
-                    <Text style={styles.time}>
-                      <Moment element={Text} fromNow>
-                        {this.state.data.date}
-                      </Moment>
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-                {this.state.data.type === 'Request' ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.handleOpen();
-                      this.state.data.action === 'Comment' ||
-                      this.state.data.action === 'Reply'
-                        ? this.props.navigation.navigate('viewComment', {
-                            id: this.state.data.id,
-                            location: this.props.location,
-                          })
-                        : this.props.navigation.navigate('viewRequest', {
-                            id: this.state.data.id,
-                            location: this.props.location,
-                          });
-                    }}
-                    style={{width: '85%'}}>
-                    {this.state.data.action === 'Like' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} liked your request
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Comment' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} commented on your request
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Reply' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} replied to your comment
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Tag' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} tagged you in a post
-                      </Text>
-                    ) : null}
-                    <Text style={styles.time}>
-                      <Moment element={Text} fromNow>
-                        {this.state.data.date}
-                      </Moment>
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-                {this.state.data.type === 'Chat' ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      this.handleOpen();
-                      this.props.navigation.navigate('Chat', {
-                        id: this.state.data.id,
-                        location: this.props.location,
+                      this.props.navigation.navigate('viewProfile', {
+                        id: this.state.user._id,
+                        location: {},
                       });
                     }}
-                    style={{width: '85%'}}>
-                    {this.state.data.action === 'message' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} send you a message
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'photo' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} send you a photo
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'video' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} send you a video
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'document' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} send you a document
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'request' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} requested one of your product
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'accepted' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} accepted your request
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'rejected' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.name} is no longer interested on your
-                        request
-                      </Text>
-                    ) : null}
-                    <Text style={styles.time}>
-                      <Moment element={Text} fromNow>
-                        {this.state.data.date}
-                      </Moment>
-                    </Text>
+                    style={styles.profileBox}>
+                    {this.state.user.photo ? (
+                      <Image
+                        source={{ uri: this.state.user.photo }}
+                        style={styles.profileImage}
+                      />
+                    ) : (
+                        <View style={styles.profileImageBox}>
+                          <Text style={styles.imageText}>
+                            {this.state.user.name &&
+                              this.state.user.name.charAt(0).toUpperCase()}
+                          </Text>
+                        </View>
+                      )}
                   </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-          </>
-        )}
+                  {this.state.data.type === 'Product' ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.handleOpen();
+                        this.state.data.action === 'Comment' ||
+                          this.state.data.action === 'Reply'
+                          ? this.props.navigation.navigate('viewComment', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          })
+                          : this.props.navigation.navigate('viewProduct', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          });
+                      }}
+                      style={{ width: '85%' }}>
+                      {this.state.data.action === 'Like' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} liked your product
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Reply' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} replied to your comment
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Comment' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} commented on your product
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Tag' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} tagged in a product
+                        </Text>
+                      ) : null}
+                      <Text style={styles.time}>
+                        <Moment element={Text} fromNow>
+                          {this.state.data.date}
+                        </Moment>
+                      </Text>
+                      {
+                        !this.state.read
+                          ?
+                          <Text style={styles.unreadText}>unread</Text>
+                          :
+                          null
+                      }
+                    </TouchableOpacity>
+                  ) : null}
+                  {this.state.data.type === 'Request' ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.handleOpen();
+                        this.state.data.action === 'Comment' ||
+                          this.state.data.action === 'Reply'
+                          ? this.props.navigation.navigate('viewComment', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          })
+                          : this.props.navigation.navigate('viewRequest', {
+                            id: this.state.data.id,
+                            location: this.props.location,
+                          });
+                      }}
+                      style={{ width: '85%' }}>
+                      {this.state.data.action === 'Like' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} liked your request
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Comment' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} commented on your request
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Reply' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} replied to your comment
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Tag' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} tagged you in a post
+                        </Text>
+                      ) : null}
+                      <Text style={styles.time}>
+                        <Moment element={Text} fromNow>
+                          {this.state.data.date}
+                        </Moment>
+                      </Text>
+                      {
+                        !this.state.read
+                          ?
+                          <Text style={styles.unreadText}>unread</Text>
+                          :
+                          null
+                      }
+                    </TouchableOpacity>
+                  ) : null}
+                  {this.state.data.type === 'Chat' ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        this.handleOpen();
+                        this.props.navigation.navigate('Chat', {
+                          id: this.state.data.id,
+                          location: this.props.location,
+                        });
+                      }}
+                      style={{ width: '85%' }}>
+                      {this.state.data.action === 'message' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} send you a message
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'photo' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} send you a photo
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'video' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} send you a video
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'document' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} send you a document
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'request' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} requested one of your product
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'accepted' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} accepted your request
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'rejected' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.name} is no longer interested on your
+                        request
+                        </Text>
+                      ) : null}
+                      <Text style={styles.time}>
+                        <Moment element={Text} fromNow>
+                          {this.state.data.date}
+                        </Moment>
+                      </Text>
+                      {
+                        !this.state.read
+                          ?
+                          <Text style={styles.unreadText}>unread</Text>
+                          :
+                          null
+                      }
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              ) : null}
+            </>
+          )}
       </>
     );
   }
@@ -305,20 +325,10 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 10,
-    backgroundColor: '#282828',
+    backgroundColor: colors.primary2,
     marginVertical: 5,
-    borderRadius: 10,
-    elevation: 3,
-    paddingHorizontal: 15,
-  },
-  itemRead: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingVertical: 10,
-    backgroundColor: colors.secondary,
-    marginVertical: 5,
-    borderRadius: 10,
-    elevation: 3,
+    borderRadius: 5,
+    // elevation: 3,
     paddingHorizontal: 15,
   },
   profileBox: {
@@ -353,11 +363,15 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
-    marginBottom: 10,
   },
   time: {
     color: colors.grey,
     fontSize: 10,
     fontFamily: 'Muli-Regular',
+  },
+  unreadText: {
+    color: colors.baseline,
+    fontSize: 12,
+    fontFamily: 'Muli-Bold',
   },
 });

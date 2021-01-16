@@ -108,7 +108,7 @@ export default class ProfileScreen extends React.Component {
                 justifyContent: 'center',
                 marginBottom: 60,
               }}>
-              <View style={{width: 120, height: 120}}>
+              <View style={{ width: 120, height: 120 }}>
                 <LottieView
                   source={require('../assets/loading.json')}
                   autoPlay={true}
@@ -118,212 +118,212 @@ export default class ProfileScreen extends React.Component {
             </View>
           </View>
         ) : (
-          <>
-            {auth().currentUser ? (
-              <ScrollView
-                refreshControl={
-                  <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.handleRefresh}
-                  />
-                }
-                style={{width: '100%', flex: 1}}>
-                <View style={{width: '100%', alignItems: 'center', flex: 1}}>
-                  <View style={styles.profileBox}>
-                    <View
-                      style={{
-                        width: '100%',
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                      <View style={styles.profileImageContainer}>
-                        {this.state.currentUser.photo ? (
-                          <Image
-                            source={{uri: this.state.currentUser.photo}}
-                            style={styles.profileImage}
-                          />
-                        ) : (
-                          <View style={styles.profileImageBox}>
-                            <Text style={styles.imageText}>
-                              {this.state.currentUser.name
-                                .charAt(0)
-                                .toUpperCase()}
+            <>
+              {auth().currentUser ? (
+                <ScrollView
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.handleRefresh}
+                    />
+                  }
+                  style={{ width: '100%', flex: 1 }}>
+                  <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
+                    <View style={styles.profileBox}>
+                      <View
+                        style={{
+                          width: '100%',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View style={styles.profileImageContainer}>
+                          {this.state.currentUser.photo ? (
+                            <Image
+                              source={{ uri: this.state.currentUser.photo }}
+                              style={styles.profileImage}
+                            />
+                          ) : (
+                              <View style={styles.profileImageBox}>
+                                <Text style={styles.imageText}>
+                                  {this.state.currentUser.name
+                                    .charAt(0)
+                                    .toUpperCase()}
+                                </Text>
+                              </View>
+                            )}
+                        </View>
+                      </View>
+                      <View style={styles.profileInfo}>
+                        <View
+                          style={{ flexDirection: 'row', alignItems: 'center' }}>
+                          <Text style={styles.name}>
+                            {this.state.currentUser.name}
+                          </Text>
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.props.navigation.navigate('ProfileEdit', {
+                                handleRefresh: this.handleRefresh,
+                              })
+                            }
+                            style={{
+                              width: 30,
+                              height: 30,
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              backgroundColor: colors.darkText,
+                              // elevation: 3,
+                              borderRadius: 10,
+                              marginLeft: 5,
+                            }}>
+                            <Ionicons
+                              name="settings-outline"
+                              size={18}
+                              color={colors.white}
+                            />
+                          </TouchableOpacity>
+                        </View>
+                        <Text style={styles.uname}>
+                          @{this.state.currentUser.uname}
+                        </Text>
+                        <Text style={styles.profession}>
+                          {this.state.currentUser.prof}
+                        </Text>
+                        {this.state.currentUser.institution &&
+                          this.state.currentUser.prof === 'Student' ? (
+                            <Text style={styles.uname}>
+                              {this.state.currentUser.institution}
                             </Text>
-                          </View>
-                        )}
+                          ) : null}
                       </View>
                     </View>
-                    <View style={styles.profileInfo}>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Text style={styles.name}>
-                          {this.state.currentUser.name}
+                    <View style={styles.profileStats}>
+                      <View style={styles.stat}>
+                        <Text style={styles.statHeader}>
+                          {this.state.currentUser.posts.length}
                         </Text>
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.props.navigation.navigate('ProfileEdit', {
-                              handleRefresh: this.handleRefresh,
-                            })
-                          }
-                          style={{
-                            width: 30,
-                            height: 30,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: colors.darkText,
-                            elevation: 3,
-                            borderRadius: 10,
-                            marginLeft: 5,
-                          }}>
-                          <Ionicons
-                            name="settings-outline"
-                            size={18}
-                            color={colors.white}
-                          />
-                        </TouchableOpacity>
+                        <Text style={styles.statSubHeader}>Posts</Text>
                       </View>
-                      <Text style={styles.uname}>
-                        @{this.state.currentUser.uname}
-                      </Text>
-                      <Text style={styles.profession}>
-                        {this.state.currentUser.prof}
-                      </Text>
-                      {this.state.currentUser.institution &&
-                      this.state.currentUser.prof === 'Student' ? (
-                        <Text style={styles.uname}>
-                          {this.state.currentUser.institution}
+                      <TouchableOpacity
+                        style={styles.stat}
+                        onPress={() =>
+                          this.props.navigation.push('viewUsers', {
+                            id: this.state.currentUser._id,
+                            type: 'followers',
+                            location: this.props.location,
+                            handleRefresh: this.handleRefresh,
+                          })
+                        }>
+                        <Text style={styles.statHeader}>
+                          {this.state.currentUser.followers.length}
                         </Text>
+                        <Text style={styles.statSubHeader}>Followers</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.stat}
+                        onPress={() =>
+                          this.props.navigation.push('viewUsers', {
+                            id: this.state.currentUser._id,
+                            type: 'following',
+                            location: this.props.location,
+                            handleRefresh: this.handleRefresh,
+                          })
+                        }>
+                        <Text style={styles.statHeader}>
+                          {this.state.currentUser.following.length}
+                        </Text>
+                        <Text style={styles.statSubHeader}>Following</Text>
+                      </TouchableOpacity>
+                    </View>
+                    <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+                      <View style={styles.tabbar}>
+                        {this.state.tab === 'Posts' ? (
+                          <View style={styles.activeTab}>
+                            <Text style={styles.activeTabText}>Posts</Text>
+                          </View>
+                        ) : (
+                            <TouchableOpacity
+                              onPress={() => this.setState({ tab: 'Posts' })}
+                              style={styles.tab}>
+                              <Text style={styles.tabText}>Posts</Text>
+                            </TouchableOpacity>
+                          )}
+                        {this.state.tab === 'Liked' ? (
+                          <View style={styles.activeTab}>
+                            <Text style={styles.activeTabText}>Liked</Text>
+                          </View>
+                        ) : (
+                            <TouchableOpacity
+                              onPress={() => this.setState({ tab: 'Liked' })}
+                              style={styles.tab}>
+                              <Text style={styles.tabText}>Liked</Text>
+                            </TouchableOpacity>
+                          )}
+                        {this.state.tab === 'Saved' ? (
+                          <View style={styles.activeTab}>
+                            <Text style={styles.activeTabText}>Saved</Text>
+                          </View>
+                        ) : (
+                            <TouchableOpacity
+                              onPress={() => this.setState({ tab: 'Saved' })}
+                              style={styles.tab}>
+                              <Text style={styles.tabText}>Saved</Text>
+                            </TouchableOpacity>
+                          )}
+                        {this.state.tab === 'Ratings' ? (
+                          <View style={styles.activeTab}>
+                            <Text style={styles.activeTabText}>Ratings</Text>
+                          </View>
+                        ) : (
+                            <TouchableOpacity
+                              onPress={() => this.setState({ tab: 'Ratings' })}
+                              style={styles.tab}>
+                              <Text style={styles.tabText}>Ratings</Text>
+                            </TouchableOpacity>
+                          )}
+                      </View>
+                      {this.state.tab === 'Posts' ? (
+                        <MyPostScreen
+                          navigation={this.props.navigation}
+                          location={this.props.location}
+                        />
+                      ) : null}
+                      {this.state.tab === 'Liked' ? (
+                        <LikedPostScreen
+                          navigation={this.props.navigation}
+                          location={this.props.location}
+                        />
+                      ) : null}
+                      {this.state.tab === 'Saved' ? (
+                        <SavedPostScreen
+                          navigation={this.props.navigation}
+                          location={this.props.location}
+                        />
+                      ) : null}
+                      {this.state.tab === 'Ratings' ? (
+                        <MyRatingScreen navigation={this.props.navigation} />
                       ) : null}
                     </View>
                   </View>
-                  <View style={styles.profileStats}>
-                    <View style={styles.stat}>
-                      <Text style={styles.statHeader}>
-                        {this.state.currentUser.posts.length}
-                      </Text>
-                      <Text style={styles.statSubHeader}>Posts</Text>
+                </ScrollView>
+              ) : (
+                  <View style={{ width: '100%', alignItems: 'center' }}>
+                    <View style={styles.imageBox}>
+                      <LottieView
+                        source={require('../assets/login.json')}
+                        autoPlay
+                        loop
+                      />
                     </View>
                     <TouchableOpacity
-                      style={styles.stat}
-                      onPress={() =>
-                        this.props.navigation.push('viewUsers', {
-                          id: this.state.currentUser._id,
-                          type: 'followers',
-                          location: this.props.location,
-                          handleRefresh: this.handleRefresh,
-                        })
-                      }>
-                      <Text style={styles.statHeader}>
-                        {this.state.currentUser.followers.length}
-                      </Text>
-                      <Text style={styles.statSubHeader}>Followers</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.stat}
-                      onPress={() =>
-                        this.props.navigation.push('viewUsers', {
-                          id: this.state.currentUser._id,
-                          type: 'following',
-                          location: this.props.location,
-                          handleRefresh: this.handleRefresh,
-                        })
-                      }>
-                      <Text style={styles.statHeader}>
-                        {this.state.currentUser.following.length}
-                      </Text>
-                      <Text style={styles.statSubHeader}>Following</Text>
+                      onPress={() => this.props.navigation.navigate('Login')}
+                      style={styles.loginButton}>
+                      <Text style={styles.loginButtonText}>Login to continue</Text>
                     </TouchableOpacity>
                   </View>
-                  <View style={{width: '100%', flex: 1, alignItems: 'center'}}>
-                    <View style={styles.tabbar}>
-                      {this.state.tab === 'Posts' ? (
-                        <View style={styles.activeTab}>
-                          <Text style={styles.activeTabText}>Posts</Text>
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Posts'})}
-                          style={styles.tab}>
-                          <Text style={styles.tabText}>Posts</Text>
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Liked' ? (
-                        <View style={styles.activeTab}>
-                          <Text style={styles.activeTabText}>Liked</Text>
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Liked'})}
-                          style={styles.tab}>
-                          <Text style={styles.tabText}>Liked</Text>
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Saved' ? (
-                        <View style={styles.activeTab}>
-                          <Text style={styles.activeTabText}>Saved</Text>
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Saved'})}
-                          style={styles.tab}>
-                          <Text style={styles.tabText}>Saved</Text>
-                        </TouchableOpacity>
-                      )}
-                      {this.state.tab === 'Ratings' ? (
-                        <View style={styles.activeTab}>
-                          <Text style={styles.activeTabText}>Ratings</Text>
-                        </View>
-                      ) : (
-                        <TouchableOpacity
-                          onPress={() => this.setState({tab: 'Ratings'})}
-                          style={styles.tab}>
-                          <Text style={styles.tabText}>Ratings</Text>
-                        </TouchableOpacity>
-                      )}
-                    </View>
-                    {this.state.tab === 'Posts' ? (
-                      <MyPostScreen
-                        navigation={this.props.navigation}
-                        location={this.props.location}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Liked' ? (
-                      <LikedPostScreen
-                        navigation={this.props.navigation}
-                        location={this.props.location}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Saved' ? (
-                      <SavedPostScreen
-                        navigation={this.props.navigation}
-                        location={this.props.location}
-                      />
-                    ) : null}
-                    {this.state.tab === 'Ratings' ? (
-                      <MyRatingScreen navigation={this.props.navigation} />
-                    ) : null}
-                  </View>
-                </View>
-              </ScrollView>
-            ) : (
-              <View style={{width: '100%', alignItems: 'center'}}>
-                <View style={styles.imageBox}>
-                  <LottieView
-                    source={require('../assets/login.json')}
-                    autoPlay
-                    loop
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('Login')}
-                  style={styles.loginButton}>
-                  <Text style={styles.loginButtonText}>Login to continue</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
+                )}
+            </>
+          )}
       </View>
     );
   }
@@ -370,25 +370,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.darkText,
   },
-  rating: {
-    alignItems: 'center',
-    width: '100%',
-    height: '80%',
-    justifyContent: 'center',
-  },
-  ratingNumber: {
-    fontFamily: 'Muli-Bold',
-    fontSize: 20,
-    color: colors.white,
-    marginLeft: 15,
-  },
-  ratingText: {
-    fontFamily: 'Muli-Regular',
-    fontSize: 12,
-    color: colors.white,
-    marginLeft: 15,
-    textAlign: 'right',
-  },
   profileInfo: {
     width: '100%',
     marginTop: 5,
@@ -401,12 +382,12 @@ const styles = StyleSheet.create({
   uname: {
     fontFamily: 'Muli-Regular',
     fontSize: 14,
-    color: colors.grey,
+    color: colors.baseline,
   },
   profession: {
     fontFamily: 'Muli-Bold',
     fontSize: 16,
-    color: colors.baseline,
+    color: colors.grey,
   },
   bio: {
     fontFamily: 'Muli-Bold',
@@ -429,12 +410,12 @@ const styles = StyleSheet.create({
   statHeader: {
     fontSize: 18,
     fontFamily: 'Muli-Bold',
-    color: colors.white,
+    color: colors.white
   },
   statSubHeader: {
     fontSize: 14,
     fontFamily: 'Muli-Bold',
-    color: colors.white,
+    color: colors.grey,
   },
   tabbar: {
     width: '100%',
@@ -442,7 +423,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
   },
   tab: {
     width: '25%',
@@ -453,7 +434,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontFamily: 'Muli-Regular',
     textTransform: 'uppercase',
-    color: '#acadaa',
+    color: colors.grey,
     fontSize: 14,
   },
   activeTab: {
@@ -461,13 +442,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    borderBottomColor: '#d65a31',
+    borderBottomColor: colors.baseline,
     borderBottomWidth: 4,
   },
   activeTabText: {
     fontFamily: 'Muli-Regular',
     textTransform: 'uppercase',
-    color: '#e5e5e5',
+    color: colors.baseline,
     fontSize: 14,
   },
   imageBox: {

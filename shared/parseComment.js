@@ -37,16 +37,16 @@ const Comment = (props) => {
             var comments = [];
             if (mentions.length > 0) {
                 var checked = 0;
-                for (j = 0; j < str.length; j++) {
-                    for (k = checked; k < mentions.length; k++) {
+                for (var j = 0; j < str.length; j++) {
+                    for (var k = checked; k < mentions.length; k++) {
                         if (j === mentions[k].start) {
                             var id = "";
                             id = mentions[k].uid;
-                            var mention = this.tagged(mentions[k]);
+                            var mention = tagged(mentions[k]);
                             comments.push(mention);
                             j = mentions[k].end;
                             checked++;
-                            msg = "";
+                            var msg = "";
                         }
                         else {
                             var startmsg = <Text style={{ color: colors.white }}>{str[j]}</Text>;
@@ -61,7 +61,7 @@ const Comment = (props) => {
                 }
             }
             else {
-                var startmsg = <Text style={{ color: '#e5e5e5' }}>{str}</Text>;
+                var startmsg = <Text style={{ color: colors.white }}>{str}</Text>;
                 comments.push(startmsg);
             }
             updateData(comments);

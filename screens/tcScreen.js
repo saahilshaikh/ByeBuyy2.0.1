@@ -46,13 +46,13 @@ class Terms extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: colors.primary,
+            backgroundColor: colors.primary2,
             paddingHorizontal: 15,
-            height: 50,
+            height: 60,
             flexDirection: 'row',
             alignItems: 'center',
             width: '100%',
-            elevation: 10
+            elevation: 3
           }}>
           <TouchableOpacity
             onPress={this.handleBack}>
@@ -100,7 +100,7 @@ class Terms extends React.Component {
                 progressTintColor: colors.white,
               }}
               source={{ uri: this.state.url, cache: true }}
-              style={{ width: width, height: height - 100 }}
+              style={{ width: width, flex: 1 }}
             />
           )}
       </SafeAreaView>
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   header: {
-    color: colors.baseline,
+    color: colors.white,
     fontSize: 20,
     fontFamily: 'Muli-Bold',
     marginLeft: 10,

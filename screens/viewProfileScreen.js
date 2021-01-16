@@ -238,7 +238,7 @@ export default class ViewProfileScreen extends React.Component {
   render() {
     return (
       <SafeAreaView
-        style={{width: '100%', flex: 1, backgroundColor: colors.primary}}>
+        style={styles.container}>
         <View style={styles.head}>
           <View style={{alignItems: 'center', flexDirection: 'row'}}>
             <TouchableOpacity
@@ -247,6 +247,8 @@ export default class ViewProfileScreen extends React.Component {
               <Ionicons
                 name="ios-arrow-back"
                 size={30}
+
+                
                 style={{color: colors.baseline}}
               />
             </TouchableOpacity>
@@ -316,7 +318,7 @@ export default class ViewProfileScreen extends React.Component {
                       }}>
                       <Swiper
                         paginationStyle={{bottom: 0}}
-                        activeDotColor={'#d65a31'}
+                        activeDotColor={colors.baseline}
                         showsButtons={false}>
                         {this.state.ratings.map((item) => {
                           return (
@@ -373,7 +375,7 @@ export default class ViewProfileScreen extends React.Component {
                       alignItems: 'center',
                       marginVertical: 5,
                     }}>
-                    <Text style={styles.followedText}>Followed by </Text>
+                    <Text style={styles.followedText}>Mutual friends </Text>
                     <ShowSimilar
                       navigation={this.props.navigation}
                       sameList={this.state.sameList}
@@ -523,6 +525,7 @@ export default class ViewProfileScreen extends React.Component {
               justifyContent: 'space-between',
               borderRadius: 10,
               marginBottom: 10,
+              backgroundColor:colors.primary2
             }}>
             <SkeletonContent
               containerStyle={{width: '100%'}}
@@ -597,21 +600,22 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
+    backgroundColor:colors.primary
   },
   head: {
     width: '100%',
     paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 50,
-    backgroundColor: colors.secondary,
-    elevation: 13,
+    height: 60,
+    backgroundColor: colors.primary2,
+    elevation: 3,
     justifyContent: 'space-between',
   },
   headText: {
     fontSize: 18,
     marginLeft: 10,
-    color: colors.white,
+    color: colors.baseline,
     fontFamily: 'Muli-Bold',
   },
   profileBox: {
@@ -648,13 +652,13 @@ const styles = StyleSheet.create({
   ratingNumber: {
     fontFamily: 'Muli-Bold',
     fontSize: 20,
-    color: colors.white,
+    color: colors.grey,
     marginLeft: 15,
   },
   ratingText: {
     fontFamily: 'Muli-Regular',
     fontSize: 12,
-    color: colors.white,
+    color: colors.grey,
     marginLeft: 15,
     textAlign: 'right',
   },
@@ -670,12 +674,12 @@ const styles = StyleSheet.create({
   uname: {
     fontFamily: 'Muli-Regular',
     fontSize: 14,
-    color: colors.grey,
+    color: colors.baseline,
   },
   profession: {
     fontFamily: 'Muli-Bold',
     fontSize: 16,
-    color: colors.baseline,
+    color: colors.grey,
   },
   bio: {
     fontFamily: 'Muli-Bold',
@@ -703,7 +707,7 @@ const styles = StyleSheet.create({
   statSubHeader: {
     fontSize: 14,
     fontFamily: 'Muli-Bold',
-    color: colors.white,
+    color: colors.grey,
   },
   tabbar: {
     width: '100%',
@@ -711,7 +715,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
   },
   tab: {
     width: '50%',
@@ -722,7 +726,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontFamily: 'Muli-Regular',
     textTransform: 'uppercase',
-    color: '#acadaa',
+    color: colors.grey,
     fontSize: 14,
   },
   activeTab: {
@@ -730,31 +734,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     height: '100%',
-    borderBottomColor: '#d65a31',
+    borderBottomColor: colors.baseline,
     borderBottomWidth: 4,
   },
   activeTabText: {
     fontFamily: 'Muli-Regular',
     textTransform: 'uppercase',
-    color: '#e5e5e5',
+    color: colors.baseline,
     fontSize: 16,
   },
   imageBox: {
     width: 300,
     height: 300,
-  },
-  loginButton: {
-    width: 150,
-    height: 50,
-    backgroundColor: colors.baseline,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-  },
-  loginButtonText: {
-    color: colors.white,
-    fontFamily: 'Muli-Bold',
-    fontSize: 14,
   },
   actionProfile: {
     width: '100%',
@@ -785,9 +776,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     justifyContent: 'center',
     alignItems: 'center',
+    elevation:2
   },
   followedText: {
-    color: colors.white,
+    color: colors.grey,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
   },

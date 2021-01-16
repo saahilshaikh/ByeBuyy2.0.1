@@ -8,13 +8,14 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const LoadingScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{width: 150, height: 150}}>
+      <View style={{ width: 150, height: 150 }}>
         <Image
           style={styles.logo}
           source={require('../assets/images/logo.png')}
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#15202B',
+    backgroundColor: colors.secondary,
   },
   logo: {
     width: '100%',

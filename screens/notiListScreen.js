@@ -113,7 +113,6 @@ export default class NotiListScreen extends React.Component {
     };
     const res2 = await axios.post(link + '/api/suggestedUsers', data2);
     if (res2.data !== null) {
-      console.log(res2.data);
       this.setState({
         sUsers: res2.data,
       });
@@ -171,7 +170,7 @@ export default class NotiListScreen extends React.Component {
     }
   };
 
-  handleRefreshSuggested = async () => {};
+  handleRefreshSuggested = async () => { };
 
   handleReachedEnd = () => {
     var newnotiList = [];
@@ -251,7 +250,7 @@ export default class NotiListScreen extends React.Component {
                 justifyContent: 'center',
                 marginBottom: 60,
               }}>
-              <View style={{width: 120, height: 120}}>
+              <View style={{ width: 120, height: 120 }}>
                 <LottieView
                   source={require('../assets/loading.json')}
                   autoPlay={true}
@@ -261,127 +260,128 @@ export default class NotiListScreen extends React.Component {
             </View>
           </View>
         ) : (
-          <>
-            {auth().currentUser ? (
-              <ScrollView
-                style={{width: '100%'}}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={this.state.refreshing}
-                    onRefresh={this.handleRefresh}
-                  />
-                }>
-                <View style={styles.list}>
-                  {this.state.today.length > 0 ? (
-                    <View style={{width: '90%', marginTop: 10}}>
-                      <Text style={styles.header}>Today</Text>
-                      {this.state.today.map((item, index) => {
-                        return (
-                          <NotiCard
-                            key={index}
-                            id={item._id}
-                            navigation={this.props.navigation}
-                            location={this.state.location}
-                            handleRefresh={this.handleRefresh}
-                          />
-                        );
-                      })}
-                    </View>
-                  ) : null}
-                  {this.state.weekly.length > 0 ? (
-                    <View style={{width: '90%', marginTop: 10}}>
-                      <Text style={styles.header}>This Week</Text>
-                      {this.state.weekly.map((item, index) => {
-                        return (
-                          <NotiCard
-                            key={index}
-                            id={item._id}
-                            navigation={this.props.navigation}
-                            location={this.state.location}
-                            handleRefresh={this.handleRefresh}
-                          />
-                        );
-                      })}
-                    </View>
-                  ) : null}
-                  {this.state.sUsers.length > 0 ? (
-                    <View style={styles.suggestedUsers}>
-                      <Text style={styles.suggestedUsersHeader}>
-                        Suggested Users
-                      </Text>
-                      <View style={styles.suggestedUsersList}>
-                        {this.state.sUsers.map((user) => {
+            <>
+              {auth().currentUser ? (
+                <ScrollView
+                  style={{ width: '100%' }}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={this.state.refreshing}
+                      onRefresh={this.handleRefresh}
+                    />
+                  }>
+                  <View style={styles.list}>
+                    {this.state.today.length > 0 ? (
+                      <View style={{ width: '95%', marginTop: 10 }}>
+                        <Text style={styles.header}>Today</Text>
+                        {this.state.today.map((item, index) => {
                           return (
-                            <Card4
-                              id={user}
-                              handleRefresh={this.handleRefreshSuggested}
+                            <NotiCard
+                              key={index}
+                              id={item._id}
                               navigation={this.props.navigation}
-                              location={this.props.location}
+                              location={this.state.location}
+                              handleRefresh={this.handleRefresh}
                             />
                           );
                         })}
                       </View>
-                    </View>
-                  ) : null}
-                  {this.state.monthly.length > 0 ? (
-                    <View style={{width: '90%', marginTop: 10}}>
-                      <Text style={styles.header}>This Month</Text>
-                      {this.state.monthly.map((item, index) => {
-                        return (
-                          <NotiCard
-                            key={index}
-                            id={item._id}
-                            navigation={this.props.navigation}
-                            location={this.state.location}
-                            handleRefresh={this.handleRefresh}
-                          />
-                        );
-                      })}
-                    </View>
-                  ) : null}
-                  {this.state.earlier.length > 0 ? (
-                    <View style={{width: '90%', marginTop: 10}}>
-                      <Text style={styles.header}>Earlier</Text>
-                      {this.state.earlier.map((item, index) => {
-                        return (
-                          <NotiCard
-                            key={index}
-                            id={item._id}
-                            navigation={this.props.navigation}
-                            location={this.state.location}
-                            handleRefresh={this.handleRefresh}
-                          />
-                        );
-                      })}
-                    </View>
-                  ) : null}
-                </View>
+                    ) : null}
+                    {this.state.weekly.length > 0 ? (
+                      <View style={{ width: '95%', marginTop: 10 }}>
+                        <Text style={styles.header}>This Week</Text>
+                        {this.state.weekly.map((item, index) => {
+                          return (
+                            <NotiCard
+                              key={index}
+                              id={item._id}
+                              navigation={this.props.navigation}
+                              location={this.state.location}
+                              handleRefresh={this.handleRefresh}
+                            />
+                          );
+                        })}
+                      </View>
+                    ) : null}
+                    {this.state.sUsers.length > 0 ? (
+                      <View style={styles.suggestedUsers}>
+                        <Text style={styles.suggestedUsersHeader}>
+                          Suggested Users
+                      </Text>
+                        <View style={styles.suggestedUsersList}>
+                          {this.state.sUsers.map((user, index) => {
+                            return (
+                              <Card4
+                                key={index}
+                                id={user}
+                                handleRefresh={this.handleRefreshSuggested}
+                                navigation={this.props.navigation}
+                                location={this.props.location}
+                              />
+                            );
+                          })}
+                        </View>
+                      </View>
+                    ) : null}
+                    {this.state.monthly.length > 0 ? (
+                      <View style={{ width: '95%', marginTop: 10 }}>
+                        <Text style={styles.header}>This Month</Text>
+                        {this.state.monthly.map((item, index) => {
+                          return (
+                            <NotiCard
+                              key={index}
+                              id={item._id}
+                              navigation={this.props.navigation}
+                              location={this.state.location}
+                              handleRefresh={this.handleRefresh}
+                            />
+                          );
+                        })}
+                      </View>
+                    ) : null}
+                    {this.state.earlier.length > 0 ? (
+                      <View style={{ width: '95%', marginTop: 10 }}>
+                        <Text style={styles.header}>Earlier</Text>
+                        {this.state.earlier.map((item, index) => {
+                          return (
+                            <NotiCard
+                              key={index}
+                              id={item._id}
+                              navigation={this.props.navigation}
+                              location={this.state.location}
+                              handleRefresh={this.handleRefresh}
+                            />
+                          );
+                        })}
+                      </View>
+                    ) : null}
+                  </View>
 
-                {/* {this.state.today.length === 0 &&
+                  {/* {this.state.today.length === 0 &&
                 this.state.weekly.length === 0 &&
                 this.state.monthly.length === 0 &&
                 this.state.earlier.length === 0 ? (
                   <>{this.renderListEmpty()}</>
                 ) : null} */}
-              </ScrollView>
-            ) : (
-              <View style={{width: '100%', alignItems: 'center'}}>
-                <View style={styles.imageBox}>
-                  <LottieView
-                    source={require('../assets/login.json')}
-                    autoPlay
-                    loop
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.navigate('Login')}
-                  style={styles.loginButton}>
-                  <Text style={styles.loginButtonText}>Login to continue</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </>
-        )}
+                </ScrollView>
+              ) : (
+                  <View style={{ width: '100%', alignItems: 'center' }}>
+                    <View style={styles.imageBox}>
+                      <LottieView
+                        source={require('../assets/login.json')}
+                        autoPlay
+                        loop
+                      />
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => this.props.navigation.navigate('Login')}
+                      style={styles.loginButton}>
+                      <Text style={styles.loginButtonText}>Login to continue</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+            </>
+          )}
       </View>
     );
   }
@@ -398,9 +398,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    color: colors.grey,
+    color: colors.baseline,
     fontFamily: 'Muli-Bold',
     fontSize: 16,
+    marginLeft: 10,
   },
   imageBox: {
     width: 300,
@@ -423,7 +424,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   suggestedUsersHeader: {
-    color: colors.grey,
+    color: colors.baseline,
     fontFamily: 'Muli-Bold',
     fontSize: 16,
     marginVertical: 10,

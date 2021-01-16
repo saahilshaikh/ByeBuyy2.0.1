@@ -10,10 +10,10 @@ import {
   Image,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {ScrollView} from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class AboutScreen extends React.Component {
   handleBack = () => {
@@ -25,12 +25,13 @@ export default class AboutScreen extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: '#1B1F22',
+            backgroundColor: colors.secondary,
             paddingHorizontal: 20,
             height: 60,
             flexDirection: 'row',
             alignItems: 'center',
             width: '100%',
+            elevation: 3
           }}>
           <TouchableOpacity onPress={this.handleBack}>
             <Ionicons name="ios-arrow-back" size={30} color={colors.baseline} />
@@ -42,9 +43,9 @@ export default class AboutScreen extends React.Component {
               justifyContent: 'center',
               marginLeft: 10,
             }}>
-            <View style={{width: 30, height: 30}}>
+            <View style={{ width: 30, height: 30 }}>
               <Image
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 source={require('../assets/images/icon.png')}
               />
             </View>
@@ -53,8 +54,8 @@ export default class AboutScreen extends React.Component {
             </Text>
           </View>
         </View>
-        <ScrollView style={{width: '100%', flex: 1}}>
-          <View style={{width: '100%', flex: 1}}>
+        <ScrollView style={{ width: '100%', flex: 1 }}>
+          <View style={{ width: '100%', flex: 1 }}>
             <Text
               style={{
                 fontSize: 24,
@@ -65,7 +66,7 @@ export default class AboutScreen extends React.Component {
               }}>
               About
             </Text>
-            <View style={{width: '100%', flex: 1, alignItems: 'center'}}>
+            <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
               <View style={styles.box}>
                 <Text style={styles.boxText}>
                   Join the byebuyy Community Free! Find products for exchange,
@@ -82,7 +83,7 @@ export default class AboutScreen extends React.Component {
                     onPress={() =>
                       Linking.openURL('mailto:grievance.byebuyy@gmail.com')
                     }
-                    style={{color: colors.baseline, fontWeight: 'bold'}}>
+                    style={{ color: colors.baseline, fontWeight: 'bold' }}>
                     grievance.byebuyy@gmail.com
                   </Text>
                 </Text>
@@ -92,7 +93,7 @@ export default class AboutScreen extends React.Component {
                   Powered by{' '}
                   <Text
                     onPress={() => Linking.openURL('https://augendtech.com')}
-                    style={{color: colors.baseline, fontWeight: 'bold'}}>
+                    style={{ color: colors.baseline, fontWeight: 'bold' }}>
                     Augend Tech
                   </Text>
                 </Text>
@@ -138,14 +139,14 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     alignItems: 'center',
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     justifyContent: 'space-between',
     borderBottomColor: colors.grey,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   boxText: {
     fontSize: 16,
-    color: '#e5e5e5',
+    color: colors.white,
     fontFamily: 'Muli-Regular',
   },
 });

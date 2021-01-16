@@ -18,7 +18,7 @@ import link from '../fetchPath';
 import auth from '@react-native-firebase/auth';
 import LottieView from 'lottie-react-native';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class DealDoneScreen extends React.Component {
   constructor() {
@@ -83,12 +83,13 @@ export default class DealDoneScreen extends React.Component {
         <SafeAreaView style={styles.container}>
           <View
             style={{
-              backgroundColor: '#1B1F22',
+              backgroundColor: colors.secondary,
               paddingHorizontal: 20,
               height: 60,
               flexDirection: 'row',
               alignItems: 'center',
               width: '100%',
+              elevation: 3
             }}>
             <TouchableOpacity onPress={this.handleBack}>
               <Ionicons
@@ -104,25 +105,25 @@ export default class DealDoneScreen extends React.Component {
                 justifyContent: 'center',
                 marginLeft: 10,
               }}>
-              <View style={{width: 30, height: 30}}>
+              <View style={{ width: 30, height: 30 }}>
                 <Image
-                  style={{width: '100%', height: '100%'}}
+                  style={{ width: '100%', height: '100%' }}
                   source={require('../assets/images/icon.png')}
                 />
               </View>
               <Text style={styles.header}>My Deals</Text>
             </View>
           </View>
-          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+          <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
             {!this.state.loading ? (
               <FlatList
                 ListEmptyComponent={this.renderListEmpty}
                 keyboardShouldPersistTaps={'handled'}
-                style={{width: '100%'}}
+                style={{ width: '100%' }}
                 data={this.state.deals}
                 onEndReached={this.handleReachedEnd}
                 keyExtractor={(item, index) => index.toString()}
-                renderItem={({item}) => (
+                renderItem={({ item }) => (
                   <View
                     style={{
                       width: '100%',
@@ -134,22 +135,22 @@ export default class DealDoneScreen extends React.Component {
                 )}
               />
             ) : (
-              <View
-                style={{
-                  width: '100%',
-                  alignItems: 'center',
-                  flex: 1,
-                  justifyContent: 'center',
-                }}>
-                <View style={{width: 100, height: 100}}>
-                  <LottieView
-                    source={require('../assets/loading.json')}
-                    autoPlay={true}
-                    loop={true}
-                  />
+                <View
+                  style={{
+                    width: '100%',
+                    alignItems: 'center',
+                    flex: 1,
+                    justifyContent: 'center',
+                  }}>
+                  <View style={{ width: 100, height: 100 }}>
+                    <LottieView
+                      source={require('../assets/loading.json')}
+                      autoPlay={true}
+                      loop={true}
+                    />
+                  </View>
                 </View>
-              </View>
-            )}
+              )}
           </View>
         </SafeAreaView>
         <SafeAreaView></SafeAreaView>
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     position: 'relative',
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   header: {
     color: colors.baseline,

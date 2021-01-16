@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export default class ShowPostsScreen extends React.Component {
   constructor() {
@@ -32,25 +33,25 @@ export default class ShowPostsScreen extends React.Component {
       locationType: 'All locations',
       activeSub: 'All',
       bcategories: [
-        {name: 'Action and adventure', value: 'Action and adventure'},
-        {name: 'Biography', value: 'Biography'},
-        {name: 'College', value: 'College'},
-        {name: 'Comic', value: 'Comic'},
-        {name: 'Competitive exams', value: 'Competitive exams'},
-        {name: 'Cooking', value: 'Cooking'},
-        {name: 'Fiction', value: 'Fiction'},
-        {name: 'Non-Fiction', value: 'Non-Fiction'},
-        {name: 'History', value: 'History'},
-        {name: 'Horror', value: 'Horror'},
-        {name: 'Novel & literature', value: 'Novel & literature'},
-        {name: 'Others', value: 'Others'},
-        {name: 'Pre school', value: 'Pre school'},
-        {name: 'Regional language', value: 'Regional language'},
-        {name: 'Religous', value: 'Religous'},
-        {name: 'Romance', value: 'Romance'},
-        {name: 'Sci-Fi', value: 'Sci-Fi'},
-        {name: 'Self help', value: 'Self help'},
-        {name: 'Suspense and thriller', value: 'Suspense and thriller'},
+        { name: 'Action and adventure', value: 'Action and adventure' },
+        { name: 'Biography', value: 'Biography' },
+        { name: 'College', value: 'College' },
+        { name: 'Comic', value: 'Comic' },
+        { name: 'Competitive exams', value: 'Competitive exams' },
+        { name: 'Cooking', value: 'Cooking' },
+        { name: 'Fiction', value: 'Fiction' },
+        { name: 'Non-Fiction', value: 'Non-Fiction' },
+        { name: 'History', value: 'History' },
+        { name: 'Horror', value: 'Horror' },
+        { name: 'Novel & literature', value: 'Novel & literature' },
+        { name: 'Others', value: 'Others' },
+        { name: 'Pre school', value: 'Pre school' },
+        { name: 'Regional language', value: 'Regional language' },
+        { name: 'Religous', value: 'Religous' },
+        { name: 'Romance', value: 'Romance' },
+        { name: 'Sci-Fi', value: 'Sci-Fi' },
+        { name: 'Self help', value: 'Self help' },
+        { name: 'Suspense and thriller', value: 'Suspense and thriller' },
       ],
     };
   }
@@ -79,9 +80,9 @@ export default class ShowPostsScreen extends React.Component {
         loading: false,
       });
     }
-    var res2 = await axios.get(link + '/api/categories');
+    const catValue = await AsyncStorage.getItem('bbcats');
     this.setState({
-      categories: res2.data,
+      categories: JSON.parse(catValue),
       categoriesLoading: false,
     });
   };
@@ -259,7 +260,7 @@ export default class ShowPostsScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={{width: '100%'}}>
+      <View style={{ width: '100%' }}>
         <View
           style={{
             width: '100%',
@@ -280,10 +281,12 @@ export default class ShowPostsScreen extends React.Component {
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              backgroundColor: '#1B1F22',
+              backgroundColor: colors.primary2,
               paddingHorizontal: 10,
               paddingVertical: 5,
               borderRadius: 5,
+              // borderWidth: 1,
+              // borderColor: colors.darkText
             }}>
             <Text
               style={{
@@ -297,10 +300,10 @@ export default class ShowPostsScreen extends React.Component {
           </TouchableOpacity>
         </View>
         {!this.state.categoriesLoading ? (
-          <View style={{width: '100%', marginBottom: 10}}>
+          <View style={{ width: '100%', marginBottom: 10 }}>
             <ScrollView
               horizontal={true}
-              style={{width: '100%', paddingLeft: 5}}
+              style={{ width: '100%', paddingLeft: 5 }}
               showsHorizontalScrollIndicator={false}>
               {this.state.activeCat === 'All' ? (
                 <TouchableOpacity
@@ -309,12 +312,12 @@ export default class ShowPostsScreen extends React.Component {
                   <Text style={styles.accategoryText}>All</Text>
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  onPress={() => this.handleCategory('All')}
-                  style={styles.category}>
-                  <Text style={styles.categoryText}>All</Text>
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity
+                    onPress={() => this.handleCategory('All')}
+                    style={styles.category}>
+                    <Text style={styles.categoryText}>All</Text>
+                  </TouchableOpacity>
+                )}
               {this.state.categories.map((item) => {
                 return (
                   <View key={item._id}>
@@ -325,12 +328,12 @@ export default class ShowPostsScreen extends React.Component {
                         <Text style={styles.accategoryText}>{item.name}</Text>
                       </TouchableOpacity>
                     ) : (
-                      <TouchableOpacity
-                        onPress={() => this.handleCategory(item.name)}
-                        style={styles.category}>
-                        <Text style={styles.categoryText}>{item.name}</Text>
-                      </TouchableOpacity>
-                    )}
+                        <TouchableOpacity
+                          onPress={() => this.handleCategory(item.name)}
+                          style={styles.category}>
+                          <Text style={styles.categoryText}>{item.name}</Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 );
               })}
@@ -340,7 +343,7 @@ export default class ShowPostsScreen extends React.Component {
         {this.state.activeCat === 'Books' ? (
           <ScrollView
             horizontal={true}
-            style={{width: '100%', paddingLeft: 5}}
+            style={{ width: '100%', paddingLeft: 5 }}
             showsHorizontalScrollIndicator={false}>
             {this.state.activeSub === 'All' ? (
               <TouchableOpacity
@@ -349,12 +352,12 @@ export default class ShowPostsScreen extends React.Component {
                 <Text style={styles.acsubcategoryText}>All</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity
-                onPress={() => this.handleSubCategory('All')}
-                style={styles.subcategory}>
-                <Text style={styles.subcategoryText}>All</Text>
-              </TouchableOpacity>
-            )}
+                <TouchableOpacity
+                  onPress={() => this.handleSubCategory('All')}
+                  style={styles.subcategory}>
+                  <Text style={styles.subcategoryText}>All</Text>
+                </TouchableOpacity>
+              )}
             {this.state.bcategories.map((item) => {
               return (
                 <View key={item._id}>
@@ -365,12 +368,12 @@ export default class ShowPostsScreen extends React.Component {
                       <Text style={styles.acsubcategoryText}>{item.name}</Text>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      onPress={() => this.handleSubCategory(item.name)}
-                      style={styles.subcategory}>
-                      <Text style={styles.subcategoryText}>{item.name}</Text>
-                    </TouchableOpacity>
-                  )}
+                      <TouchableOpacity
+                        onPress={() => this.handleSubCategory(item.name)}
+                        style={styles.subcategory}>
+                        <Text style={styles.subcategoryText}>{item.name}</Text>
+                      </TouchableOpacity>
+                    )}
                 </View>
               );
             })}
@@ -400,10 +403,10 @@ export default class ShowPostsScreen extends React.Component {
         <Text
           style={{
             fontFamily: 'Muli-Bold',
-            color: colors.grey,
+            color: colors.white,
             fontSize: 20,
           }}>
-          Nothing Found
+          No Products Found
         </Text>
       </View>
     );
@@ -411,10 +414,10 @@ export default class ShowPostsScreen extends React.Component {
 
   renderFooter = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {this.state.loadingMore ? (
-          <View style={{marginBottom: 20}}>
-            <View style={{width: 60, height: 60}}>
+          <View style={{ marginBottom: 20 }}>
+            <View style={{ width: 60, height: 60 }}>
               <LottieView
                 source={require('../assets/loading.json')}
                 autoPlay={true}
@@ -430,10 +433,10 @@ export default class ShowPostsScreen extends React.Component {
   render() {
     _renderMyKeyExtractor = (item, index) => item.id;
     return (
-      <View style={{width: '100%', flex: 1, paddingVertical: 10}}>
+      <View style={{ width: '100%', flex: 1, paddingVertical: 10 }}>
         {!this.state.loading ? (
           <FlatList
-            style={{width: '100%'}}
+            style={{ width: '100%' }}
             data={this.state.data}
             ListEmptyComponent={this.renderListEmpty}
             ListFooterComponent={this.renderFooter}
@@ -442,7 +445,7 @@ export default class ShowPostsScreen extends React.Component {
             keyExtractor={_renderMyKeyExtractor}
             initialNumToRender={2}
             onEndReachedThreshold={30}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <>
                 {this.state.activeSub === 'All' ? (
                   <Card
@@ -455,50 +458,50 @@ export default class ShowPostsScreen extends React.Component {
                     navigation={this.props.navigation}
                   />
                 ) : (
-                  <>
-                    {item.subcategory === this.state.activeSub ? (
-                      <Card
-                        key={item.id}
-                        item={item}
-                        handleCardImageClick={(e, f) =>
-                          this.props.handleCardImageClick(e, f)
-                        }
-                        location={this.state.location}
-                        navigation={this.props.navigation}
-                      />
-                    ) : null}
-                  </>
-                )}
+                    <>
+                      {item.subcategory === this.state.activeSub ? (
+                        <Card
+                          key={item.id}
+                          item={item}
+                          handleCardImageClick={(e, f) =>
+                            this.props.handleCardImageClick(e, f)
+                          }
+                          location={this.state.location}
+                          navigation={this.props.navigation}
+                        />
+                      ) : null}
+                    </>
+                  )}
               </>
             )}
           />
         ) : (
-          <View
-            style={{
-              marginTop: 30,
-              alignItems: 'center',
-              width: '100%',
-              flex: 1,
-            }}>
             <View
               style={{
-                marginTop: 20,
+                marginTop: 30,
                 alignItems: 'center',
-                flex: 1,
                 width: '100%',
-                justifyContent: 'center',
-                marginBottom: 60,
+                flex: 1,
               }}>
-              <View style={{width: 120, height: 120}}>
-                <LottieView
-                  source={require('../assets/loading.json')}
-                  autoPlay={true}
-                  loop={true}
-                />
+              <View
+                style={{
+                  marginTop: 20,
+                  alignItems: 'center',
+                  flex: 1,
+                  width: '100%',
+                  justifyContent: 'center',
+                  marginBottom: 60,
+                }}>
+                <View style={{ width: 120, height: 120 }}>
+                  <LottieView
+                    source={require('../assets/loading.json')}
+                    autoPlay={true}
+                    loop={true}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          )}
       </View>
     );
   }
@@ -515,7 +518,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 7,
     paddingHorizontal: 15,
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
+    elevation: 5,
+    marginBottom: 2,
+  },
+  accategory: {
+    marginHorizontal: 5,
+    borderRadius: 10,
+    paddingVertical: 7,
+    paddingHorizontal: 15,
+    backgroundColor: colors.primary2,
     elevation: 5,
     marginBottom: 2,
   },
@@ -523,15 +535,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.grey,
     fontFamily: 'Muli-Bold',
-  },
-  accategory: {
-    marginHorizontal: 5,
-    borderRadius: 10,
-    paddingVertical: 7,
-    paddingHorizontal: 15,
-    backgroundColor: '#1B1F22',
-    elevation: 5,
-    marginBottom: 2,
   },
   accategoryText: {
     fontSize: 14,

@@ -26,15 +26,16 @@ import Geolocation from 'react-native-geolocation-service';
 import Geocoder from 'react-native-geocoding';
 import axios from 'axios';
 import link from '../fetchPath';
+import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 export default class AddRequest extends React.Component {
   constructor() {
     super();
     this.state = {
       category: '',
       type: 0,
-      desc: 'I am looking for ',
+      desc: '',
       city: '',
       loading: false,
       modalVisible: false,
@@ -50,9 +51,9 @@ export default class AddRequest extends React.Component {
       code: '',
       expiry: '',
       types: [
-        {label: 'Select a type', value: 0},
-        {label: 'Borrow', value: 2},
-        {label: 'Donate', value: 3},
+        { label: 'Select a type', value: 0 },
+        { label: 'Borrow', value: 2 },
+        { label: 'Donate', value: 3 },
       ],
       quantity: 1,
       quantities: [
@@ -100,25 +101,25 @@ export default class AddRequest extends React.Component {
       ],
       subcategory: 'Action and adventure',
       bcategories: [
-        {label: 'Action and adventure', value: 'Action and adventure'},
-        {label: 'Biography', value: 'Biography'},
-        {label: 'College', value: 'College'},
-        {label: 'Comic', value: 'Comic'},
-        {label: 'Competitive exams', value: 'Competitive exams'},
-        {label: 'Cooking', value: 'Cooking'},
-        {label: 'Fiction', value: 'Fiction'},
-        {label: 'Non-Fiction', value: 'Non-Fiction'},
-        {label: 'History', value: 'History'},
-        {label: 'Horror', value: 'Horror'},
-        {label: 'Novel & literature', value: 'Novel & literature'},
-        {label: 'Others', value: 'Others'},
-        {label: 'Pre school', value: 'Pre school'},
-        {label: 'Regional language', value: 'Regional language'},
-        {label: 'Religous', value: 'Religous'},
-        {label: 'Romance', value: 'Romance'},
-        {label: 'Sci-Fi', value: 'Sci-Fi'},
-        {label: 'Self help', value: 'Self help'},
-        {label: 'Suspense and thriller', value: 'Suspense and thriller'},
+        { label: 'Action and adventure', value: 'Action and adventure' },
+        { label: 'Biography', value: 'Biography' },
+        { label: 'College', value: 'College' },
+        { label: 'Comic', value: 'Comic' },
+        { label: 'Competitive exams', value: 'Competitive exams' },
+        { label: 'Cooking', value: 'Cooking' },
+        { label: 'Fiction', value: 'Fiction' },
+        { label: 'Non-Fiction', value: 'Non-Fiction' },
+        { label: 'History', value: 'History' },
+        { label: 'Horror', value: 'Horror' },
+        { label: 'Novel & literature', value: 'Novel & literature' },
+        { label: 'Others', value: 'Others' },
+        { label: 'Pre school', value: 'Pre school' },
+        { label: 'Regional language', value: 'Regional language' },
+        { label: 'Religous', value: 'Religous' },
+        { label: 'Romance', value: 'Romance' },
+        { label: 'Sci-Fi', value: 'Sci-Fi' },
+        { label: 'Self help', value: 'Self help' },
+        { label: 'Suspense and thriller', value: 'Suspense and thriller' },
       ],
     };
   }
@@ -265,21 +266,25 @@ export default class AddRequest extends React.Component {
       Snackbar.show({
         text: 'Please select a type',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
-    } else if (this.state.desc.replace(/ /g, '').length < 30) {
+    } else if (this.state.desc.replace(/ /g, '').length < 20) {
       Snackbar.show({
-        text: 'Please add proper request',
+        text: 'Please add proper description of what do you want to request',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     } else if (this.state.category === '') {
       Snackbar.show({
         text: 'Please select a product category',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     } else if (this.state.city === '' && this.state.neighbourhood === '') {
       Snackbar.show({
         text: 'Please add a location',
         duration: Snackbar.LENGTH_SHORT,
+        backgroundColor: colors.baseline,
       });
     } else {
       this.setState({
@@ -385,7 +390,7 @@ export default class AddRequest extends React.Component {
   };
 
   handleDesc = (desc) => {
-    this.setState({desc});
+    this.setState({ desc });
   };
 
   render() {
@@ -403,12 +408,12 @@ export default class AddRequest extends React.Component {
               progress={0.25}
               width={50}
               height={5}
-              color="#d65a31"
+              color={colors.baseline}
               indeterminate={true}
             />
             <Text
               style={{
-                color: '#e5e5e5',
+                color: colors.white,
                 fontSize: 20,
                 marginTop: 30,
                 textAlign: 'center',
@@ -417,211 +422,212 @@ export default class AddRequest extends React.Component {
             </Text>
           </View>
         ) : (
-          <View style={{width: '100%', flex: 1}}>
-            {this.state.success ? (
-              <View
-                style={{
-                  width: '100%',
-                  flex: 1,
-                  backgroundColor: '#15202B',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <View style={{width: 200, height: 200}}>
-                  <LottieView
-                    source={require('../assets/433-checked-done.json')}
-                    autoPlay={true}
-                    loop={false}
-                    style={{transform: [{scale: 1.5}]}}
-                  />
-                </View>
-                <Text
+            <View style={{ width: '100%', flex: 1 }}>
+              {this.state.success ? (
+                <View
                   style={{
-                    fontSize: 24,
-                    color: '#e5e5e5',
-                    textAlign: 'center',
-                    marginTop: 20,
-                    width: '80%',
+                    width: '100%',
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                  Product Requested Succesfully
-                </Text>
-              </View>
-            ) : (
-              <View
-                style={{
-                  flex: 1,
-                  width: '100%',
-                  alignItems: 'center',
-                }}>
-                <View style={{width: '100%', flex: 1}}>
-                  <View style={styles.header}>
-                    <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                      <TouchableOpacity
-                        style={styles.action}
-                        onPress={() => this.props.navigation.pop()}>
-                        <Ionicons
-                          name="ios-close"
-                          size={30}
-                          style={{color: '#d65a31'}}
-                        />
-                      </TouchableOpacity>
-                      <Text style={styles.headerText}>Add Request</Text>
-                    </View>
-                    {this.state.loading ? (
-                      <ActivityIndicator size="large" color="#d65a31" />
-                    ) : (
-                      <TouchableOpacity onPress={this.handleSubmit}>
-                        <Ionicons
-                          name="ios-checkmark"
-                          size={35}
-                          color="#d65a31"
-                        />
-                      </TouchableOpacity>
-                    )}
+                  <View style={{ width: 200, height: 200 }}>
+                    <LottieView
+                      source={require('../assets/433-checked-done.json')}
+                      autoPlay={true}
+                      loop={false}
+                      style={{ transform: [{ scale: 1.5 }] }}
+                    />
                   </View>
-
-                  <ScrollView
-                    keyboardShouldPersistTaps="handled"
-                    style={{width: '100%', paddingTop: 10}}>
-                    <View style={{width: '100%', alignItems: 'center'}}>
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>Type</Text>
-                        <View style={{width: '100%'}}>
-                          <SelectInput
-                            value={this.state.type}
-                            options={this.state.types}
-                            onCancelEditing={() => console.log('onCancel')}
-                            onSubmitEditing={(e) => {
-                              this.setState({
-                                type: e,
-                              });
-                            }}
-                            style={styles.picker}
-                            labelStyle={{fontSize: 16, color: '#464646'}}
-                          />
-                        </View>
-                      </View>
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>Category</Text>
-                        <View style={{width: '100%'}}>
-                          <SelectInput
-                            value={this.state.category}
-                            options={this.state.categories}
-                            onCancelEditing={() => console.log('onCancel')}
-                            onSubmitEditing={(e) => {
-                              this.setState({
-                                category: e,
-                              });
-                            }}
-                            style={styles.picker}
-                            labelStyle={{fontSize: 16, color: '#464646'}}
-                          />
-                        </View>
-                      </View>
-                      {this.state.category === 'Books' ? (
-                        <View style={styles.inputGroup}>
-                          <Text style={styles.inputGroupText}>
-                            Sub-Category
-                          </Text>
-                          <View style={{width: '100%'}}>
-                            <SelectInput
-                              value={this.state.subcategory}
-                              options={this.state.bcategories}
-                              onCancelEditing={() => console.log('onCancel')}
-                              onSubmitEditing={(e) => {
-                                this.setState({
-                                  subcategory: e,
-                                });
-                              }}
-                              style={styles.picker}
-                              labelStyle={{fontSize: 16, color: '#464646'}}
+                  <Text
+                    style={{
+                      fontSize: 24,
+                      color: colors.white,
+                      textAlign: 'center',
+                      marginTop: 20,
+                      width: '80%',
+                    }}>
+                    Product Requested Succesfully
+                </Text>
+                </View>
+              ) : (
+                  <View
+                    style={{
+                      flex: 1,
+                      width: '100%',
+                      alignItems: 'center',
+                    }}>
+                    <View style={{ width: '100%', flex: 1 }}>
+                      <View style={styles.header}>
+                        <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                          <TouchableOpacity
+                            style={styles.action}
+                            onPress={() => this.props.navigation.pop()}>
+                            <Ionicons
+                              name="ios-close"
+                              size={30}
+                              style={{ color: colors.baseline }}
                             />
-                          </View>
+                          </TouchableOpacity>
+                          <Text style={styles.headerText}>Add Request</Text>
                         </View>
-                      ) : null}
-                      <View style={styles.inputGroup}>
-                        <Text style={styles.inputGroupText}>
-                          Describe what are you looking for..?
-                        </Text>
-                        <TextInput
-                          style={styles.inputArea}
-                          autoCapitalize="none"
-                          multiline={true}
-                          maxLength={300}
-                          onChangeText={(desc) => this.handleDesc(desc)}
-                          value={this.state.desc}></TextInput>
-                      </View>
-
-                      {this.state.loadingLocation ? (
-                        <View
-                          style={{
-                            width: '90%',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                          }}>
-                          <View style={{width: '10%'}}>
-                            <ActivityIndicator size="large" color="#d65a31" />
-                          </View>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: '#ACADAA',
-                              marginLeft: 10,
-                            }}>
-                            Finding Location
-                          </Text>
-                        </View>
-                      ) : (
-                        <>
-                          {this.state.city.length > 0 &&
-                          this.state.neighbourhood.length > 0 ? (
-                            <View style={{width: '90%'}}>
-                              <Text style={styles.inputGroupText}>
-                                Location
-                              </Text>
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  color: '#d65a31',
-                                  fontFamily: 'Muli-Bold',
-                                }}>
-                                {this.state.neighbourhood} ,{this.state.city} ,
-                                {this.state.country}
-                              </Text>
-                            </View>
-                          ) : (
-                            <TouchableOpacity
-                              onPress={this.handleLocation}
-                              style={{
-                                width: '90%',
-                                alignItems: 'center',
-                                flexDirection: 'row',
-                                marginTop: 10,
-                              }}>
-                              <AntDesign
-                                name="pluscircle"
-                                style={{fontSize: 30, color: '#d65a31'}}
+                        {this.state.loading ? (
+                          <ActivityIndicator size="large" color={colors.baseline} />
+                        ) : (
+                            <TouchableOpacity onPress={this.handleSubmit}>
+                              <Ionicons
+                                name="ios-checkmark"
+                                size={35}
+                                color={colors.baseline}
                               />
-                              <Text
-                                style={{
-                                  fontSize: 16,
-                                  color: '#ACADAA',
-                                  marginLeft: 10,
-                                  fontFamily: 'Muli-Bold',
-                                }}>
-                                Add Location
-                              </Text>
                             </TouchableOpacity>
                           )}
-                        </>
-                      )}
+                      </View>
+
+                      <ScrollView
+                        keyboardShouldPersistTaps="handled"
+                        style={{ width: '100%', paddingTop: 10 }}>
+                        <View style={{ width: '100%', alignItems: 'center' }}>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Type</Text>
+                            <View style={{ width: '100%' }}>
+                              <SelectInput
+                                value={this.state.type}
+                                options={this.state.types}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    type: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{ fontSize: 16, color: colors.darkText }}
+                              />
+                            </View>
+                          </View>
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>Category</Text>
+                            <View style={{ width: '100%' }}>
+                              <SelectInput
+                                value={this.state.category}
+                                options={this.state.categories}
+                                onCancelEditing={() => console.log('onCancel')}
+                                onSubmitEditing={(e) => {
+                                  this.setState({
+                                    category: e,
+                                  });
+                                }}
+                                style={styles.picker}
+                                labelStyle={{ fontSize: 16, color: colors.darkText }}
+                              />
+                            </View>
+                          </View>
+                          {this.state.category === 'Books' ? (
+                            <View style={styles.inputGroup}>
+                              <Text style={styles.inputGroupText}>
+                                Sub-Category
+                          </Text>
+                              <View style={{ width: '100%' }}>
+                                <SelectInput
+                                  value={this.state.subcategory}
+                                  options={this.state.bcategories}
+                                  onCancelEditing={() => console.log('onCancel')}
+                                  onSubmitEditing={(e) => {
+                                    this.setState({
+                                      subcategory: e,
+                                    });
+                                  }}
+                                  style={styles.picker}
+                                  labelStyle={{ fontSize: 16, color: colors.darkText }}
+                                />
+                              </View>
+                            </View>
+                          ) : null}
+                          <View style={styles.inputGroup}>
+                            <Text style={styles.inputGroupText}>
+                              Describe what are you looking for ?
+                        </Text>
+                            <Text style={this.state.desc.replace(/ /g, '').length >= 20 ? styles.right : styles.wrong}>{this.state.desc.replace(/ /g, '').length}/{this.state.desc.replace(/ /g, '').length >= 20 ? "400" : "20"}</Text>
+                            <TextInput
+                              style={styles.inputArea}
+                              autoCapitalize="none"
+                              multiline={true}
+                              maxLength={400}
+                              onChangeText={(desc) => this.handleDesc(desc)}
+                              value={this.state.desc}
+                              placeholder="I am looking for..."
+                            ></TextInput>
+                          </View>
+                          {this.state.loadingLocation ? (
+                            <View
+                              style={{
+                                width: '90%',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <View style={{ width: '10%' }}>
+                                <ActivityIndicator size="large" color={colors.baseline} />
+                              </View>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                  color: colors.white,
+                                  marginLeft: 10,
+                                }}>
+                                Finding Location
+                          </Text>
+                            </View>
+                          ) : (
+                              <>
+                                {this.state.city.length > 0 &&
+                                  this.state.neighbourhood.length > 0 ? (
+                                    <View style={{ width: '90%' }}>
+                                      <Text style={styles.inputGroupText}>
+                                        Location
+                              </Text>
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          color: colors.baseline,
+                                          fontFamily: 'Muli-Bold',
+                                        }}>
+                                        {this.state.neighbourhood} ,{this.state.city} ,
+                                {this.state.country}
+                                      </Text>
+                                    </View>
+                                  ) : (
+                                    <TouchableOpacity
+                                      onPress={this.handleLocation}
+                                      style={{
+                                        width: '90%',
+                                        alignItems: 'center',
+                                        flexDirection: 'row',
+                                        marginTop: 10,
+                                      }}>
+                                      <AntDesign
+                                        name="pluscircle"
+                                        style={{ fontSize: 30, color: colors.baseline }}
+                                      />
+                                      <Text
+                                        style={{
+                                          fontSize: 16,
+                                          color: colors.white,
+                                          marginLeft: 10,
+                                          fontFamily: 'Muli-Bold',
+                                        }}>
+                                        Add Location
+                              </Text>
+                                    </TouchableOpacity>
+                                  )}
+                              </>
+                            )}
+                        </View>
+                      </ScrollView>
                     </View>
-                  </ScrollView>
-                </View>
-              </View>
-            )}
-          </View>
-        )}
+                  </View>
+                )}
+            </View>
+          )}
       </SafeAreaView>
     );
   }
@@ -632,7 +638,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#31363C',
+    backgroundColor: colors.primary
   },
   header: {
     width: '100%',
@@ -640,14 +646,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: 60,
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     elevation: 3,
     justifyContent: 'space-between',
   },
   headerText: {
     fontSize: 18,
     marginLeft: 10,
-    color: '#e5e5e5',
+    color: colors.baseline,
     fontFamily: 'Muli-Bold',
   },
   selector: {
@@ -657,35 +663,54 @@ const styles = StyleSheet.create({
   },
   selectorText: {
     fontSize: 14,
-    color: '#e5e5e5',
+    color: colors.white,
     fontFamily: 'Muli-Bold',
   },
   inputGroup: {
     width: '90%',
     marginBottom: 15,
+    position: 'relative'
   },
   inputGroupText: {
     fontSize: 14,
-    color: '#ACADAA',
+    color: colors.grey,
     fontFamily: 'Muli-Bold',
   },
   input: {
     marginTop: 5,
     height: 50,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
-    color: '#464646',
+    color: colors.darkText,
     paddingHorizontal: 10,
     justifyContent: 'center',
     borderRadius: 3,
   },
+  right: {
+    fontSize: 12,
+    fontFamily: 'Muli-Regular',
+    color: 'green',
+    position: 'absolute',
+    right: 5,
+    top: 25,
+    elevation: 10
+  },
+  wrong: {
+    fontSize: 12,
+    fontFamily: 'Muli-Regular',
+    color: 'red',
+    position: 'absolute',
+    right: 5,
+    top: 25,
+    elevation: 10
+  },
   inputArea: {
     marginTop: 5,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: colors.white,
     fontSize: 16,
     fontFamily: 'Muli-Regular',
-    color: '#464646',
+    color: colors.darkText,
     padding: 10,
     height: 200,
     textAlignVertical: 'top',
@@ -706,14 +731,14 @@ const styles = StyleSheet.create({
     marginTop: 5,
     height: 50,
     paddingHorizontal: 10,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: colors.white,
     justifyContent: 'center',
     borderRadius: 3,
   },
   imagePicker: {
     width: width * 0.27,
     height: width * 0.27,
-    backgroundColor: '#d65a31',
+    backgroundColor: colors.baseline,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,
@@ -724,7 +749,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -10,
     bottom: -10,
-    backgroundColor: '#d65a31',
+    backgroundColor: colors.baseline,
     padding: 12,
     borderRadius: 20,
     elevation: 5,
@@ -732,7 +757,7 @@ const styles = StyleSheet.create({
   },
   upload: {
     fontSize: 60,
-    color: '#fff',
+    color: colors.white,
   },
   button: {
     paddingHorizontal: 10,

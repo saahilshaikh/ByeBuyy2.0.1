@@ -16,7 +16,7 @@ import link from '../fetchPath';
 import AsyncStorage from '@react-native-community/async-storage';
 import Modal from 'react-native-modal';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ChatCard extends React.Component {
   inter = null;
@@ -99,6 +99,17 @@ export default class ChatCard extends React.Component {
     };
   }
 
+  handleMount = () => {
+    this.handleInit();
+    this.inter = setInterval(() => {
+      this.handleInit();
+    }, 2000);
+  }
+
+  handleUnmount = () => {
+    clearInterval(this.inter);
+  }
+
   handleInit = async () => {
     var id = null;
     if (auth().currentUser) {
@@ -129,21 +140,23 @@ export default class ChatCard extends React.Component {
             Math.floor(
               (new Date(
                 res.data[
-                  'clear' +
-                    (res.data.participants.indexOf(auth().currentUser.email) +
-                      1)
+                'clear' +
+                (res.data.participants.indexOf(auth().currentUser.email) +
+                  1)
                 ],
               ).getTime() -
                 new Date(
                   res.data.messages[res.data.messages.length - 1].date,
                 ).getTime()) /
-                1000,
+              1000,
             ) > 0
           ) {
             show = false;
           }
           if (show) {
-            this.storeData(this.props.item.id + 'chat', res.data);
+            var chat = res.data;
+            chat['messages'] = res.data.messages.reverse();
+            this.storeData(this.props.item.id + 'chat', chat);
             this.storeData(this.props.item.id + 'user', res2.data);
             this.setState({
               chat: res.data,
@@ -214,15 +227,17 @@ export default class ChatCard extends React.Component {
 
   handleOpen = () => {
     this.props.handleRefreshCount();
+    this.handleUnmount();
     this.props.navigation.navigate('Chat', {
       id: this.state.chat._id,
       location: this.props.location,
+      handleMount: this.handleMount
     });
   };
 
   render() {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {this.state.loading ? (
           <View
             style={{
@@ -230,13 +245,13 @@ export default class ChatCard extends React.Component {
               paddingVertical: 10,
               paddingHorizontal: 15,
               alignItems: 'center',
-              backgroundColor: colors.primary,
+              backgroundColor: colors.primary2,
               justifyContent: 'space-between',
               borderRadius: 5,
               marginVertical: 5,
             }}>
             <SkeletonContent
-              containerStyle={{width: '100%'}}
+              containerStyle={{ width: '100%' }}
               boneColor={colors.primary}
               highlightColor={colors.darkText}
               isLoading={this.state.loadingProduct || this.state.loadingOwner}
@@ -260,89 +275,79 @@ export default class ChatCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <>
-            {this.state.NF ? null : (
-              <TouchableOpacity
-                onPress={this.handleOpen}
-                onLongPress={() => {
-                  this.setState({menu: true});
-                }}
-                style={styles.chat}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <View style={styles.chatProfileImageBox}>
-                    {this.state.user.photo ? (
-                      <Image
-                        source={{uri: this.state.user.photo}}
-                        style={styles.chatProfileImage}
-                      />
-                    ) : (
-                      <Text style={styles.imageText}>
-                        {this.state.user.name.charAt(0).toUpperCase()}
-                      </Text>
-                    )}
-                  </View>
-                  <View>
-                    <Text style={styles.chatName}>{this.state.user.name}</Text>
-                    {this.state.chat.messages.length > 0 ? (
-                      <>
-                        {Math.floor(
-                          (new Date(
-                            this.state.chat[
-                              'clear' +
-                                (this.state.chat.participants.indexOf(
-                                  auth().currentUser.email,
-                                ) +
-                                  1)
-                            ],
-                          ).getTime() -
-                            new Date(
-                              this.state.chat.messages[
-                                this.state.chat.messages.length - 1
-                              ].date,
-                            ).getTime()) /
-                            1000,
-                        ) < 0 &&
-                        !this.state.chat.messages[
-                          this.state.chat.messages.length - 1
-                        ].hide.includes(auth().currentUser.email) ? (
-                          <Text style={styles.chatMessage}>
-                            {this.state.chat.messages[
-                              this.state.chat.messages.length - 1
-                            ].message.length > 10
-                              ? this.state.chat.messages[
-                                  this.state.chat.messages.length - 1
-                                ].message.substring(0, 30) + '...'
-                              : this.state.chat.messages[
-                                  this.state.chat.messages.length - 1
-                                ].message}
+            <>
+              {this.state.NF ? null : (
+                <TouchableOpacity
+                  onPress={this.handleOpen}
+                  onLongPress={() => {
+                    this.setState({ menu: true });
+                  }}
+                  style={styles.chat}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={styles.chatProfileImageBox}>
+                      {this.state.user.photo ? (
+                        <Image
+                          source={{ uri: this.state.user.photo }}
+                          style={styles.chatProfileImage}
+                        />
+                      ) : (
+                          <Text style={styles.imageText}>
+                            {this.state.user.name.charAt(0).toUpperCase()}
                           </Text>
-                        ) : (
-                          <Text style={styles.chatMessage}></Text>
                         )}
-                      </>
-                    ) : null}
+                    </View>
+                    <View>
+                      <Text style={styles.chatName}>{this.state.user.name}</Text>
+                      {this.state.chat.messages.length > 0 ? (
+                        <>
+                          {Math.floor(
+                            (new Date(
+                              this.state.chat[
+                              'clear' +
+                              (this.state.chat.participants.indexOf(
+                                auth().currentUser.email,
+                              ) +
+                                1)
+                              ],
+                            ).getTime() -
+                              new Date(
+                                this.state.chat.messages[0].date,
+                              ).getTime()) /
+                            1000,
+                          ) < 0 &&
+                            !this.state.chat.messages[0].hide.includes(auth().currentUser.email) ? (
+                              <Text style={styles.chatMessage}>
+                                {this.state.chat.messages[0].message.length > 10
+                                  ? this.state.chat.messages[0].message.substring(0, 30) + '...'
+                                  : this.state.chat.messages[0].message}
+                              </Text>
+                            ) : (
+                              <Text style={styles.chatMessage}></Text>
+                            )}
+                        </>
+                      ) : null}
+                    </View>
                   </View>
-                </View>
-                {this.state.unread > 0 ? (
-                  <View style={{position: 'relative'}}>
-                    <Ionicons
-                      name="chatbox-ellipses-outline"
-                      size={30}
-                      color={colors.grey}
-                    />
-                    <Text style={styles.unread}>{this.state.unread}</Text>
-                  </View>
-                ) : (
-                  <Ionicons
-                    name="chatbox-ellipses-outline"
-                    size={30}
-                    color={colors.grey}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
-          </>
-        )}
+                  {this.state.unread > 0 ? (
+                    <View style={{ position: 'relative' }}>
+                      <Ionicons
+                        name="chatbox-ellipses-outline"
+                        size={26}
+                        color={colors.grey}
+                      />
+                      <Text style={styles.unread}>{this.state.unread}</Text>
+                    </View>
+                  ) : (
+                      <Ionicons
+                        name="chatbox-ellipses-outline"
+                        size={26}
+                        color={colors.grey}
+                      />
+                    )}
+                </TouchableOpacity>
+              )}
+            </>
+          )}
         <Modal isVisible={this.state.menu}>
           <TouchableOpacity
             onPress={() => {
@@ -359,7 +364,7 @@ export default class ChatCard extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -406,7 +411,7 @@ export default class ChatCard extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -416,7 +421,7 @@ export default class ChatCard extends React.Component {
                   width: '100%',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 20,
+                  paddingVertical: 15,
                   justifyContent: 'center',
                   borderBottomColor: colors.grey,
                   borderBottomWidth: StyleSheet.hairlineWidth,
@@ -441,7 +446,7 @@ export default class ChatCard extends React.Component {
                   width: '100%',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 20,
+                  paddingVertical: 15,
                   justifyContent: 'center',
                 }}>
                 <Text
@@ -471,29 +476,29 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   chatProfileImageBox: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.grey,
     marginRight: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   chatProfileImage: {
-    width: 45,
-    height: 45,
-    borderRadius: 25,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: colors.grey,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.grey,
   },
   imageText: {
     fontFamily: 'Muli-Bold',
-    fontSize: 18,
+    fontSize: 16,
     color: colors.darkText,
   },
   chatName: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Muli-Bold',
     color: colors.white,
   },

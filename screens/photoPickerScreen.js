@@ -15,8 +15,9 @@ import {
 import Ioniocns from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ImagePicker from 'react-native-image-crop-picker';
+import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get('screen');
 
 export default class PhotoPickerScreen extends React.Component {
   constructor(props) {
@@ -29,7 +30,7 @@ export default class PhotoPickerScreen extends React.Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() { }
 
   hasAndroidPermission = async () => {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
@@ -161,7 +162,7 @@ export default class PhotoPickerScreen extends React.Component {
   render() {
     return (
       <>
-        <StatusBar barStyle="light-content" backgroundColor="#15202B" />
+        <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
         <SafeAreaView style={styles.container}>
           <View
             style={{
@@ -173,13 +174,13 @@ export default class PhotoPickerScreen extends React.Component {
             }}>
             <TouchableOpacity
               onPress={() => this.props.navigation.pop()}
-              style={[styles.actionButton, {backgroundColor: '#e5e5e5'}]}>
+              style={[styles.actionButton, { backgroundColor: '#e5e5e5' }]}>
               <Text style={styles.actionText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={this.handleDone}
-              style={[styles.actionButton, {backgroundColor: '#d65a31'}]}>
-              <Text style={[styles.actionText, {color: '#e5e5e5'}]}>Done</Text>
+              style={[styles.actionButton, { backgroundColor: '#d65a31' }]}>
+              <Text style={[styles.actionText, { color: '#e5e5e5' }]}>Done</Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.header}>
@@ -190,14 +191,14 @@ export default class PhotoPickerScreen extends React.Component {
             </Text>
           </Text>
           <ScrollView>
-            <View style={{width: '100%'}}>
+            <View style={{ width: '100%' }}>
               {this.state.rphotos.length > 0 ? (
                 <>
                   <Text style={styles.header}>Recent Photos</Text>
                   <ScrollView
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
-                    style={{width: '100%'}}>
+                    style={{ width: '100%' }}>
                     <View
                       style={{
                         width: '100%',
@@ -214,7 +215,7 @@ export default class PhotoPickerScreen extends React.Component {
                               key={r.key}
                               style={styles.rsphotoView}>
                               <Image
-                                source={{uri: r.uri}}
+                                source={{ uri: r.uri }}
                                 style={styles.rphoto}
                               />
                               <View style={styles.shadeView}></View>
@@ -232,7 +233,7 @@ export default class PhotoPickerScreen extends React.Component {
                               onPress={() => this.handleSelect(r.key)}
                               style={styles.rphotoView}>
                               <Image
-                                source={{uri: r.uri}}
+                                source={{ uri: r.uri }}
                                 style={styles.rphoto}
                               />
                             </TouchableOpacity>
@@ -243,7 +244,7 @@ export default class PhotoPickerScreen extends React.Component {
                   </ScrollView>
                 </>
               ) : null}
-              <View style={{width: '100%', paddingHorizontal: 20}}>
+              <View style={{ width: '100%', paddingHorizontal: 20 }}>
                 <TouchableOpacity
                   onPress={this.handleCamera}
                   style={styles.pickerAction}>
@@ -265,7 +266,7 @@ export default class PhotoPickerScreen extends React.Component {
                   <Text style={styles.pickerText}>Select from gallery</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView style={{width: '100%', paddingVertical: 10}}>
+              <ScrollView style={{ width: '100%', paddingVertical: 10 }}>
                 <View
                   style={{
                     width: '100%',
@@ -279,7 +280,7 @@ export default class PhotoPickerScreen extends React.Component {
                         key={image.key}
                         onPress={() => this.handleImage(image.key)}
                         style={styles.photoView}>
-                        <Image source={{uri: image.uri}} style={styles.photo} />
+                        <Image source={{ uri: image.uri }} style={styles.photo} />
                         <View style={styles.shadeView}></View>
                         <Ioniocns
                           name="checkmark-circle"
@@ -301,20 +302,20 @@ export default class PhotoPickerScreen extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#192734',
+    backgroundColor: colors.primary,
     width: '100%',
     flex: 1,
     paddingTop: 20,
   },
   selectLength: {
     fontSize: 16,
-    color: '#d65a31',
+    color: colors.baseline,
     marginTop: 10,
     fontWeight: 'bold',
   },
   header: {
     fontSize: 20,
-    color: '#e5e5e5',
+    color: colors.white,
     paddingLeft: 20,
     marginTop: 10,
   },
@@ -322,7 +323,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     elevation: 5,
     borderWidth: 2,
-    borderColor: '#d65a31',
+    borderColor: colors.baseline,
     borderRadius: 5,
     position: 'relative',
   },
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     fontSize: 26,
-    color: '#d65a31',
+    color: colors.baseline,
   },
   shadeView: {
     position: 'absolute',
@@ -339,13 +340,13 @@ const styles = StyleSheet.create({
     top: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(214, 90, 49,0.1)',
+    backgroundColor: colors.baselineDull,
   },
   rphotoView: {
     elevation: 5,
     marginHorizontal: 2,
     borderWidth: 2,
-    borderColor: '#192734',
+    borderColor: colors.primary2,
     borderRadius: 5,
   },
   rphoto: {
@@ -369,24 +370,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 15,
     marginVertical: 5,
-    backgroundColor: '#15202B',
+    backgroundColor: colors.white,
     borderRadius: 5,
   },
   pickericon: {
-    backgroundColor: '#d65a31',
+    backgroundColor: colors.baseline,
     padding: 5,
     borderRadius: 30,
     marginHorizontal: 10,
   },
   pickerText: {
     fontSize: 16,
-    color: '#e5e5e5',
+    color: colors.darkText,
   },
   photoView: {
     marginHorizontal: 2,
     elevation: 5,
     borderWidth: 2,
-    borderColor: '#d65a31',
+    borderColor: colors.baseline,
     borderRadius: 5,
     position: 'relative',
     marginBottom: 5,

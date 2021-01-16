@@ -19,7 +19,7 @@ import SkeletonContent from 'react-native-skeleton-content-nonexpo';
 import link from '../fetchPath';
 import auth from '@react-native-firebase/auth';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 export default class ActivityCard extends React.Component {
   constructor() {
     super();
@@ -81,14 +81,14 @@ export default class ActivityCard extends React.Component {
               paddingVertical: 10,
               paddingHorizontal: 15,
               alignItems: 'center',
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary2,
               justifyContent: 'space-between',
               borderRadius: 10,
               marginBottom: 10,
               elevation: 3,
             }}>
             <SkeletonContent
-              containerStyle={{width: '100%'}}
+              containerStyle={{ width: '100%' }}
               boneColor={colors.primary}
               highlightColor={colors.darkText}
               isLoading={true}
@@ -125,103 +125,103 @@ export default class ActivityCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <>
-            {this.state.hide === false ? (
-              <View style={styles.item}>
-                {this.state.data.type === 'Product' ? (
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('viewProduct', {
-                        id: this.state.data.id,
-                        location: this.props.location,
-                      })
-                    }
-                    style={{width: '100%'}}>
-                    {this.state.data.action === 'Like' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+            <>
+              {this.state.hide === false ? (
+                <View style={styles.item}>
+                  {this.state.data.type === 'Product' ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.props.navigation.navigate('viewProduct', {
+                          id: this.state.data.id,
+                          location: this.props.location,
+                        })
+                      }
+                      style={{ width: '100%' }}>
+                      {this.state.data.action === 'Like' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         liked a product
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Comment' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Comment' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         commented a product
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Tag' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Tag' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         tagged a product
+                        </Text>
+                      ) : null}
+                      <MiniCard
+                        location={this.props.location}
+                        id={this.state.data.id}
+                        navigation={this.props.navigation}
+                      />
+                      <Text style={styles.time}>
+                        <Moment element={Text} fromNow>
+                          {this.state.data.date}
+                        </Moment>
                       </Text>
-                    ) : null}
-                    <MiniCard
-                      location={this.props.location}
-                      id={this.state.data.id}
-                      navigation={this.props.navigation}
-                    />
-                    <Text style={styles.time}>
-                      <Moment element={Text} fromNow>
-                        {this.state.data.date}
-                      </Moment>
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-                {this.state.data.type === 'Request' ? (
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.props.navigation.navigate('viewRequest', {
-                        id: this.state.data.id,
-                        location: this.props.location,
-                      })
-                    }
-                    style={{width: '100%'}}>
-                    {this.state.data.action === 'Like' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+                    </TouchableOpacity>
+                  ) : null}
+                  {this.state.data.type === 'Request' ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.props.navigation.navigate('viewRequest', {
+                          id: this.state.data.id,
+                          location: this.props.location,
+                        })
+                      }
+                      style={{ width: '100%' }}>
+                      {this.state.data.action === 'Like' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         liked a request
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Comment' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Comment' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         commented a request
-                      </Text>
-                    ) : null}
-                    {this.state.data.action === 'Tag' ? (
-                      <Text style={styles.title}>
-                        {this.state.user.email === auth().currentUser.email
-                          ? 'You'
-                          : this.state.user.name}{' '}
+                        </Text>
+                      ) : null}
+                      {this.state.data.action === 'Tag' ? (
+                        <Text style={styles.title}>
+                          {this.state.user.email === auth().currentUser.email
+                            ? 'You'
+                            : this.state.user.name}{' '}
                         tagged in a post
+                        </Text>
+                      ) : null}
+                      <MiniCard2
+                        location={this.props.location}
+                        id={this.state.data.id}
+                        navigation={this.props.navigation}
+                      />
+                      <Text style={styles.time}>
+                        <Moment element={Text} fromNow>
+                          {this.state.data.date}
+                        </Moment>
                       </Text>
-                    ) : null}
-                    <MiniCard2
-                      location={this.props.location}
-                      id={this.state.data.id}
-                      navigation={this.props.navigation}
-                    />
-                    <Text style={styles.time}>
-                      <Moment element={Text} fromNow>
-                        {this.state.data.date}
-                      </Moment>
-                    </Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-            ) : null}
-          </>
-        )}
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              ) : null}
+            </>
+          )}
       </>
     );
   }
@@ -232,20 +232,13 @@ const styles = StyleSheet.create({
     width: '95%',
     flexDirection: 'row',
     paddingVertical: 10,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     marginVertical: 5,
     borderRadius: 10,
     elevation: 3,
     paddingHorizontal: 15,
-  },
-  icon: {
-    backgroundColor: colors.darkText,
-    width: 40,
-    height: 40,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
+    // borderBottomWidth: 1,
+    // borderBottomColor: colors.grey
   },
   title: {
     color: colors.white,

@@ -13,16 +13,16 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import auth from '@react-native-firebase/auth';
-import {CommonActions} from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-community/google-signin';
+import { CommonActions } from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-community/google-signin';
 import LottieView from 'lottie-react-native';
-import {LoginManager, AccessToken} from 'react-native-fbsdk';
+import { LoginManager, AccessToken } from 'react-native-fbsdk';
 import Snackbar from 'react-native-snackbar';
 import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 class LoginScreen extends React.Component {
   constructor() {
@@ -42,7 +42,7 @@ class LoginScreen extends React.Component {
         forceConsentPrompt: true,
         offlineAccess: false,
       });
-      const {idToken} = await GoogleSignin.signIn();
+      const { idToken } = await GoogleSignin.signIn();
       const googleCredential = await auth.GoogleAuthProvider.credential(
         idToken,
       );
@@ -62,9 +62,13 @@ class LoginScreen extends React.Component {
         const re = await axios.post(link + '/api/user/signup', data);
         if (re.data.type === 'success') {
           console.log(re.data.success);
+          var data2 = {
+            email: res.additionalUserInfo.profile.email,
+          };
+          var res2 = await axios.post(link + '/api/user/active', data2);
           this.props.navigation.dispatch(
             CommonActions.reset({
-              routes: [{name: 'Main'}],
+              routes: [{ name: 'Main' }],
             }),
           );
         } else {
@@ -138,9 +142,13 @@ class LoginScreen extends React.Component {
         const re = await axios.post(link + '/api/user/signup', data2);
         if (re.data.type === 'success') {
           console.log(re.data.success);
+          var data2 = {
+            email: res.additionalUserInfo.profile.email,
+          };
+          var res2 = await axios.post(link + '/api/user/active', data2);
           this.props.navigation.dispatch(
             CommonActions.reset({
-              routes: [{name: 'Main'}],
+              routes: [{ name: 'Main' }],
             }),
           );
         } else {
@@ -183,15 +191,15 @@ class LoginScreen extends React.Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <ScrollView style={{width: '100%', flex: 1, paddingHorizontal: 40}}>
-          <View style={{width: '100%'}}>
+        <ScrollView style={{ width: '100%', flex: 1, paddingHorizontal: 40 }}>
+          <View style={{ width: '100%' }}>
             <TouchableOpacity
               style={styles.action}
               onPress={() => this.props.navigation.pop()}>
               <Ionicons
                 name="ios-arrow-back"
                 size={30}
-                style={{color: colors.baseline}}
+                style={{ color: colors.baseline }}
               />
             </TouchableOpacity>
           </View>
@@ -210,12 +218,12 @@ class LoginScreen extends React.Component {
               }}>
               bye
               <Text
-                style={{fontFamily: 'Muli-Regular', color: colors.baseline}}>
+                style={{ fontFamily: 'Muli-Regular', color: colors.baseline }}>
                 buyy
               </Text>
             </Text>
           </Text>
-          <View style={{width: '100%', alignItems: 'center'}}>
+          <View style={{ width: '100%', alignItems: 'center' }}>
             <View style={styles.imageBox}>
               <LottieView
                 source={require('../assets/login.json')}
@@ -225,12 +233,12 @@ class LoginScreen extends React.Component {
             </View>
           </View>
           {this.state.loading ? (
-            <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
               <Text
                 style={{
                   fontSize: 28,
                   marginBottom: 20,
-                  color: colors.grey,
+                  color: colors.white,
                   fontFamily: 'Muli-Bold',
                 }}>
                 Logging you in
@@ -238,74 +246,74 @@ class LoginScreen extends React.Component {
               <ActivityIndicator size={'large'} color={colors.baseline} />
             </View>
           ) : (
-            <View
-              style={{
-                width: '100%',
-                flex: 1,
-                justifyContent: 'flex-end',
-                marginBottom: 20,
-              }}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate('SignUp')}>
-                <Text
-                  style={{
-                    color: colors.baseline,
-                    fontSize: 16,
-                    fontFamily: 'Muli-Bold',
-                  }}>
-                  Create an account
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, {backgroundColor: colors.baseline}]}
-                onPress={() => this.props.navigation.navigate('SignIn')}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: '#fff',
-                    fontFamily: 'Muli-Bold',
-                  }}>
-                  Login with e-mail
-                </Text>
-              </TouchableOpacity>
-              <Text
-                style={{
-                  width: '100%',
-                  textAlign: 'center',
-                  fontSize: 18,
-                  marginTop: 10,
-                  marginBottom: 15,
-                  color: colors.grey,
-                  fontFamily: 'Muli-Regular',
-                }}>
-                or continue with
-              </Text>
               <View
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  width: '100%',
+                  flex: 1,
+                  justifyContent: 'flex-end',
+                  marginBottom: 20,
                 }}>
                 <TouchableOpacity
-                  style={styles.social}
-                  onPress={this.handleFacebook}>
-                  <Image
-                    style={{width: 42, height: 42}}
-                    source={require('../assets/images/facebook.png')}
-                  />
+                  style={styles.button}
+                  onPress={() => this.props.navigation.navigate('SignUp')}>
+                  <Text
+                    style={{
+                      color: colors.baseline,
+                      fontSize: 16,
+                      fontFamily: 'Muli-Bold',
+                    }}>
+                    Create an account
+                </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={styles.social}
-                  onPress={this.handleGoogle}>
-                  <Image
-                    style={{width: 40, height: 40}}
-                    source={require('../assets/images/google.png')}
-                  />
+                  style={[styles.button, { backgroundColor: colors.baseline }]}
+                  onPress={() => this.props.navigation.navigate('SignIn')}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      color: colors.white,
+                      fontFamily: 'Muli-Bold',
+                    }}>
+                    Login with e-mail
+                </Text>
                 </TouchableOpacity>
+                <Text
+                  style={{
+                    width: '100%',
+                    textAlign: 'center',
+                    fontSize: 18,
+                    marginTop: 10,
+                    marginBottom: 15,
+                    color: colors.white,
+                    fontFamily: 'Muli-Regular',
+                  }}>
+                  or continue with
+              </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <TouchableOpacity
+                    style={styles.social}
+                    onPress={this.handleFacebook}>
+                    <Image
+                      style={{ width: 42, height: 42 }}
+                      source={require('../assets/images/facebook.png')}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.social}
+                    onPress={this.handleGoogle}>
+                    <Image
+                      style={{ width: 40, height: 40 }}
+                      source={require('../assets/images/google.png')}
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
+            )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -345,7 +353,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     borderRadius: 25,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
+    elevation: 3,
+    marginLeft: 5
   },
 });
 

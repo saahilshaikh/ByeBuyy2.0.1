@@ -1,5 +1,5 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/homeScreen';
 import LoginScreen from '../screens/loginScreen';
 import SignInScreen from '../screens/signInScreen';
@@ -34,7 +34,7 @@ const Stack = createStackNavigator();
 
 const HomeStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={HomeScreen} />
       <Stack.Screen name="Loc" component={LocationSelectorScreen} />
       <Stack.Screen name="viewProduct" component={ViewProductScreen} />

@@ -15,7 +15,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ViewOtherUsersListScreen extends React.Component {
   render() {
@@ -49,7 +49,7 @@ export default class ViewOtherUsersListScreen extends React.Component {
               <Text style={styles.headerText}>Mutual Friends</Text>
             </View>
           </View>
-          <ScrollView style={{width: '100%', flex: 1, paddingVertical: 10}}>
+          <ScrollView style={{ width: '100%', flex: 1, paddingVertical: 10 }}>
             {this.props.route.params.data &&
               this.props.route.params.data.map((item) => {
                 console.log(item);
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.secondary,
   },
   header: {
     width: '100%',

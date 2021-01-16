@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import Moment from 'react-moment';
 import Modal from 'react-native-modal';
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SkeletonContent from 'react-native-skeleton-content-nonexpo';
 import Snackbar from 'react-native-snackbar';
@@ -28,8 +28,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import colors from '../appTheme';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CountDownTimer from 'react-native-countdown-timer-hooks';
+import { Grayscale } from 'react-native-color-matrix-image-filters';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 var inter;
 
@@ -196,16 +197,16 @@ export default class ViewProductScreen extends React.Component {
     var a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.deg2rad(lat1)) *
-        Math.cos(this.deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
   };
 
   handleMenu = () => {
-    this.setState({menu: !this.state.menu});
+    this.setState({ menu: !this.state.menu });
   };
 
   handleRequest = () => {
@@ -214,14 +215,14 @@ export default class ViewProductScreen extends React.Component {
         this.state.product.quantity > 0 &&
         this.state.product.type !== 'give it for free'
       ) {
-        this.setState({request: !this.state.request});
+        this.setState({ request: !this.state.request });
       } else if (
         this.state.product.type === 'give it for free' &&
         this.state.product.category === 'Food'
       ) {
         var d = Math.floor(
           (new Date(this.state.product.to).getTime() - new Date().getTime()) /
-            1000,
+          1000,
         );
         if (d < 0) {
           Snackbar.show({
@@ -229,7 +230,7 @@ export default class ViewProductScreen extends React.Component {
             duration: Snackbar.LENGTH_SHORT,
           });
         } else {
-          this.setState({request: !this.state.request});
+          this.setState({ request: !this.state.request });
         }
       } else {
         Snackbar.show({
@@ -656,11 +657,11 @@ export default class ViewProductScreen extends React.Component {
 
   renderHeader = () => {
     return (
-      <View style={{width: '100%', alignItems: 'center', marginBottom: 10}}>
+      <View style={{ width: '100%', alignItems: 'center', marginBottom: 10 }}>
         {!this.state.loadingProduct && !this.state.loadingOwner ? (
           <>
             {this.state.NF === false ? (
-              <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
                 <View style={styles.item}>
                   <View style={styles.top}>
                     <View style={styles.profile}>
@@ -673,7 +674,7 @@ export default class ViewProductScreen extends React.Component {
                         style={styles.profileBox}>
                         {this.state.owner.photo ? (
                           <Image
-                            source={{uri: this.state.owner.photo}}
+                            source={{ uri: this.state.owner.photo }}
                             style={styles.profileImage}
                             onError={() => {
                               var owner = this.state.owner;
@@ -684,16 +685,16 @@ export default class ViewProductScreen extends React.Component {
                             }}
                           />
                         ) : (
-                          <View style={styles.profileImageBox}>
-                            <Text style={styles.imageText}>
-                              {this.state.owner.name.charAt(0).toUpperCase()}
-                            </Text>
-                          </View>
-                        )}
+                            <View style={styles.profileImageBox}>
+                              <Text style={styles.imageText}>
+                                {this.state.owner.name.charAt(0).toUpperCase()}
+                              </Text>
+                            </View>
+                          )}
                         {this.state.owner.active &
-                        (this.state.owner.logout === false) ? (
-                          <View style={styles.active}></View>
-                        ) : null}
+                          (this.state.owner.logout === false) ? (
+                            <View style={styles.active}></View>
+                          ) : null}
                       </TouchableOpacity>
                       <View>
                         <Text style={styles.profileName}>
@@ -711,26 +712,27 @@ export default class ViewProductScreen extends React.Component {
                         </Text>
                       </View>
                       {this.state.showExpired &&
-                      this.state.product.category === 'Food' ? (
-                        <View
-                          style={{
-                            backgroundColor: '#d65a31',
-                            paddingHorizontal: 5,
-                            paddingVertical: 2,
-                            borderRadius: 2,
-                          }}>
-                          <Text
+                        this.state.product.category === 'Food' ? (
+                          <View
                             style={{
-                              fontSize: 14,
-                              fontFamily: 'Muli-Bold',
-                              color: colors.white,
+                              backgroundColor: colors.darkText,
+                              paddingHorizontal: 5,
+                              paddingVertical: 2,
+                              borderRadius: 2,
+                              marginLeft: 5
                             }}>
-                            Expired
+                            <Text
+                              style={{
+                                fontSize: 14,
+                                fontFamily: 'Muli-Bold',
+                                color: colors.white,
+                              }}>
+                              Expired
                           </Text>
-                        </View>
-                      ) : null}
+                          </View>
+                        ) : null}
                     </View>
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                       style={{
                         width: 40,
                         height: 40,
@@ -744,7 +746,7 @@ export default class ViewProductScreen extends React.Component {
                         size={22}
                         color={colors.grey}
                       />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </View>
                   <View style={styles.middle}>
                     <Text style={styles.type}>
@@ -753,12 +755,12 @@ export default class ViewProductScreen extends React.Component {
                         : this.state.product.type}{' '}
                       |{' '}
                       {this.state.product.category === 'Books' &&
-                      this.state.product.subcategory
+                        this.state.product.subcategory
                         ? this.state.product.subcategory + ' | '
                         : null}
                       {this.state.product.category}
                     </Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <Image
                         source={{
                           uri:
@@ -766,7 +768,7 @@ export default class ViewProductScreen extends React.Component {
                             this.state.product.code +
                             '/flat/64.png',
                         }}
-                        style={{width: 20, height: 15, marginRight: 5}}
+                        style={{ width: 20, height: 15, marginRight: 5 }}
                       />
                       <Text style={styles.location}>
                         {this.state.product.city +
@@ -774,6 +776,33 @@ export default class ViewProductScreen extends React.Component {
                           this.state.product.country}
                       </Text>
                     </View>
+                    {this.state.product.type === 'exchange' &&
+                      this.state.product.value ? (
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            marginVertical: 5,
+                          }}>
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Regular',
+                              color: colors.grey,
+                              fontSize: 16,
+                              marginRight: 5,
+                            }}>
+                            Value :
+                            </Text>
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Regular',
+                              color: colors.grey,
+                              fontSize: 16,
+                            }}>
+                            ${this.state.product.value}
+                          </Text>
+                        </View>
+                      ) : null}
                     <Text style={styles.title}>
                       Ready to {this.state.product.type}{' '}
                       {this.state.product.what}{' '}
@@ -782,97 +811,97 @@ export default class ViewProductScreen extends React.Component {
                         : null}
                     </Text>
                     {this.state.product.type.toLowerCase() === 'donate' &&
-                    this.state.product.category === 'Food' &&
-                    this.state.showExpired === false &&
-                    this.state.showTimer === true ? (
-                      <View
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          marginVertical: 5,
-                        }}>
-                        <Text
+                      this.state.product.category === 'Food' &&
+                      this.state.showExpired === false &&
+                      this.state.showTimer === true ? (
+                        <View
                           style={{
-                            fontSize: 14,
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            marginLeft: 5,
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            marginVertical: 5,
                           }}>
-                          Available in
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              marginLeft: 5,
+                            }}>
+                            Available in
                         </Text>
-                        <CountDownTimer
-                          timestamp={Math.floor(
-                            (new Date(this.state.product.from).getTime() -
-                              new Date().getTime()) /
+                          <CountDownTimer
+                            timestamp={Math.floor(
+                              (new Date(this.state.product.from).getTime() -
+                                new Date().getTime()) /
                               1000,
-                          )}
-                          timerCallback={() => {
-                            this.setState({
-                              showTimer: false,
-                            });
-                          }}
-                          containerStyle={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 35,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            marginLeft: 5,
-                            color: colors.grey,
-                          }}
-                        />
-                      </View>
-                    ) : null}
+                            )}
+                            timerCallback={() => {
+                              this.setState({
+                                showTimer: false,
+                              });
+                            }}
+                            containerStyle={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              borderRadius: 35,
+                            }}
+                            textStyle={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              marginLeft: 5,
+                              color: colors.grey,
+                            }}
+                          />
+                        </View>
+                      ) : null}
                     {this.state.product.type.toLowerCase() === 'donate' &&
-                    this.state.product.category === 'Food' &&
-                    this.state.showExpired === false &&
-                    this.state.showTimer === false ? (
-                      <View
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          marginVertical: 5,
-                        }}>
-                        <Text
+                      this.state.product.category === 'Food' &&
+                      this.state.showExpired === false &&
+                      this.state.showTimer === false ? (
+                        <View
                           style={{
-                            fontSize: 14,
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            marginLeft: 5,
+                            width: '100%',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            marginVertical: 5,
                           }}>
-                          Available for
+                          <Text
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              marginLeft: 5,
+                            }}>
+                            Available for
                         </Text>
-                        <CountDownTimer
-                          timestamp={Math.floor(
-                            (new Date(this.state.product.to).getTime() -
-                              new Date().getTime()) /
+                          <CountDownTimer
+                            timestamp={Math.floor(
+                              (new Date(this.state.product.to).getTime() -
+                                new Date().getTime()) /
                               1000,
-                          )}
-                          timerCallback={() => {
-                            this.setState({
-                              showExpired: true,
-                            });
-                          }}
-                          containerStyle={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            borderRadius: 35,
-                          }}
-                          textStyle={{
-                            fontSize: 14,
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            marginLeft: 5,
-                            color: '#d65a31',
-                          }}
-                        />
-                      </View>
-                    ) : null}
+                            )}
+                            timerCallback={() => {
+                              this.setState({
+                                showExpired: true,
+                              });
+                            }}
+                            containerStyle={{
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              borderRadius: 35,
+                            }}
+                            textStyle={{
+                              fontSize: 14,
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              marginLeft: 5,
+                              color: '#d65a31',
+                            }}
+                          />
+                        </View>
+                      ) : null}
                     <Text style={styles.subHeader}>
                       {this.state.product.category !== 'Books'
                         ? 'Description'
@@ -882,69 +911,69 @@ export default class ViewProductScreen extends React.Component {
                       {this.state.product.description}
                     </Text>
                     {this.state.product.type === 'share' &&
-                    this.state.product.giveaway === false ? (
-                      <>
-                        <Text style={styles.subHeader}>Sharing Dates</Text>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginVertical: 10,
-                          }}>
+                      this.state.product.giveaway === false ? (
+                        <>
+                          <Text style={styles.subHeader}>Sharing Dates</Text>
                           <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
+                              marginVertical: 10,
                             }}>
-                            <Ionicons
-                              name="ios-calendar"
-                              style={{fontSize: 18, color: colors.white}}
-                            />
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Ionicons
+                                name="ios-calendar"
+                                style={{ fontSize: 18, color: colors.white }}
+                              />
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                  marginLeft: 5,
+                                }}>
+                                {this.state.product.share_from}
+                              </Text>
+                            </View>
                             <Text
                               style={{
                                 fontSize: 14,
                                 fontFamily: 'Muli-Bold',
                                 color: colors.white,
-                                marginLeft: 5,
+                                marginHorizontal: 5,
                               }}>
-                              {this.state.product.share_from}
-                            </Text>
-                          </View>
-                          <Text
-                            style={{
-                              fontSize: 14,
-                              fontFamily: 'Muli-Bold',
-                              color: colors.white,
-                              marginHorizontal: 5,
-                            }}>
-                            To
+                              To
                           </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}>
-                            <Ionicons
-                              name="ios-calendar"
-                              style={{fontSize: 18, color: colors.white}}
-                            />
-                            <Text
+                            <View
                               style={{
-                                fontSize: 14,
-                                fontFamily: 'Muli-Bold',
-                                color: colors.white,
-                                marginLeft: 5,
+                                flexDirection: 'row',
+                                alignItems: 'center',
                               }}>
-                              {this.state.product.share_till}
-                            </Text>
+                              <Ionicons
+                                name="ios-calendar"
+                                style={{ fontSize: 18, color: colors.white }}
+                              />
+                              <Text
+                                style={{
+                                  fontSize: 14,
+                                  fontFamily: 'Muli-Bold',
+                                  color: colors.white,
+                                  marginLeft: 5,
+                                }}>
+                                {this.state.product.share_till}
+                              </Text>
+                            </View>
                           </View>
-                        </View>
-                      </>
-                    ) : null}
+                        </>
+                      ) : null}
                     <ScrollView
                       horizontal={true}
                       showsHorizontalScrollIndicator={false}
-                      style={{marginVertical: 10}}>
+                      style={{ marginVertical: 10 }}>
                       {this.state.product.images.length > 1 ? (
                         <>
                           {this.state.product.images.map((image, index) => {
@@ -959,7 +988,7 @@ export default class ViewProductScreen extends React.Component {
                                 }
                                 style={styles.imageBox}>
                                 <Image
-                                  source={{uri: image.image}}
+                                  source={{ uri: image.image }}
                                   style={styles.imageBox}
                                 />
                               </TouchableOpacity>
@@ -967,24 +996,154 @@ export default class ViewProductScreen extends React.Component {
                           })}
                         </>
                       ) : (
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.handleCardImageClick(
-                              this.state.product.images,
-                              this.state.product.images[0].index,
-                            )
-                          }
-                          style={styles.imageBoxOne}>
-                          <Image
-                            source={{uri: this.state.product.images[0].image}}
-                            style={styles.imageBoxOne}
-                          />
-                        </TouchableOpacity>
-                      )}
+                          <>
+                            {this.state.product.images.length === 0 &&
+                              this.state.product.category === 'Food' ? (
+                                <View style={[
+                                  styles.imageBoxOne,
+                                  { position: 'relative', justifyContent: 'center', alignItems: 'center' },
+                                ]}>
+                                  {this.state.product.quantity === 0 ||
+                                    (this.state.product.type.toLowerCase() === 'donate' &&
+                                      this.state.product.category === 'Food' &&
+                                      this.state.showExpired === false &&
+                                      this.state.showTimer === true) || (this.state.showExpired &&
+                                        this.state.product.category === 'Food')
+                                    ?
+                                    <>
+                                      <Grayscale>
+                                        <Image
+                                          source={{
+                                            uri:
+                                              'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
+                                          }}
+                                          style={styles.imageBoxOne}
+                                        />
+                                      </Grayscale>
+                                      {
+                                        this.state.product.type === 'exchange' && this.state.product.quantity === 0
+                                          ?
+                                          <Image
+                                            source={require('../assets/images/be.png')}
+                                            resizeMode="contain"
+                                            style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                          />
+                                          :
+                                          null
+                                      }
+                                      {
+                                        this.state.product.type === 'lend' && this.state.product.quantity === 0
+                                          ?
+                                          <Image
+                                            source={require('../assets/images/bl.png')}
+                                            resizeMode="contain"
+                                            style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                          />
+                                          :
+                                          null
+                                      }
+                                      {
+                                        this.state.product.type === 'donate' && this.state.product.quantity === 0
+                                          ?
+                                          <Image
+                                            source={require('../assets/images/bd.png')}
+                                            resizeMode="contain"
+                                            style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                          />
+                                          :
+                                          null
+                                      }
+                                    </>
+                                    :
+                                    <Image
+                                      source={{
+                                        uri:
+                                          'https://firebasestorage.googleapis.com/v0/b/byebuyyy.appspot.com/o/data%2Fbyebuyy.jpg?alt=media&token=ae61849c-0964-4fa4-b5c4-6c43a76a3b13',
+                                      }}
+                                      style={styles.imageBoxOne}
+                                    />
+                                  }
+
+                                </View>
+                              ) : (
+                                <TouchableOpacity
+                                  onPress={() =>
+                                    this.handleCardImageClick(
+                                      this.state.product.images,
+                                      this.state.product.images[0].index,
+                                    )
+                                  }
+                                  style={styles.imageBoxOne}>
+                                  {this.state.product.quantity === 0 || (this.state.product.type.toLowerCase() === 'donate' &&
+                                    this.state.product.category === 'Food' &&
+                                    this.state.showExpired === false &&
+                                    this.state.showTimer === true) || (this.state.showExpired &&
+                                      this.state.product.category === 'Food') ? (
+                                      <View style={[
+                                        styles.imageBoxOne,
+                                        { position: 'relative', justifyContent: 'center', alignItems: 'center' },
+                                      ]}>
+                                        <Grayscale>
+                                          <Image
+                                            source={{
+                                              uri: this.state.product.images[0].image,
+                                            }}
+                                            style={[
+                                              styles.imageBoxOne,
+                                              { opacity: 0.5 },
+                                            ]}
+                                          />
+                                        </Grayscale>
+                                        {
+                                          this.state.product.type === 'exchange' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/be.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'lend' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bl.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                        {
+                                          this.state.product.type === 'donate' && this.state.product.quantity === 0
+                                            ?
+                                            <Image
+                                              source={require('../assets/images/bd.png')}
+                                              resizeMode="contain"
+                                              style={{ position: 'absolute', width: 180, height: 180, opacity: 0.7 }}
+                                            />
+                                            :
+                                            null
+                                        }
+                                      </View>
+                                    ) : (
+                                      <Image
+                                        source={{
+                                          uri: this.state.product.images[0].image,
+                                        }}
+                                        style={styles.imageBoxOne}
+                                      />
+                                    )}
+                                </TouchableOpacity>
+                              )}
+                          </>
+                        )}
                     </ScrollView>
                   </View>
                   <View style={styles.bottom}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <TouchableOpacity
                         onPress={this.handleLike}
                         style={{
@@ -998,18 +1157,18 @@ export default class ViewProductScreen extends React.Component {
                             name="like1"
                             size={26}
                             color={colors.baseline}
-                            style={{marginRight: 7}}
+                            style={{ marginRight: 7 }}
                           />
                         ) : (
-                          <AntDesign
-                            name="like2"
-                            size={26}
-                            color={colors.grey}
-                            style={{marginRight: 7}}
-                          />
-                        )}
+                            <AntDesign
+                              name="like2"
+                              size={26}
+                              color={colors.grey}
+                              style={{ marginRight: 7 }}
+                            />
+                          )}
                         {this.state.product.likes.length > 0 ? (
-                          <Text style={{fontSize: 16, color: colors.grey}}>
+                          <Text style={{ fontSize: 16, color: colors.grey }}>
                             {this.state.product.likes.length > 1000
                               ? this.state.product.likes.length / 1000 + 'K'
                               : this.state.product.likes.length}
@@ -1032,18 +1191,16 @@ export default class ViewProductScreen extends React.Component {
                           name="ios-chatbubble-outline"
                           size={28}
                           color={colors.grey}
-                          style={{marginHorizontal: 7}}
+                          style={{ marginHorizontal: 7 }}
                         />
                         {this.state.product.comments.length > 0 ? (
-                          <Text style={{fontSize: 16, color: colors.grey}}>
+                          <Text style={{ fontSize: 16, color: colors.grey }}>
                             {this.state.product.comments.length > 1000
                               ? this.state.product.comments.length / 1000 + 'K'
                               : this.state.product.comments.length}
                           </Text>
                         ) : null}
                       </TouchableOpacity>
-                    </View>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <TouchableOpacity
                         onPress={() => this.handleShare(this.state.product.id)}
                         style={{
@@ -1056,7 +1213,7 @@ export default class ViewProductScreen extends React.Component {
                           name="share-social-outline"
                           size={28}
                           color={colors.grey}
-                          style={{marginHorizontal: 7}}
+                          style={{ marginHorizontal: 7 }}
                         />
                       </TouchableOpacity>
                     </View>
@@ -1064,111 +1221,111 @@ export default class ViewProductScreen extends React.Component {
                 </View>
               </View>
             ) : (
-              <View
-                style={{
-                  width: '100%',
-                  flex: 1,
-                  alignItems: 'center',
-                }}>
-                <Lottieview
-                  source={require('../assets/16656-empty-state.json')}
-                  autoPlay={true}
-                  loop={false}
+                <View
                   style={{
-                    width: 300,
-                    height: 250,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontFamily: 'Muli-Bold',
-                    color: colors.grey,
-                    fontSize: 20,
+                    width: '100%',
+                    flex: 1,
+                    alignItems: 'center',
                   }}>
-                  Nothing Found
+                  <Lottieview
+                    source={require('../assets/16656-empty-state.json')}
+                    autoPlay={true}
+                    loop={false}
+                    style={{
+                      width: 300,
+                      height: 250,
+                    }}
+                  />
+                  <Text
+                    style={{
+                      fontFamily: 'Muli-Bold',
+                      color: colors.grey,
+                      fontSize: 20,
+                    }}>
+                    Nothing Found
                 </Text>
-              </View>
-            )}
+                </View>
+              )}
           </>
         ) : (
-          <View
-            style={{
-              width: '95%',
-              paddingVertical: 10,
-              paddingHorizontal: 15,
-              alignItems: 'center',
-              backgroundColor: colors.primary,
-              justifyContent: 'space-between',
-              borderRadius: 10,
-              marginBottom: 10,
-              elevation: 3,
-              marginTop: 10,
-            }}>
-            <SkeletonContent
-              containerStyle={{width: '100%'}}
-              boneColor={colors.primary}
-              highlightColor={colors.darkText}
-              isLoading={this.state.loadingProduct || this.state.loadingOwner}
-              layout={[
-                {
-                  flexDirection: 'row',
-                  marginTop: 10,
-                  alignItems: 'center',
-                  children: [
-                    {
-                      width: 40,
-                      height: 40,
-                      marginRight: 10,
-                      borderRadius: 20,
-                    },
-                    {
-                      width: 150,
-                      height: 20,
-                    },
-                  ],
-                },
-                {
-                  flexDirection: 'column',
-                  marginTop: 10,
-                  children: [
-                    {
-                      width: '100%',
-                      height: 30,
-                    },
-                    {
-                      flexDirection: 'row',
-                      marginVertical: 10,
-                      justifyContent: 'space-between',
-                      children: [
-                        {
-                          width: width * 0.42,
-                          height: 150,
-                        },
-                        {
-                          width: width * 0.42,
-                          height: 150,
-                        },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  children: [
-                    {
-                      width: 80,
-                      height: 30,
-                    },
-                    {
-                      width: 80,
-                      height: 30,
-                    },
-                  ],
-                },
-              ]}></SkeletonContent>
-          </View>
-        )}
+            <View
+              style={{
+                width: '95%',
+                paddingVertical: 10,
+                paddingHorizontal: 15,
+                alignItems: 'center',
+                backgroundColor: colors.primary,
+                justifyContent: 'space-between',
+                borderRadius: 10,
+                marginBottom: 10,
+                elevation: 3,
+                marginTop: 10,
+              }}>
+              <SkeletonContent
+                containerStyle={{ width: '100%' }}
+                boneColor={colors.primary}
+                highlightColor={colors.darkText}
+                isLoading={this.state.loadingProduct || this.state.loadingOwner}
+                layout={[
+                  {
+                    flexDirection: 'row',
+                    marginTop: 10,
+                    alignItems: 'center',
+                    children: [
+                      {
+                        width: 40,
+                        height: 40,
+                        marginRight: 10,
+                        borderRadius: 20,
+                      },
+                      {
+                        width: 150,
+                        height: 20,
+                      },
+                    ],
+                  },
+                  {
+                    flexDirection: 'column',
+                    marginTop: 10,
+                    children: [
+                      {
+                        width: '100%',
+                        height: 30,
+                      },
+                      {
+                        flexDirection: 'row',
+                        marginVertical: 10,
+                        justifyContent: 'space-between',
+                        children: [
+                          {
+                            width: width * 0.42,
+                            height: 150,
+                          },
+                          {
+                            width: width * 0.42,
+                            height: 150,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    children: [
+                      {
+                        width: 80,
+                        height: 30,
+                      },
+                      {
+                        width: 80,
+                        height: 30,
+                      },
+                    ],
+                  },
+                ]}></SkeletonContent>
+            </View>
+          )}
       </View>
     );
   };
@@ -1177,12 +1334,12 @@ export default class ViewProductScreen extends React.Component {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <View style={{alignItems: 'center', flexDirection: 'row'}}>
+          <View style={{ alignItems: 'center', flexDirection: 'row' }}>
             <TouchableOpacity style={styles.action} onPress={this.handeGoBack}>
               <Ionicons
                 name="ios-arrow-back"
                 size={30}
-                style={{color: colors.baseline}}
+                style={{ color: colors.baseline }}
               />
             </TouchableOpacity>
             <Text style={styles.headerText}>Product Info</Text>
@@ -1192,33 +1349,33 @@ export default class ViewProductScreen extends React.Component {
               {auth().currentUser ? (
                 <>
                   {this.state.product.owner ===
-                  auth().currentUser.email ? null : (
-                    <View style={styles.requestContainer}>
-                      <TouchableOpacity
-                        onPress={this.handleRequest}
-                        style={{
-                          flexDirection: 'row',
-                          height: 40,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <MaterialCommunityIcons
-                          name="message-processing-outline"
-                          size={28}
-                          color={colors.grey}
-                        />
-                      </TouchableOpacity>
-                      {this.state.product.quantity === 0 ? (
-                        <View style={styles.crossbar}></View>
-                      ) : null}
-                    </View>
-                  )}
+                    auth().currentUser.email ? null : (
+                      <View style={styles.requestContainer}>
+                        <TouchableOpacity
+                          onPress={this.handleRequest}
+                          style={{
+                            flexDirection: 'row',
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}>
+                          <MaterialCommunityIcons
+                            name="message-processing-outline"
+                            size={28}
+                            color={colors.grey}
+                          />
+                        </TouchableOpacity>
+                        {this.state.product.quantity === 0 ? (
+                          <View style={styles.crossbar}></View>
+                        ) : null}
+                      </View>
+                    )}
                 </>
               ) : null}
             </>
           ) : null}
         </View>
-        <ScrollView style={{width: '100%'}}>{this.renderHeader()}</ScrollView>
+        <ScrollView style={{ width: '100%' }}>{this.renderHeader()}</ScrollView>
         <Modal isVisible={this.state.request}>
           <View
             style={{
@@ -1231,7 +1388,7 @@ export default class ViewProductScreen extends React.Component {
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%', marginTop: 10}}>
+              <View style={{ width: '100%', marginTop: 10 }}>
                 <View
                   style={{
                     width: '100%',
@@ -1294,9 +1451,9 @@ export default class ViewProductScreen extends React.Component {
                     </View>
                   ) : null}
                 </View>
-                <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
                   {this.state.tab === 1 ? (
-                    <View style={{width: '100%', alignItems: 'center'}}>
+                    <View style={{ width: '100%', alignItems: 'center' }}>
                       <View style={styles.inputGroup}>
                         <Text style={styles.inputGroupText}>
                           State a reason why you want this product?
@@ -1306,59 +1463,59 @@ export default class ViewProductScreen extends React.Component {
                           autoCapitalize="none"
                           multiline={true}
                           maxLength={300}
-                          onChangeText={(desc) => this.setState({desc})}
+                          onChangeText={(desc) => this.setState({ desc })}
                           value={this.state.desc}></TextInput>
                       </View>
                     </View>
                   ) : null}
                   {this.state.tab === 2 &&
-                  this.state.product.type === 'exchange' ? (
-                    <View
-                      style={{
-                        width: '100%',
-                        alignItems: 'center',
-                        height: height * 0.6,
-                      }}>
-                      <ScrollView
-                        style={{width: '100%', flex: 1, paddingVertical: 10}}>
-                        {this.state.productList.map((product) => {
-                          return (
-                            <TouchableOpacity
-                              onPress={() => this.handleSelectCard(product._id)}
-                              style={styles.activeproduct}>
-                              <Card3
-                                key={product._id}
-                                handleCardImageClick={(e, f) =>
-                                  this.handleCardImageClick(e, f)
-                                }
-                                id={product._id}
-                                navigation={this.props.navigation}
-                              />
-                              {product._id === this.state.selectId ? (
-                                <>
-                                  <View
-                                    style={styles.activeproductOverlay}></View>
-                                  <Ionicons
-                                    name="checkmark-circle"
-                                    size={25}
-                                    color={colors.baseline}
-                                    style={styles.activeproductIcon}
-                                  />
-                                </>
-                              ) : (
-                                <Ionicons
-                                  name="checkmark-circle-outline"
-                                  size={25}
-                                  color={colors.grey}
-                                  style={styles.activeproductIcon}
+                    this.state.product.type === 'exchange' ? (
+                      <View
+                        style={{
+                          width: '100%',
+                          alignItems: 'center',
+                          height: height * 0.6,
+                        }}>
+                        <ScrollView
+                          style={{ width: '100%', flex: 1, paddingVertical: 10 }}>
+                          {this.state.productList.map((product) => {
+                            return (
+                              <TouchableOpacity
+                                onPress={() => this.handleSelectCard(product._id)}
+                                style={styles.activeproduct}>
+                                <Card3
+                                  key={product._id}
+                                  handleCardImageClick={(e, f) =>
+                                    this.handleCardImageClick(e, f)
+                                  }
+                                  id={product._id}
+                                  navigation={this.props.navigation}
                                 />
-                              )}
-                            </TouchableOpacity>
-                          );
-                        })}
-                      </ScrollView>
-                    </View>
-                  ) : null}
+                                {product._id === this.state.selectId ? (
+                                  <>
+                                    <View
+                                      style={styles.activeproductOverlay}></View>
+                                    <Ionicons
+                                      name="checkmark-circle"
+                                      size={25}
+                                      color={colors.baseline}
+                                      style={styles.activeproductIcon}
+                                    />
+                                  </>
+                                ) : (
+                                    <Ionicons
+                                      name="checkmark-circle-outline"
+                                      size={25}
+                                      color={colors.grey}
+                                      style={styles.activeproductIcon}
+                                    />
+                                  )}
+                              </TouchableOpacity>
+                            );
+                          })}
+                        </ScrollView>
+                      </View>
+                    ) : null}
                   <TouchableOpacity
                     style={styles.requestButton}
                     onPress={this.handleRequestProduct}>
@@ -1367,7 +1524,7 @@ export default class ViewProductScreen extends React.Component {
                       name="ios-chatbubble-ellipses"
                       size={20}
                       color={colors.white}
-                      style={{marginLeft: 5}}
+                      style={{ marginLeft: 5 }}
                     />
                   </TouchableOpacity>
                 </View>
@@ -1420,7 +1577,7 @@ export default class ViewProductScreen extends React.Component {
                   paddingVertical: 10,
                 }}>
                 <TouchableOpacity
-                  style={{marginLeft: 20}}
+                  style={{ marginLeft: 20 }}
                   onPress={() =>
                     this.setState({
                       reportForm: false,
@@ -1509,7 +1666,7 @@ export default class ViewProductScreen extends React.Component {
           images={this.state.images}
           imageIndex={this.state.imageIndex}
           visible={this.state.showImage}
-          onRequestClose={() => this.setState({showImage: false})}
+          onRequestClose={() => this.setState({ showImage: false })}
           swipeToCloseEnabled={false}
           doubleTapToZoomEnabled={true}
           presentationStyle="fullScreen"
@@ -1814,7 +1971,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 38,
     height: 2,
-    transform: [{rotate: '45deg'}],
+    transform: [{ rotate: '45deg' }],
     backgroundColor: colors.grey,
   },
 });

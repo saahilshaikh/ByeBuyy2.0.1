@@ -3,12 +3,13 @@ import {
   View,
   Text,
   StyleSheet,
-  FlatList
 } from 'react-native';
 import Card from '../shared/card';
 import Card2 from '../shared/card2';
 import axios from 'axios';
 import link from '../fetchPath';
+import LottieView from 'lottie-react-native';
+import colors from '../appTheme';
 
 export default class OtherPostScreen extends React.Component {
   constructor() {
@@ -58,7 +59,7 @@ export default class OtherPostScreen extends React.Component {
     return (
       <View style={styles.container}>
         {
-          this.state.data.map(item=>{
+          this.state.data.map(item => {
             if (item.type.toLowerCase() === 'product') {
               return (
                 <Card handleCardImageClick={(e, f) => this.props.handleCardImageClick(e, f)}
@@ -77,6 +78,36 @@ export default class OtherPostScreen extends React.Component {
             }
           })
         }
+        {
+          this.state.data.length === 0 && this.state.loading === false
+            ?
+            <View
+              style={{
+                width: '100%',
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <LottieView
+                source={require('../assets/16656-empty-state.json')}
+                autoPlay={true}
+                loop={false}
+                style={{
+                  width: 300,
+                  height: 250,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: 'Muli-Bold',
+                  color: colors.white,
+                  fontSize: 20,
+                }}>
+                No Posts Found
+            </Text>
+            </View>
+            :
+            null
+        }
       </View>
     );
   }
@@ -86,6 +117,6 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
-    paddingVertical:20
+    paddingVertical: 20
   },
 });

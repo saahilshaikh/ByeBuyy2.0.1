@@ -14,6 +14,7 @@ import {
   Dimensions,
   Linking,
   Platform,
+  StatusBar
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -25,17 +26,17 @@ import Geolocation from 'react-native-geolocation-service';
 import AskLocationPermissionScreen from './askLocationPermissionScreen';
 import LocationLoadingScreen from './locationLoadingScreen';
 import NetInfo from '@react-native-community/netinfo';
-import auth, {firebase} from '@react-native-firebase/auth';
+import auth, { firebase } from '@react-native-firebase/auth';
 import NoInternetScreen from './noInternetScreen';
 import CustomDrawer from '../shared/customDrawer';
-import {CommonActions} from '@react-navigation/native';
-import {GoogleSignin} from '@react-native-community/google-signin';
+import { CommonActions } from '@react-navigation/native';
+import { GoogleSignin } from '@react-native-community/google-signin';
 import colors from '../appTheme';
 import axios from 'axios';
 import link from '../fetchPath';
 import Geocoder from 'react-native-geocoding';
-import {fcmService} from '../shared/FCMService';
-import {localNotificationService} from '../shared/LocalNotificationService';
+import { fcmService } from '../shared/FCMService';
+import { localNotificationService } from '../shared/LocalNotificationService';
 import Modal from 'react-native-modal';
 import firestore from '@react-native-firebase/firestore';
 import {
@@ -45,7 +46,7 @@ import {
   NavigationState,
   SceneRendererProps,
 } from 'react-native-tab-view';
-import Rate, {AndroidMarket} from 'react-native-rate';
+import Rate, { AndroidMarket } from 'react-native-rate';
 
 type Route = {
   key: string,
@@ -54,7 +55,7 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 Geocoder.init('AIzaSyD12ob7WRZs6OttEQQ9C8NMPai-WlraopQ');
 
@@ -126,7 +127,7 @@ export default class HomeScreen extends React.Component {
         snap.forEach((doc) => {
           console.log('75', Platform.OS);
           if (Platform.OS === 'android') {
-            if (doc.data().android !== '2.1.8') {
+            if (doc.data().android !== '2.2.1') {
               this.setState({
                 update: true,
                 showLocationAccess: true,
@@ -137,7 +138,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           } else {
-            if (doc.data().ios !== '2.1.8') {
+            if (doc.data().ios !== '2.2.1') {
               this.setState({
                 update: true,
               });
@@ -149,14 +150,14 @@ export default class HomeScreen extends React.Component {
           }
         });
       });
-    if (auth().currentUser) {
-      this.handleNotiCount();
-      this.handleChatCount();
-      this.inter = setInterval(() => {
-        this.handleNotiCount();
-        this.handleChatCount();
-      }, 5000);
-    }
+    // if (auth().currentUser) {
+    //   this.handleNotiCount();
+    //   this.handleChatCount();
+    //   this.inter = setInterval(() => {
+    //     this.handleNotiCount();
+    //     this.handleChatCount();
+    //   }, 2000);
+    // }
     fcmService.registerAppWithFCM();
     fcmService.register(
       this.onRegister,
@@ -253,18 +254,19 @@ export default class HomeScreen extends React.Component {
           var res2 = await axios.post(link + '/api/chat', data2);
           var unread = false;
           if (
-            res2.data !== null &&
+            res2.data !== null && res2.data.messages &&
             res2.data.messages.length > 0 &&
             new Date(
               res2.data[
-                'clear' +
-                  (res2.data.participants.indexOf(auth().currentUser.email) + 1)
+              'clear' +
+              (res2.data.participants.indexOf(auth().currentUser.email) + 1)
               ],
             ) < new Date(res2.data.messages[res2.data.messages.length - 1].date)
           ) {
             res2.data.messages.map((m) => {
               if (m.read !== true && m.id !== auth().currentUser.email) {
                 unread = true;
+                console.log(res2.data.messages.length)
               }
             });
           }
@@ -273,6 +275,8 @@ export default class HomeScreen extends React.Component {
           }
           this.setState({
             tab2Count: count,
+          }, () => {
+            console.log(this.state.tab2Count);
           });
         }
       }
@@ -348,7 +352,7 @@ export default class HomeScreen extends React.Component {
         });
       }
     } else if (e.data.type === 'Chat') {
-      this.props.navigation.push('Chat', {id: e.data.id, location: location});
+      this.props.navigation.push('Chat', { id: e.data.id, location: location });
     } else if (e.data.type === 'ViewProfile') {
       this.props.navigation.push('viewProfile', {
         id: e.data.id,
@@ -374,7 +378,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Deal') {
-      this.props.navigation.push('Deal', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Deal', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -384,7 +388,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Refer') {
-      this.props.navigation.push('Refer', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Refer', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -394,7 +398,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'About') {
-      this.props.navigation.push('About', {handleBack: this.handleBackHome});
+      this.props.navigation.push('About', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -404,7 +408,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Feedback') {
-      this.props.navigation.push('Feedback', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Feedback', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -414,7 +418,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Privacy') {
-      this.props.navigation.push('Privacy', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Privacy', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -424,7 +428,7 @@ export default class HomeScreen extends React.Component {
         },
       );
     } else if (e === 'Terms') {
-      this.props.navigation.push('Terms', {handleBack: this.handleBackHome});
+      this.props.navigation.push('Terms', { handleBack: this.handleBackHome });
       this.setState(
         {
           activeMenu: e,
@@ -453,7 +457,10 @@ export default class HomeScreen extends React.Component {
       await GoogleSignin.revokeAccess();
     }
     console.log(isSignedIn);
-    var email = auth().currentUser.email;
+    var data = {
+      email: auth().currentUser.email,
+    };
+    var res = await axios.post(link + '/api/user/deactive', data);
     var has = await auth()
       .signOut()
       .then(() => {
@@ -466,7 +473,7 @@ export default class HomeScreen extends React.Component {
       this.props.navigation.dispatch(
         CommonActions.reset({
           index: 1,
-          routes: [{name: 'Main'}],
+          routes: [{ name: 'Main' }],
         }),
       );
     }
@@ -655,7 +662,7 @@ export default class HomeScreen extends React.Component {
   handleSearch = () => {
     var location = this.state.location;
     console.log('Handling Search');
-    this.props.navigation.navigate('Search', {location: location});
+    this.props.navigation.navigate('Search', { location: location });
   };
 
   handleDrawrOpen = () => {
@@ -696,27 +703,26 @@ export default class HomeScreen extends React.Component {
     });
   };
 
-  renderIcon = ({route, color}: {route: Route, color: string}) => (
-    <View style={{width: 25, height: 25, position: 'relative'}}>
-      <Image source={route.inactive} style={{width: '100%', height: '100%'}} />
-      {route.index === 1 &&
-      this.state.index !== 1 &&
-      this.state.tab2Count > 0 ? (
-        <View style={styles.tabCount}>
-          <Text style={styles.tabCountText}>{this.state.tab2Count}</Text>
-        </View>
-      ) : null}
-      {route.index === 1 &&
-      this.state.index !== 2 &&
-      this.state.tab3Count > 0 ? (
-        <View style={styles.tabCount}>
-          <Text style={styles.tabCountText}>{this.state.tab3Count}</Text>
-        </View>
-      ) : null}
-    </View>
-  );
+  renderIcon = ({ route, color }: { route: Route, color: string }) => {
+    return (
+      <View style={{ width: 25, height: 25, position: 'relative' }}>
+        <Image source={route.inactive} style={{ width: '100%', height: '100%' }} />
+        {route.key === 'chats' && this.state.tab2Count > 0 ? (
+          <View style={styles.tabCount}>
+            <Text style={styles.tabCountText}>{this.state.tab2Count}</Text>
+          </View>
+        ) : null}
+        {route.key === 'notifications' && this.state.index !== 2 &&
+          this.state.tab3Count > 0 ? (
+            <View style={styles.tabCount}>
+              <Text style={styles.tabCountText}>{this.state.tab3Count}</Text>
+            </View>
+          ) : null}
+      </View>
+    )
+  };
 
-  renderTabBar = (props: SceneRendererProps & {navigationState: State}) => {
+  renderTabBar = (props: SceneRendererProps & { navigationState: State }) => {
     return (
       <TabBar
         {...props}
@@ -779,116 +785,117 @@ export default class HomeScreen extends React.Component {
             handleDeniedLocationPermission={this.handleDeniedLocationPermission}
           />
         ) : (
-          <>
-            {this.state.showNoInternet ? (
-              <NoInternetScreen handleReCheck={this.handlePermissionAndroid} />
-            ) : (
-              <>
-                {this.state.locationLoading ? (
-                  <LocationLoadingScreen />
-                ) : (
-                  <SafeAreaView style={styles.container}>
-                    <View
-                      style={{
-                        backgroundColor: '#1B1F22',
-                        paddingHorizontal: 15,
-                        paddingVertical: 10,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <View style={{width: 30, height: 30}}>
-                          <Image
-                            style={styles.logo}
-                            source={require('../assets/images/icon.png')}
+            <>
+              {this.state.showNoInternet ? (
+                <NoInternetScreen handleReCheck={this.handlePermissionAndroid} />
+              ) : (
+                  <>
+                    {this.state.locationLoading ? (
+                      <LocationLoadingScreen />
+                    ) : (
+                        <SafeAreaView style={styles.container}>
+                          <StatusBar backgroundColor={colors.primary2} />
+                          <View
+                            style={{
+                              backgroundColor: colors.primary2,
+                              paddingHorizontal: 15,
+                              paddingVertical: 10,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <View style={{ width: 30, height: 30 }}>
+                                <Image
+                                  style={styles.logo}
+                                  source={require('../assets/images/icon.png')}
+                                />
+                              </View>
+                              <Text style={styles.header}>
+                                bye<Text style={styles.header2}>buyy</Text>
+                              </Text>
+                            </View>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <TouchableOpacity
+                                onPress={this.handleSearch}
+                                style={styles.headerIcon}>
+                                <Ionicons
+                                  name="ios-search"
+                                  size={20}
+                                  color={colors.white}
+                                />
+                              </TouchableOpacity>
+                              <TouchableOpacity
+                                style={styles.headerIcon}
+                                onPress={this.handleToggle}>
+                                <Ionicons
+                                  name="ios-ellipsis-horizontal"
+                                  size={20}
+                                  color={colors.white}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          </View>
+                          <TabView
+                            navigationState={this.state}
+                            renderScene={this.renderScene}
+                            renderTabBar={this.renderTabBar}
+                            onIndexChange={this.handleIndexChange}
                           />
-                        </View>
-                        <Text style={styles.header}>
-                          bye<Text style={styles.header2}>buyy</Text>
-                        </Text>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                        <TouchableOpacity
-                          onPress={this.handleSearch}
-                          style={styles.headerIcon}>
-                          <Ionicons
-                            name="ios-search"
-                            size={20}
-                            color={colors.white}
-                          />
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.headerIcon}
-                          onPress={this.handleToggle}>
-                          <Ionicons
-                            name="ios-ellipsis-horizontal"
-                            size={20}
-                            color={colors.white}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                    <TabView
-                      navigationState={this.state}
-                      renderScene={this.renderScene}
-                      renderTabBar={this.renderTabBar}
-                      onIndexChange={this.handleIndexChange}
-                    />
-                    {this.state.showDrawer ? (
-                      <View
-                        style={{
-                          width: width,
-                          height: '100%',
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          backgroundColor: 'rgba(110,110,110,0.1)',
-                        }}>
-                        <TouchableOpacity
-                          onPress={this.handleToggleClose}
-                          style={{
-                            width: width - 200,
-                            height: '100%',
-                          }}></TouchableOpacity>
-                        <Animated.View
-                          style={{
-                            width: 200,
-                            alignItems: 'center',
-                            height: '100%',
-                            top: 0,
-                            right: this.state.toggleValue,
-                            position: 'absolute',
-                            backgroundColor: colors.primary,
-                            elevation: 10,
-                            borderBottomLeftRadius: 10,
-                            borderTopLeftRadius: 10,
-                          }}>
-                          <CustomDrawer
-                            handleMenu={(e) => this.handleMenu(e)}
-                            active={this.state.activeMenu}
-                          />
-                        </Animated.View>
-                      </View>
-                    ) : null}
-                  </SafeAreaView>
+                          {this.state.showDrawer ? (
+                            <View
+                              style={{
+                                width: width,
+                                height: '100%',
+                                position: 'absolute',
+                                top: 0,
+                                right: 0,
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                              }}>
+                              <TouchableOpacity
+                                onPress={this.handleToggleClose}
+                                style={{
+                                  width: width - 200,
+                                  height: '100%',
+                                }}></TouchableOpacity>
+                              <Animated.View
+                                style={{
+                                  width: 200,
+                                  alignItems: 'center',
+                                  height: '100%',
+                                  top: 0,
+                                  right: this.state.toggleValue,
+                                  position: 'absolute',
+                                  backgroundColor: colors.primary2,
+                                  elevation: 10,
+                                  borderBottomLeftRadius: 5,
+                                  borderTopLeftRadius: 5,
+                                }}>
+                                <CustomDrawer
+                                  handleMenu={(e) => this.handleMenu(e)}
+                                  active={this.state.activeMenu}
+                                />
+                              </Animated.View>
+                            </View>
+                          ) : null}
+                        </SafeAreaView>
+                      )}
+                  </>
                 )}
-              </>
-            )}
-          </>
-        )}
+            </>
+          )}
         <Modal isVisible={this.state.update}>
           <View
             style={{
@@ -900,7 +907,7 @@ export default class HomeScreen extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -933,14 +940,14 @@ export default class HomeScreen extends React.Component {
             <View
               style={{
                 width: '85%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
                 paddingVertical: 20,
               }}>
               <Image
                 source={require('../assets/images/icon.png')}
-                style={{width: 50, height: 50, marginBottom: 10}}
+                style={{ width: 50, height: 50, marginBottom: 10 }}
               />
               <Text
                 style={{
@@ -968,7 +975,7 @@ export default class HomeScreen extends React.Component {
                     borderRadius: 5,
                     marginHorizontal: 10,
                   }}>
-                  <Text style={styles.updateButtonText}>Exit App</Text>
+                  <Text style={[styles.updateButtonText, { color: colors.baseline }]}>Exit App</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={this.handleRate}
@@ -1022,8 +1029,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   tabbar: {
-    backgroundColor: '#1B1F22',
-    elevation: 3,
+    backgroundColor: colors.primary2,
+    elevation: 1,
   },
   indicator: {
     backgroundColor: colors.baseline,
@@ -1034,13 +1041,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -10,
     top: -5,
-    backgroundColor: '#d65a31',
+    backgroundColor: colors.baseline,
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 10,
   },
   tabCountText: {
-    color: '#fff',
+    color: colors.white,
     fontFamily: 'Muili-Bold',
     fontSize: 12,
   },
@@ -1049,13 +1056,14 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   updateHeader: {
-    color: '#fff',
+    color: colors.white,
     fontFamily: 'Muili-Bold',
-    fontSize: 18,
+    fontSize: 20,
     marginVertical: 10,
+    marginTop: 20
   },
   updateButton: {
-    backgroundColor: '#d65a31',
+    backgroundColor: colors.baseline,
     width: 250,
     height: 50,
     borderRadius: 10,
@@ -1065,7 +1073,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   updateButtonText: {
-    color: '#fff',
+    color: colors.white,
     fontFamily: 'Muili-Bold',
     fontSize: 18,
   },

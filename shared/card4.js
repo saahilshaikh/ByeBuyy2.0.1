@@ -14,7 +14,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class Card4 extends React.Component {
   constructor() {
@@ -70,9 +70,9 @@ export default class Card4 extends React.Component {
     var location = this.props.location;
     return (
       <>
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
           {!this.state.loading ? (
-            <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigation.push('viewProfile', {
@@ -92,7 +92,7 @@ export default class Card4 extends React.Component {
                     style={styles.profileBox}>
                     {this.state.user.photo ? (
                       <Image
-                        source={{uri: this.state.user.photo}}
+                        source={{ uri: this.state.user.photo }}
                         style={styles.profileImage}
                         onError={() => {
                           var user = this.state.user;
@@ -103,10 +103,10 @@ export default class Card4 extends React.Component {
                         }}
                       />
                     ) : (
-                      <Text style={styles.imageText}>
-                        {this.state.user.name.charAt(0).toUpperCase()}
-                      </Text>
-                    )}
+                        <Text style={styles.imageText}>
+                          {this.state.user.name.charAt(0).toUpperCase()}
+                        </Text>
+                      )}
                   </View>
                   <View>
                     <Text style={styles.profileName}>
@@ -120,80 +120,80 @@ export default class Card4 extends React.Component {
                 {auth().currentUser ? (
                   <>
                     {this.state.user.email ===
-                    auth().currentUser.email ? null : (
-                      <View style={styles.actionProfile}>
-                        {this.state.follow ? (
-                          <TouchableOpacity
-                            onPress={this.handleFollow}
-                            style={styles.followAction}>
-                            <Ionicons
-                              name="ios-person-remove"
-                              size={16}
-                              color={colors.white}
-                              style={{marginRight: 7}}
-                            />
-                            <Text style={styles.followActionText}>
-                              Unfollow
+                      auth().currentUser.email ? null : (
+                        <View style={styles.actionProfile}>
+                          {this.state.follow ? (
+                            <TouchableOpacity
+                              onPress={this.handleFollow}
+                              style={styles.followAction}>
+                              <Ionicons
+                                name="ios-person-remove"
+                                size={16}
+                                color={colors.white}
+                                style={{ marginRight: 7 }}
+                              />
+                              <Text style={styles.followActionText}>
+                                Unfollow
                             </Text>
-                          </TouchableOpacity>
-                        ) : (
-                          <TouchableOpacity
-                            onPress={this.handleFollow}
-                            style={styles.followAction}>
-                            <Ionicons
-                              name="ios-person-add"
-                              size={16}
-                              color={colors.white}
-                              style={{marginRight: 7}}
-                            />
-                            <Text style={styles.followActionText}>Follow</Text>
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    )}
+                            </TouchableOpacity>
+                          ) : (
+                              <TouchableOpacity
+                                onPress={this.handleFollow}
+                                style={styles.followAction}>
+                                <Ionicons
+                                  name="ios-person-add"
+                                  size={16}
+                                  color={colors.white}
+                                  style={{ marginRight: 7 }}
+                                />
+                                <Text style={styles.followActionText}>Follow</Text>
+                              </TouchableOpacity>
+                            )}
+                        </View>
+                      )}
                   </>
                 ) : null}
               </TouchableOpacity>
             </View>
           ) : (
-            <View
-              style={{
-                width: '95%',
-                paddingVertical: 10,
-                paddingHorizontal: 15,
-                alignItems: 'center',
-                backgroundColor: colors.secondary,
-                justifyContent: 'space-between',
-                borderRadius: 10,
-                marginBottom: 10,
-                elevation: 3,
-              }}>
-              <SkeletonContent
-                containerStyle={{width: '100%'}}
-                boneColor={colors.primary}
-                highlightColor={colors.darkText}
-                isLoading={this.state.loading}
-                layout={[
-                  {
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    alignItems: 'center',
-                    children: [
-                      {
-                        width: 40,
-                        height: 40,
-                        marginRight: 10,
-                        borderRadius: 20,
-                      },
-                      {
-                        width: 150,
-                        height: 20,
-                      },
-                    ],
-                  },
-                ]}></SkeletonContent>
-            </View>
-          )}
+              <View
+                style={{
+                  width: '95%',
+                  paddingVertical: 10,
+                  paddingHorizontal: 15,
+                  alignItems: 'center',
+                  // backgroundColor: colors.secondary,
+                  justifyContent: 'space-between',
+                  borderRadius: 10,
+                  marginBottom: 10,
+                  // elevation: 3,
+                }}>
+                <SkeletonContent
+                  containerStyle={{ width: '100%' }}
+                  boneColor={colors.grey}
+                  highlightColor={colors.darkText}
+                  isLoading={this.state.loading}
+                  layout={[
+                    {
+                      flexDirection: 'row',
+                      marginTop: 10,
+                      alignItems: 'center',
+                      children: [
+                        {
+                          width: 40,
+                          height: 40,
+                          marginRight: 10,
+                          borderRadius: 20,
+                        },
+                        {
+                          width: 150,
+                          height: 20,
+                        },
+                      ],
+                    },
+                  ]}></SkeletonContent>
+              </View>
+            )}
         </View>
       </>
     );
@@ -202,16 +202,16 @@ export default class Card4 extends React.Component {
 
 const styles = StyleSheet.create({
   item: {
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingLeft: 15,
     paddingRight: 5,
     width: '95%',
     alignItems: 'center',
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     justifyContent: 'space-between',
     borderRadius: 5,
-    marginBottom: 10,
-    elevation: 3,
+    marginBottom: 5,
+    elevation: 1,
     flexDirection: 'row',
   },
   profile: {

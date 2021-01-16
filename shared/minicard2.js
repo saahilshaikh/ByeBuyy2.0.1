@@ -19,7 +19,7 @@ import axios from 'axios';
 import link from '../fetchPath';
 import colors from '../appTheme';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class MiniCard2 extends React.Component {
   constructor() {
@@ -133,11 +133,11 @@ export default class MiniCard2 extends React.Component {
   render() {
     return (
       <>
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
           {!this.state.loadingProduct && !this.state.loadingOwner ? (
             <>
               {this.state.NF === false ? (
-                <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
                   <View style={styles.item}>
                     <View style={styles.top}>
                       <View style={styles.profile}>
@@ -150,16 +150,16 @@ export default class MiniCard2 extends React.Component {
                           style={styles.profileBox}>
                           {this.state.owner.photo ? (
                             <Image
-                              source={{uri: this.state.owner.photo}}
+                              source={{ uri: this.state.owner.photo }}
                               style={styles.profileImage}
                             />
                           ) : (
-                            <View style={styles.profileImageBox}>
-                              <Text style={styles.imageText}>
-                                {this.state.owner.name.charAt(0).toUpperCase()}
-                              </Text>
-                            </View>
-                          )}
+                              <View style={styles.profileImageBox}>
+                                <Text style={styles.imageText}>
+                                  {this.state.owner.name.charAt(0).toUpperCase()}
+                                </Text>
+                              </View>
+                            )}
                         </TouchableOpacity>
                         <View>
                           <Text
@@ -191,12 +191,12 @@ export default class MiniCard2 extends React.Component {
                     <View style={styles.middle}>
                       <Text style={styles.type}>{this.state.product.type}</Text>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Ionicons
                           name="ios-location-outline"
                           size={14}
                           color={colors.white}
-                          style={{marginRight: 5}}
+                          style={{ marginRight: 5 }}
                         />
                         <Text style={styles.location}>
                           {this.state.product.city +
@@ -218,72 +218,72 @@ export default class MiniCard2 extends React.Component {
                   </View>
                 </View>
               ) : (
-                <View style={styles.item}>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: '#fff',
-                      fontFamily: 'Muli-Bold',
-                    }}>
-                    Post no longer exist
+                  <View style={styles.item}>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color: '#fff',
+                        fontFamily: 'Muli-Bold',
+                      }}>
+                      Post no longer exist
                   </Text>
-                </View>
-              )}
+                  </View>
+                )}
             </>
           ) : (
-            <View
-              style={{
-                width: '95%',
-                paddingVertical: 10,
-                paddingHorizontal: 15,
-                alignItems: 'center',
-                backgroundColor: colors.primary,
-                justifyContent: 'space-between',
-                borderRadius: 10,
-                marginBottom: 10,
-                elevation: 3,
-              }}>
-              <SkeletonContent
-                containerStyle={{width: '100%'}}
-                boneColor={colors.primary}
-                highlightColor={colors.darkText}
-                isLoading={this.state.loadingProduct || this.state.loadingOwner}
-                layout={[
-                  {
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    alignItems: 'center',
-                    children: [
-                      {
-                        width: 40,
-                        height: 40,
-                        marginRight: 10,
-                        borderRadius: 20,
-                      },
-                      {
-                        width: 150,
-                        height: 20,
-                      },
-                    ],
-                  },
-                  {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 20,
-                    children: [
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                    ],
-                  },
-                ]}></SkeletonContent>
-            </View>
-          )}
+              <View
+                style={{
+                  width: '95%',
+                  paddingVertical: 10,
+                  paddingHorizontal: 15,
+                  alignItems: 'center',
+                  backgroundColor: colors.primary,
+                  justifyContent: 'space-between',
+                  borderRadius: 10,
+                  marginBottom: 10,
+                  elevation: 3,
+                }}>
+                <SkeletonContent
+                  containerStyle={{ width: '100%' }}
+                  boneColor={colors.primary}
+                  highlightColor={colors.darkText}
+                  isLoading={this.state.loadingProduct || this.state.loadingOwner}
+                  layout={[
+                    {
+                      flexDirection: 'row',
+                      marginTop: 10,
+                      alignItems: 'center',
+                      children: [
+                        {
+                          width: 40,
+                          height: 40,
+                          marginRight: 10,
+                          borderRadius: 20,
+                        },
+                        {
+                          width: 150,
+                          height: 20,
+                        },
+                      ],
+                    },
+                    {
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 20,
+                      children: [
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                      ],
+                    },
+                  ]}></SkeletonContent>
+              </View>
+            )}
         </View>
       </>
     );

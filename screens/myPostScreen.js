@@ -1,16 +1,19 @@
 import React from 'react';
 import {
   View,
-  StyleSheet
+  StyleSheet,
+  Text
 } from 'react-native';
 import Card from '../shared/card';
 import Card2 from '../shared/card2';
 import auth from '@react-native-firebase/auth';
 import axios from 'axios';
 import link from '../fetchPath';
+import LottieView from 'lottie-react-native';
+import colors from '../appTheme';
 
 export default class MyPostScreen extends React.PureComponent {
-  inter=null;
+  inter = null;
   constructor() {
     super();
     this.state = {
@@ -23,9 +26,9 @@ export default class MyPostScreen extends React.PureComponent {
     this.handleInit();
   }
 
-  componentWillUnmount(){
-    this.setState = (state,callback)=>{
-        return;
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
     };
   }
 
@@ -45,9 +48,9 @@ export default class MyPostScreen extends React.PureComponent {
     }
   }
 
-  componentWillUnmount(){
-    this.setState = (state,callback)=>{
-        return;
+  componentWillUnmount() {
+    this.setState = (state, callback) => {
+      return;
     };
   }
 
@@ -55,7 +58,7 @@ export default class MyPostScreen extends React.PureComponent {
     return (
       <View style={styles.container}>
         {
-          this.state.data.map(item=>{
+          this.state.data.map(item => {
             if (item.type.toLowerCase() === 'product') {
               return (
                 <Card handleCardImageClick={(e, f) => this.props.handleCardImageClick(e, f)}
@@ -73,6 +76,36 @@ export default class MyPostScreen extends React.PureComponent {
               )
             }
           })
+        }
+        {
+          this.state.data.length === 0 && this.state.loading === false
+            ?
+            <View
+              style={{
+                width: '100%',
+                flex: 1,
+                alignItems: 'center',
+              }}>
+              <LottieView
+                source={require('../assets/16656-empty-state.json')}
+                autoPlay={true}
+                loop={false}
+                style={{
+                  width: 300,
+                  height: 250,
+                }}
+              />
+              <Text
+                style={{
+                  fontFamily: 'Muli-Bold',
+                  color: colors.white,
+                  fontSize: 20,
+                }}>
+                No Posts Found
+            </Text>
+            </View>
+            :
+            null
         }
       </View>
     );

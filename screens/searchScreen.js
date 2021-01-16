@@ -8,6 +8,7 @@ import {
   Dimensions,
   ActivityIndicator,
   Keyboard,
+  Text
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
@@ -23,7 +24,7 @@ import colors from '../appTheme';
 import LikedFollowing from '../shared/likedfollwing';
 import auth from '@react-native-firebase/auth';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class SearchScreen extends React.Component {
   constructor() {
@@ -38,9 +39,9 @@ export default class SearchScreen extends React.Component {
       loading: false,
       index: 0,
       routes: [
-        {key: 'products', title: 'PRODUCTS'},
-        {key: 'requests', title: 'REQUESTS'},
-        {key: 'people', title: 'PEOPLE'},
+        { key: 'products', title: 'PRODUCTS' },
+        { key: 'requests', title: 'REQUESTS' },
+        { key: 'people', title: 'PEOPLE' },
       ],
       searchWord: '',
       images: [],
@@ -68,10 +69,15 @@ export default class SearchScreen extends React.Component {
     });
   };
 
-  renderTabBar = (props: SceneRendererProps & {navigationState: State}) => {
+  renderTabBar = (props: SceneRendererProps & { navigationState: State }) => {
     return (
       <TabBar
         {...props}
+        renderLabel={({ route, focused, color }) => (
+          <Text style={{ color: colors.grey, fontSize: 14, fontFamily: 'Muli-Bold' }}>
+            {route.title}
+          </Text>
+        )}
         indicatorStyle={styles.indicator}
         style={styles.tabbar}
       />
@@ -171,25 +177,25 @@ export default class SearchScreen extends React.Component {
                     justifyContent: 'center',
                     borderRadius: 10,
                   }}>
-                  <Ionicons name="ios-close" size={26} color={colors.grey} />
+                  <Ionicons name="ios-close" size={26} color={colors.baseline} />
                 </TouchableOpacity>
               ) : (
-                <TouchableOpacity
-                  onPress={() => this.props.navigation.pop()}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: 10,
-                  }}>
-                  <Ionicons
-                    name="ios-arrow-back"
-                    size={26}
-                    color={colors.grey}
-                  />
-                </TouchableOpacity>
-              )}
+                  <TouchableOpacity
+                    onPress={() => this.props.navigation.pop()}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 10,
+                    }}>
+                    <Ionicons
+                      name="ios-arrow-back"
+                      size={26}
+                      color={colors.baseline}
+                    />
+                  </TouchableOpacity>
+                )}
               <TextInput
                 onSubmitEditing={this.handleSearch}
                 onFocus={this.handleInputFocus}
@@ -199,7 +205,7 @@ export default class SearchScreen extends React.Component {
                 placeholderTextColor={colors.grey}
                 value={this.state.searchWord}
                 onChangeText={(text) => {
-                  this.setState({searchWord: text});
+                  this.setState({ searchWord: text });
                 }}
               />
               <TouchableOpacity
@@ -211,39 +217,39 @@ export default class SearchScreen extends React.Component {
                   justifyContent: 'center',
                   borderRadius: 10,
                 }}>
-                <Ionicons name="ios-search" size={30} color={colors.grey} />
+                <Ionicons name="ios-search" size={26} color={colors.grey} />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{width: '100%', alignItems: 'center', flex: 1}}>
+          <View style={{ width: '100%', alignItems: 'center', flex: 1 }}>
             {this.state.loading ? (
               <View
-                style={{width: '100%', marginTop: 20, alignItems: 'center'}}>
+                style={{ width: '100%', marginTop: 20, alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={colors.baseline} />
               </View>
             ) : (
-              <>
-                {this.state.showResult ? (
-                  <View style={{width: '100%', flex: 1}}>
-                    <TabView
-                      navigationState={this.state}
-                      renderScene={this.renderScene}
-                      renderTabBar={this.renderTabBar}
-                      onIndexChange={this.handleIndexChange}
-                    />
-                  </View>
-                ) : (
-                  <>
-                    {auth().currentUser ? (
-                      <LikedFollowing
-                        location={this.state.location}
-                        navigation={this.props.navigation}
+                <>
+                  {this.state.showResult ? (
+                    <View style={{ width: '100%', flex: 1 }}>
+                      <TabView
+                        navigationState={this.state}
+                        renderScene={this.renderScene}
+                        renderTabBar={this.renderTabBar}
+                        onIndexChange={this.handleIndexChange}
                       />
-                    ) : null}
-                  </>
-                )}
-              </>
-            )}
+                    </View>
+                  ) : (
+                      <>
+                        {auth().currentUser ? (
+                          <LikedFollowing
+                            location={this.state.location}
+                            navigation={this.props.navigation}
+                          />
+                        ) : null}
+                      </>
+                    )}
+                </>
+              )}
           </View>
         </SafeAreaView>
         <SafeAreaView></SafeAreaView>
@@ -261,18 +267,20 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     paddingVertical: 5,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     alignItems: 'center',
+    height: 60,
+    elevation: 3
   },
   input: {
     width: width - 110,
     height: 40,
     padding: 0,
     fontSize: 16,
-    color: colors.white,
+    color: colors.darkText,
     fontFamily: 'Muli-Regular',
-    backgroundColor: colors.primary,
-    borderRadius: 10,
+    backgroundColor: colors.white,
+    borderRadius: 5,
     paddingHorizontal: 10,
   },
   box: {
@@ -284,17 +292,11 @@ const styles = StyleSheet.create({
     color: colors.baseline,
     fontFamily: 'Muli-Bold',
   },
-  topic: {
-    fontSize: 18,
-    color: colors.white,
-    fontFamily: 'Muli-Regular',
-    marginLeft: 10,
-  },
   tabBox: {
     width: '100%',
   },
   tabbar: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primary2,
     elevation: 3,
   },
   indicator: {

@@ -24,7 +24,7 @@ import SelectInput from 'react-native-select-input-ios';
 
 var RNFS = require('react-native-fs');
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class ProfileEditScreen extends React.Component {
   constructor() {
@@ -39,9 +39,9 @@ export default class ProfileEditScreen extends React.Component {
       loading: true,
       saving: false,
       profs: [
-        {label: 'Select a type', value: ''},
-        {label: 'Student', value: 'Student'},
-        {label: 'Non-Student', value: 'Non-Student'},
+        { label: 'Select a type', value: '' },
+        { label: 'Student', value: 'Student' },
+        { label: 'Non-Student', value: 'Non-Student' },
       ],
       profStudent: '',
     };
@@ -211,13 +211,15 @@ export default class ProfileEditScreen extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: colors.secondary,
+            backgroundColor: colors.primary2,
             paddingHorizontal: 15,
             paddingVertical: 10,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
             width: '100%',
+            height: 60,
+            elevation: 3
           }}>
           <View
             style={{
@@ -226,7 +228,7 @@ export default class ProfileEditScreen extends React.Component {
               justifyContent: 'center',
             }}>
             <TouchableOpacity onPress={() => this.props.navigation.pop()}>
-              <Ionicons name="ios-close" size={35} color={colors.baseline} />
+              <Ionicons name="ios-close" size={30} color={colors.baseline} />
             </TouchableOpacity>
             <Text style={styles.header}>Edit Profile</Text>
           </View>
@@ -239,17 +241,17 @@ export default class ProfileEditScreen extends React.Component {
             {this.state.saving ? (
               <ActivityIndicator size="large" color={colors.baseline} />
             ) : (
-              <TouchableOpacity onPress={this.handleSave}>
-                <Ionicons
-                  name="ios-checkmark"
-                  size={35}
-                  color={colors.baseline}
-                />
-              </TouchableOpacity>
-            )}
+                <TouchableOpacity onPress={this.handleSave}>
+                  <Ionicons
+                    name="ios-checkmark"
+                    size={30}
+                    color={colors.baseline}
+                  />
+                </TouchableOpacity>
+              )}
           </View>
         </View>
-        <ScrollView style={{width: '100%', flex: 1, paddingTop: 10}}>
+        <ScrollView style={{ width: '100%', flex: 1, paddingTop: 10 }}>
           {!this.state.loading ? (
             <View
               style={{
@@ -260,16 +262,16 @@ export default class ProfileEditScreen extends React.Component {
               <View style={styles.profileImageBox}>
                 {this.state.photo ? (
                   <Image
-                    source={{uri: this.state.photo}}
+                    source={{ uri: this.state.photo }}
                     style={styles.profileImage}
                   />
                 ) : (
-                  <View style={styles.profileImageTextBox}>
-                    <Text style={styles.imageText}>
-                      {this.state.name.charAt(0).toUpperCase()}
-                    </Text>
-                  </View>
-                )}
+                    <View style={styles.profileImageTextBox}>
+                      <Text style={styles.imageText}>
+                        {this.state.name.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  )}
                 <TouchableOpacity
                   onPress={this.handleImageChange}
                   style={styles.profileEditButton}>
@@ -286,7 +288,7 @@ export default class ProfileEditScreen extends React.Component {
                   style={styles.input}
                   autoCapitalize="none"
                   maxLength={25}
-                  onChangeText={(name) => this.setState({name})}
+                  onChangeText={(name) => this.setState({ name })}
                   value={this.state.name}></TextInput>
               </View>
               <View style={styles.inputGroup}>
@@ -308,18 +310,18 @@ export default class ProfileEditScreen extends React.Component {
                     @
                   </Text>
                   <TextInput
-                    style={[styles.input, {width: '90%'}]}
+                    style={[styles.input, { width: '90%' }]}
                     autoCapitalize="none"
                     maxLength={20}
                     onChangeText={(uname) =>
-                      this.setState({uname: uname.replace(' ', '')})
+                      this.setState({ uname: uname.replace(' ', '') })
                     }
                     value={this.state.uname}></TextInput>
                 </View>
               </View>
               <View style={styles.inputGroup}>
                 <Text style={styles.inputGroupText}>Profession</Text>
-                <View style={{width: '100%'}}>
+                <View style={{ width: '100%' }}>
                   <SelectInput
                     value={this.state.prof}
                     options={this.state.profs}
@@ -357,8 +359,8 @@ export default class ProfileEditScreen extends React.Component {
               ) : null}
             </View>
           ) : (
-            <ActivityIndicator size="large" color={colors.baseline} />
-          )}
+              <ActivityIndicator size="large" color={colors.baseline} />
+            )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -373,7 +375,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   header: {
-    color: colors.white,
+    color: colors.baseline,
     fontSize: 20,
     fontFamily: 'Muli-Bold',
     marginLeft: 10,
@@ -406,7 +408,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: colors.darkText,
+    backgroundColor: colors.white,
     borderRadius: 20,
     width: 40,
     height: 40,

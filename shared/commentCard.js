@@ -21,7 +21,7 @@ import auth from '@react-native-firebase/auth';
 import ReplyCard from './replyCard';
 import Snackbar from 'react-native-snackbar';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class CommentCard extends React.Component {
   constructor() {
@@ -47,6 +47,7 @@ export default class CommentCard extends React.Component {
     if (res.data !== null && res.data.name) {
       var comment = {
         name: res.data.name,
+        userId: res.data._id,
         photo: res.data.photo,
         email: res.data.email,
         comment: this.props.item.comment,
@@ -117,7 +118,7 @@ export default class CommentCard extends React.Component {
 
   render() {
     return (
-      <View style={{width: '100%', alignItems: 'center'}}>
+      <View style={{ width: '100%', alignItems: 'center' }}>
         {this.state.loading ? (
           <View
             style={{
@@ -125,14 +126,13 @@ export default class CommentCard extends React.Component {
               paddingVertical: 10,
               paddingHorizontal: 15,
               alignItems: 'center',
-              backgroundColor: colors.primary,
+              backgroundColor: colors.primary2,
               justifyContent: 'space-between',
               borderRadius: 10,
-              elevation: 3,
               marginVertical: 5,
             }}>
             <SkeletonContent
-              containerStyle={{width: '100%'}}
+              containerStyle={{ width: '100%' }}
               boneColor={colors.primary}
               highlightColor={colors.darkText}
               isLoading={this.state.loading}
@@ -156,90 +156,94 @@ export default class CommentCard extends React.Component {
               ]}></SkeletonContent>
           </View>
         ) : (
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-              alignItems: 'flex-end',
-            }}>
-            {this.state.NF ? null : (
-              <View style={styles.commentView}>
-                <View style={{flexDirection: 'row'}}>
-                  <View style={styles.commentUserPhotoBox}>
-                    {this.state.comment.photo ? (
-                      <Image
-                        source={{uri: this.state.comment.photo}}
-                        style={styles.commentUserPhoto}
-                      />
-                    ) : (
-                      <View style={styles.profileImageBox}>
-                        <Text style={styles.imageText}>
-                          {this.state.comment.name.charAt(0).toUpperCase()}
-                        </Text>
-                      </View>
-                    )}
-                    {this.state.comment.active ? (
-                      <View style={styles.active}></View>
-                    ) : null}
-                  </View>
-                  <View style={{marginLeft: 10}}>
-                    <View style={{width: width * 0.65}}>
-                      <Text style={styles.commentUserName}>
-                        {this.state.comment.name}
-                      </Text>
-                      <Comment
-                        value={this.state.comment.comment}
-                        navigation={this.props.navigation}
-                      />
-                    </View>
-                    <Text style={styles.commentDate}>
-                      <Moment element={Text} fromNow>
-                        {this.state.comment.date}
-                      </Moment>
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => {
-                        this.setState({
-                          showReply: true,
-                        });
-                      }}
-                      style={styles.replyButton}>
-                      <Text style={styles.replyButtonText}>Reply</Text>
+            <View
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                alignItems: 'flex-end',
+              }}>
+              {this.state.NF ? null : (
+                <View style={styles.commentView}>
+                  <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity onPress={() =>
+                      this.props.navigation.push('viewProfile', {
+                        id: this.state.comment.userId,
+                        location: {},
+                      })} style={styles.commentUserPhotoBox}>
+                      {this.state.comment.photo ? (
+                        <Image
+                          source={{ uri: this.state.comment.photo }}
+                          style={styles.commentUserPhoto}
+                        />
+                      ) : (
+                          <View style={styles.profileImageBox}>
+                            <Text style={styles.imageText}>
+                              {this.state.comment.name.charAt(0).toUpperCase()}
+                            </Text>
+                          </View>
+                        )}
+                      {this.state.comment.active ? (
+                        <View style={styles.active}></View>
+                      ) : null}
                     </TouchableOpacity>
-                  </View>
-                </View>
-                {auth().currentUser ? (
-                  <>
-                    {this.state.comment.email === auth().currentUser.email ? (
+                    <View style={{ marginLeft: 10 }}>
+                      <View style={{ width: width * 0.65 }}>
+                        <Text style={styles.commentUserName}>
+                          {this.state.comment.name}
+                        </Text>
+                        <Comment
+                          value={this.state.comment.comment}
+                          navigation={this.props.navigation}
+                        />
+                      </View>
+                      <Text style={styles.commentDate}>
+                        <Moment element={Text} fromNow>
+                          {this.state.comment.date}
+                        </Moment>
+                      </Text>
                       <TouchableOpacity
                         onPress={() => {
-                          this.setState({isModalVisible: true});
+                          this.setState({
+                            showReply: true,
+                          });
                         }}
-                        style={styles.actionButton}>
-                        <Ionicons
-                          name="ios-ellipsis-horizontal-outline"
-                          size={22}
-                          color={colors.grey}
-                        />
+                        style={styles.replyButton}>
+                        <Text style={styles.replyButtonText}>Reply</Text>
                       </TouchableOpacity>
-                    ) : null}
-                  </>
-                ) : null}
-              </View>
-            )}
-            <ScrollView style={{width: '90%'}}>
-              {this.state.replies.map((rep) => {
-                return (
-                  <ReplyCard
-                    item={rep}
-                    handleEditReply={this.handleEditReply}
-                    handleDeleteReply={this.handleDeleteReply}
-                  />
-                );
-              })}
-            </ScrollView>
-          </View>
-        )}
+                    </View>
+                  </View>
+                  {auth().currentUser ? (
+                    <>
+                      {this.state.comment.email === auth().currentUser.email ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({ isModalVisible: true });
+                          }}
+                          style={styles.actionButton}>
+                          <Ionicons
+                            name="ios-ellipsis-horizontal-outline"
+                            size={22}
+                            color={colors.grey}
+                          />
+                        </TouchableOpacity>
+                      ) : null}
+                    </>
+                  ) : null}
+                </View>
+              )}
+              <ScrollView style={{ width: '90%' }}>
+                {this.state.replies.map((rep) => {
+                  return (
+                    <ReplyCard
+                      item={rep}
+                      handleEditReply={this.handleEditReply}
+                      handleDeleteReply={this.handleDeleteReply}
+                    />
+                  );
+                })}
+              </ScrollView>
+            </View>
+          )}
 
         <Modal isVisible={this.state.isModalVisible}>
           <TouchableOpacity
@@ -257,11 +261,11 @@ export default class CommentCard extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 <TouchableOpacity
                   onPress={() =>
                     this.setState({
@@ -339,13 +343,13 @@ export default class CommentCard extends React.Component {
             <View
               style={{
                 width: '100%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%', marginTop: 10}}>
-                <View style={{width: '100%', alignItems: 'center'}}>
-                  <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{ width: '100%', marginTop: 10 }}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
+                  <View style={{ width: '100%', alignItems: 'center' }}>
                     <View style={styles.inputGroup}>
                       <Text style={styles.inputGroupText}>Edit Comment</Text>
                       <TextInput
@@ -354,7 +358,7 @@ export default class CommentCard extends React.Component {
                         maxLength={150}
                         autoFocus={true}
                         multiline={true}
-                        onChangeText={(desc) => this.setState({desc})}
+                        onChangeText={(desc) => this.setState({ desc })}
                         value={this.state.desc}></TextInput>
                     </View>
                   </View>
@@ -384,24 +388,25 @@ export default class CommentCard extends React.Component {
             <View
               style={{
                 width: '100%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%', marginTop: 10}}>
-                <View style={{width: '100%', alignItems: 'center'}}>
-                  <View style={{width: '100%', alignItems: 'center'}}>
+              <View style={{ width: '100%', marginTop: 10 }}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
+                  <View style={{ width: '100%', alignItems: 'center' }}>
                     <View style={styles.inputGroup}>
                       <Text style={styles.inputGroupText}>
                         Reply to Comment
                       </Text>
                       <TextInput
+                        placeholder="Type a reply..."
                         style={styles.inputArea}
                         autoCapitalize="none"
                         maxLength={150}
                         autoFocus={true}
                         multiline={true}
-                        onChangeText={(reply) => this.setState({reply})}
+                        onChangeText={(reply) => this.setState({ reply })}
                         value={this.state.reply}></TextInput>
                     </View>
                   </View>
@@ -462,7 +467,7 @@ const styles = StyleSheet.create({
   comment: {
     fontFamily: 'Muli-Regular',
     fontSize: 12,
-    color: colors.grey,
+    color: colors.white,
   },
   commentDate: {
     fontFamily: 'Muli-Regular',
@@ -532,6 +537,6 @@ const styles = StyleSheet.create({
   replyButtonText: {
     fontSize: 12,
     fontFamily: 'Muli-Bold',
-    color: colors.white,
+    color: colors.grey,
   },
 });

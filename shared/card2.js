@@ -23,7 +23,7 @@ import link from '../fetchPath';
 import colors from '../appTheme';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class Card2 extends React.Component {
   inter = null;
@@ -345,9 +345,9 @@ export default class Card2 extends React.Component {
     var a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(this.deg2rad(lat1)) *
-        Math.cos(this.deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(this.deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c; // Distance in km
     return d;
@@ -404,10 +404,23 @@ export default class Card2 extends React.Component {
     };
     var res = await axios.post(link + '/api/notifications/check', data);
     if (res.data.length === 0) {
-      this.sendLikedPushNotification('Request', this.state.product.id);
+      // this.sendLikedPushNotification('Request', this.state.product.id);
       var res2 = await axios.post(link + '/api/notifications/add', data);
       if (res2.data !== null) {
         console.log(res.data);
+        var title = this.state.currentUser.name + ' liked your request';
+        var noti = {
+          token: this.state.owner.pushToken,
+          title: title,
+          body: 'Tap here to see the details',
+          type: 'Request',
+          id: this.state.product.id,
+          date: new Date(),
+        };
+        var not = await axios.post(link + '/api/sendPushNotification', noti);
+        if (not.data.type === 'success') {
+          console.log('Send Noti');
+        }
       }
     }
   };
@@ -455,7 +468,7 @@ export default class Card2 extends React.Component {
   };
 
   handleMenu = () => {
-    this.setState({isModalVisible: !this.state.isModalVisible});
+    this.setState({ isModalVisible: !this.state.isModalVisible });
   };
 
   handleRemovePost = async () => {
@@ -540,11 +553,11 @@ export default class Card2 extends React.Component {
   render() {
     return (
       <>
-        <View style={{width: '100%', alignItems: 'center'}}>
+        <View style={{ width: '100%', alignItems: 'center' }}>
           {!this.state.loadingProduct && !this.state.loadingOwner ? (
             <>
               {this.state.NF === false ? (
-                <View style={{width: '100%', alignItems: 'center'}}>
+                <View style={{ width: '100%', alignItems: 'center' }}>
                   <View style={styles.item}>
                     <View style={styles.top}>
                       {!this.state.loadingOwner ? (
@@ -559,7 +572,7 @@ export default class Card2 extends React.Component {
                             style={styles.profileBox}>
                             {this.state.owner.photo ? (
                               <Image
-                                source={{uri: this.state.owner.photo}}
+                                source={{ uri: this.state.owner.photo }}
                                 style={styles.profileImage}
                                 onError={() => {
                                   var owner = this.state.owner;
@@ -570,18 +583,18 @@ export default class Card2 extends React.Component {
                                 }}
                               />
                             ) : (
-                              <View style={styles.profileImageBox}>
-                                <Text style={styles.imageText}>
-                                  {this.state.owner.name
-                                    .charAt(0)
-                                    .toUpperCase()}
-                                </Text>
-                              </View>
-                            )}
+                                <View style={styles.profileImageBox}>
+                                  <Text style={styles.imageText}>
+                                    {this.state.owner.name
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </Text>
+                                </View>
+                              )}
                             {this.state.owner.active &
-                            (this.state.owner.logout === false) ? (
-                              <View style={styles.active}></View>
-                            ) : null}
+                              (this.state.owner.logout === false) ? (
+                                <View style={styles.active}></View>
+                              ) : null}
                           </TouchableOpacity>
                           <TouchableOpacity
                             onPress={() =>
@@ -590,7 +603,7 @@ export default class Card2 extends React.Component {
                                 location: this.props.location,
                               })
                             }
-                            style={{marginLeft: 5}}>
+                            style={{ marginLeft: 5 }}>
                             <Text style={styles.profileName}>
                               {this.state.owner.name}
                             </Text>
@@ -609,43 +622,43 @@ export default class Card2 extends React.Component {
                           </TouchableOpacity>
                         </View>
                       ) : (
-                        <View
-                          style={{
-                            width: '100%',
-                            padding: 5,
-                            alignItems: 'center',
-                            backgroundColor: colors.primary,
-                            justifyContent: 'space-between',
-                            elevation: 3,
-                            borderTopColor: colors.grey,
-                            borderBottomColor: colors.grey,
-                          }}>
-                          <SkeletonContent
-                            containerStyle={{width: '100%'}}
-                            boneColor={colors.primary}
-                            highlightColor={colors.darkText}
-                            isLoading={true}
-                            layout={[
-                              {
-                                flexDirection: 'row',
-                                marginTop: 10,
-                                alignItems: 'center',
-                                children: [
-                                  {
-                                    width: 50,
-                                    height: 50,
-                                    marginRight: 10,
-                                    borderRadius: 25,
-                                  },
-                                  {
-                                    width: 150,
-                                    height: 20,
-                                  },
-                                ],
-                              },
-                            ]}></SkeletonContent>
-                        </View>
-                      )}
+                          <View
+                            style={{
+                              width: '100%',
+                              padding: 5,
+                              alignItems: 'center',
+                              backgroundColor: colors.primary2,
+                              justifyContent: 'space-between',
+                              elevation: 3,
+                              // borderTopColor: colors.grey,
+                              // borderBottomColor: colors.grey,
+                            }}>
+                            <SkeletonContent
+                              containerStyle={{ width: '100%' }}
+                              boneColor={colors.primary}
+                              highlightColor={colors.darkText}
+                              isLoading={true}
+                              layout={[
+                                {
+                                  flexDirection: 'row',
+                                  marginTop: 10,
+                                  alignItems: 'center',
+                                  children: [
+                                    {
+                                      width: 50,
+                                      height: 50,
+                                      marginRight: 10,
+                                      borderRadius: 25,
+                                    },
+                                    {
+                                      width: 150,
+                                      height: 20,
+                                    },
+                                  ],
+                                },
+                              ]}></SkeletonContent>
+                          </View>
+                        )}
                       {auth().currentUser ? (
                         <TouchableOpacity
                           style={{
@@ -668,12 +681,12 @@ export default class Card2 extends React.Component {
                       <Text style={styles.type}>
                         {this.state.product.type} |{' '}
                         {this.state.product.category === 'Books' &&
-                        this.state.product.subcategory
+                          this.state.product.subcategory
                           ? this.state.product.subcategory + ' | '
                           : null}
                         {this.state.product.category}
                       </Text>
-                      <View style={{flexDirection: 'row'}}>
+                      <View style={{ flexDirection: 'row' }}>
                         <Image
                           source={{
                             uri:
@@ -681,7 +694,7 @@ export default class Card2 extends React.Component {
                               this.state.product.code +
                               '/flat/64.png',
                           }}
-                          style={{width: 20, height: 15, marginRight: 5}}
+                          style={{ width: 20, height: 15, marginRight: 5 }}
                         />
                         <Text style={styles.location}>
                           {this.state.product.city +
@@ -693,54 +706,54 @@ export default class Card2 extends React.Component {
                             {auth().currentUser ? (
                               <>
                                 {this.state.product.owner !==
-                                auth().currentUser.email ? (
-                                  <View
-                                    style={{
-                                      flexDirection: 'row',
-                                      alignItems: 'center',
-                                      marginLeft: 5,
-                                    }}>
-                                    <Ionicons
-                                      name="ios-navigate"
-                                      color={colors.baseline}
-                                      size={14}
-                                      style={{marginRight: 5}}
-                                    />
-                                    <Text style={styles.location}>
-                                      {this.state.product.distance > 1
-                                        ? Math.round(
+                                  auth().currentUser.email ? (
+                                    <View
+                                      style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        marginLeft: 5,
+                                      }}>
+                                      <Ionicons
+                                        name="ios-navigate"
+                                        color={colors.baseline}
+                                        size={14}
+                                        style={{ marginRight: 5 }}
+                                      />
+                                      <Text style={styles.location}>
+                                        {this.state.product.distance > 1
+                                          ? Math.round(
                                             this.state.product.distance,
                                           ) + ' km'
-                                        : (
+                                          : (
                                             this.state.product.distance * 1000
                                           ).toFixed(2) + ' m'}
-                                    </Text>
-                                  </View>
-                                ) : null}
+                                      </Text>
+                                    </View>
+                                  ) : null}
                               </>
                             ) : (
-                              <View
-                                style={{
-                                  flexDirection: 'row',
-                                  alignItems: 'center',
-                                  marginLeft: 5,
-                                }}>
-                                <Ionicons
-                                  name="ios-navigate"
-                                  color={colors.baseline}
-                                  size={14}
-                                  style={{marginRight: 5}}
-                                />
-                                <Text style={styles.location}>
-                                  {this.state.product.distance > 1
-                                    ? Math.round(this.state.product.distance) +
+                                <View
+                                  style={{
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    marginLeft: 5,
+                                  }}>
+                                  <Ionicons
+                                    name="ios-navigate"
+                                    color={colors.baseline}
+                                    size={14}
+                                    style={{ marginRight: 5 }}
+                                  />
+                                  <Text style={styles.location}>
+                                    {this.state.product.distance > 1
+                                      ? Math.round(this.state.product.distance) +
                                       ' km'
-                                    : (
+                                      : (
                                         this.state.product.distance * 1000
                                       ).toFixed(2) + ' m'}
-                                </Text>
-                              </View>
-                            )}
+                                  </Text>
+                                </View>
+                              )}
                           </>
                         ) : null}
                       </View>
@@ -751,7 +764,7 @@ export default class Card2 extends React.Component {
                     </View>
                     <View style={styles.bottom}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <TouchableOpacity
                           onPress={this.handleLike}
                           style={{
@@ -765,18 +778,18 @@ export default class Card2 extends React.Component {
                               name="like1"
                               size={28}
                               color={colors.baseline}
-                              style={{marginRight: 7}}
+                              style={{ marginRight: 7 }}
                             />
                           ) : (
-                            <AntDesign
-                              name="like2"
-                              size={28}
-                              color={colors.grey}
-                              style={{marginRight: 7}}
-                            />
-                          )}
+                              <AntDesign
+                                name="like2"
+                                size={28}
+                                color={colors.grey}
+                                style={{ marginRight: 7 }}
+                              />
+                            )}
                           {this.state.product.likes.length > 0 ? (
-                            <Text style={{fontSize: 16, color: colors.grey}}>
+                            <Text style={{ fontSize: 16, color: colors.grey }}>
                               {this.state.product.likes.length > 1000
                                 ? this.state.product.likes.length / 1000 + 'K'
                                 : this.state.product.likes.length}
@@ -800,13 +813,13 @@ export default class Card2 extends React.Component {
                             name="ios-chatbubble-outline"
                             size={28}
                             color={colors.grey}
-                            style={{marginHorizontal: 7}}
+                            style={{ marginHorizontal: 7 }}
                           />
                           {this.state.product.comments.length > 0 ? (
-                            <Text style={{fontSize: 16, color: colors.grey}}>
+                            <Text style={{ fontSize: 16, color: colors.grey }}>
                               {this.state.product.comments.length > 1000
                                 ? this.state.product.comments.length / 1000 +
-                                  'K'
+                                'K'
                                 : this.state.product.comments.length}
                             </Text>
                           ) : null}
@@ -825,7 +838,7 @@ export default class Card2 extends React.Component {
                             name="ios-share-social-outline"
                             size={26}
                             color={colors.grey}
-                            style={{marginHorizontal: 5}}
+                            style={{ marginHorizontal: 5 }}
                           />
                         </TouchableOpacity>
                       </View>
@@ -835,60 +848,60 @@ export default class Card2 extends React.Component {
               ) : null}
             </>
           ) : (
-            <View
-              style={{
-                width: '95%',
-                padding: 15,
-                alignItems: 'center',
-                backgroundColor: '#1B1F22',
-                justifyContent: 'space-between',
-                elevation: 3,
-                borderWidth: 1,
-                borderColor: colors.darkText,
-                borderRadius: 10,
-                marginBottom: 10,
-              }}>
-              <SkeletonContent
-                containerStyle={{width: '100%'}}
-                boneColor={colors.primary}
-                highlightColor={colors.darkText}
-                isLoading={true}
-                layout={[
-                  {
-                    flexDirection: 'row',
-                    marginTop: 10,
-                    alignItems: 'center',
-                    children: [
-                      {
-                        width: 50,
-                        height: 50,
-                        marginRight: 10,
-                        borderRadius: 25,
-                      },
-                      {
-                        width: 150,
-                        height: 20,
-                      },
-                    ],
-                  },
-                  {
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    marginTop: 10,
-                    children: [
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                      {
-                        width: 80,
-                        height: 30,
-                      },
-                    ],
-                  },
-                ]}></SkeletonContent>
-            </View>
-          )}
+              <View
+                style={{
+                  width: '95%',
+                  padding: 15,
+                  alignItems: 'center',
+                  backgroundColor: colors.primary2,
+                  justifyContent: 'space-between',
+                  elevation: 3,
+                  // borderBottomWidth: 1,
+                  // borderBottomColor: colors.grey,
+                  borderRadius: 10,
+                  marginBottom: 10,
+                }}>
+                <SkeletonContent
+                  containerStyle={{ width: '100%' }}
+                  boneColor={colors.primary}
+                  highlightColor={colors.darkText}
+                  isLoading={true}
+                  layout={[
+                    {
+                      flexDirection: 'row',
+                      marginTop: 10,
+                      alignItems: 'center',
+                      children: [
+                        {
+                          width: 50,
+                          height: 50,
+                          marginRight: 10,
+                          borderRadius: 25,
+                        },
+                        {
+                          width: 150,
+                          height: 20,
+                        },
+                      ],
+                    },
+                    {
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      marginTop: 10,
+                      children: [
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                        {
+                          width: 80,
+                          height: 30,
+                        },
+                      ],
+                    },
+                  ]}></SkeletonContent>
+              </View>
+            )}
         </View>
         <Modal isVisible={this.state.isModalVisible}>
           <TouchableOpacity
@@ -906,49 +919,49 @@ export default class Card2 extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
-              <View style={{width: '100%'}}>
+              <View style={{ width: '100%' }}>
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner ===
+                      this.state.product.owner ===
                       auth().currentUser.email ? null : (
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.setState({
-                            reportForm: true,
-                            isModalVisible: false,
-                          })
-                        }
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Ionicons
-                          name="ios-flag"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.setState({
+                              reportForm: true,
+                              isModalVisible: false,
+                            })
+                          }
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Report
+                          <Ionicons
+                            name="ios-flag"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Report
                         </Text>
-                      </TouchableOpacity>
-                    )}
+                        </TouchableOpacity>
+                      )}
                   </>
                 ) : null}
                 {auth().currentUser ? (
@@ -978,8 +991,8 @@ export default class Card2 extends React.Component {
                     <Fontisto
                       name="bookmark-alt"
                       size={22}
-                      color={colors.grey}
-                      style={{marginRight: 20}}
+                      color={colors.white}
+                      style={{ marginRight: 20 }}
                     />
                     <Text
                       style={{
@@ -995,80 +1008,80 @@ export default class Card2 extends React.Component {
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner === auth().currentUser.email ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            isModalVisible: false,
-                          });
-                          this.props.navigation.navigate('EditRequest', {
-                            id: this.state.product.id,
-                            handleRefresh: this.handleInit,
-                          });
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                          borderBottomColor: colors.grey,
-                          borderBottomWidth: StyleSheet.hairlineWidth,
-                        }}>
-                        <Ionicons
-                          name="ios-brush"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                      this.state.product.owner === auth().currentUser.email ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              isModalVisible: false,
+                            });
+                            this.props.navigation.navigate('EditRequest', {
+                              id: this.state.product.id,
+                              handleRefresh: this.handleInit,
+                            });
+                          }}
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
+                            borderBottomColor: colors.grey,
+                            borderBottomWidth: StyleSheet.hairlineWidth,
                           }}>
-                          Edit
+                          <Ionicons
+                            name="ios-brush"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Edit
                         </Text>
-                      </TouchableOpacity>
-                    ) : null}
+                        </TouchableOpacity>
+                      ) : null}
                   </>
                 ) : null}
                 {auth().currentUser ? (
                   <>
                     {auth().currentUser &&
-                    this.state.product.owner === auth().currentUser.email ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          this.setState({
-                            isModalVisible: false,
-                            menu2: true,
-                          });
-                        }}
-                        style={{
-                          width: '100%',
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          paddingVertical: 15,
-                          justifyContent: 'center',
-                        }}>
-                        <Ionicons
-                          name="ios-trash"
-                          size={22}
-                          color={colors.grey}
-                          style={{marginRight: 20}}
-                        />
-                        <Text
+                      this.state.product.owner === auth().currentUser.email ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              isModalVisible: false,
+                              menu2: true,
+                            });
+                          }}
                           style={{
-                            fontFamily: 'Muli-Bold',
-                            color: colors.white,
-                            fontSize: 14,
-                            width: 60,
+                            width: '100%',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingVertical: 15,
+                            justifyContent: 'center',
                           }}>
-                          Remove
+                          <Ionicons
+                            name="ios-trash"
+                            size={22}
+                            color={colors.white}
+                            style={{ marginRight: 20 }}
+                          />
+                          <Text
+                            style={{
+                              fontFamily: 'Muli-Bold',
+                              color: colors.white,
+                              fontSize: 14,
+                              width: 60,
+                            }}>
+                            Remove
                         </Text>
-                      </TouchableOpacity>
-                    ) : null}
+                        </TouchableOpacity>
+                      ) : null}
                   </>
                 ) : null}
               </View>
@@ -1091,7 +1104,7 @@ export default class Card2 extends React.Component {
             <View
               style={{
                 width: '90%',
-                backgroundColor: colors.primary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -1177,7 +1190,7 @@ export default class Card2 extends React.Component {
             <View
               style={{
                 width: '60%',
-                backgroundColor: colors.primary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -1191,13 +1204,13 @@ export default class Card2 extends React.Component {
                 }}>
                 <Text style={styles.reportheader}>Reported</Text>
               </View>
-              <View style={{width: '100%', alignItems: 'center'}}>
-                <View style={{width: 80, height: 80}}>
+              <View style={{ width: '100%', alignItems: 'center' }}>
+                <View style={{ width: 80, height: 80 }}>
                   <LottieView
                     source={require('../assets/433-checked-done.json')}
                     autoPlay={true}
                     loop={false}
-                    style={{transform: [{scale: 1.5}]}}
+                    style={{ transform: [{ scale: 1.5 }] }}
                   />
                 </View>
               </View>
@@ -1220,7 +1233,7 @@ export default class Card2 extends React.Component {
             <View
               style={{
                 width: '80%',
-                backgroundColor: colors.secondary,
+                backgroundColor: colors.primary2,
                 borderRadius: 10,
                 alignItems: 'center',
               }}>
@@ -1235,7 +1248,7 @@ export default class Card2 extends React.Component {
                   width: '100%',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 20,
+                  paddingVertical: 15,
                   justifyContent: 'center',
                   borderBottomColor: colors.grey,
                   borderBottomWidth: StyleSheet.hairlineWidth,
@@ -1259,7 +1272,7 @@ export default class Card2 extends React.Component {
                   width: '100%',
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 20,
+                  paddingVertical: 15,
                   justifyContent: 'center',
                 }}>
                 <Text
@@ -1284,10 +1297,8 @@ const styles = StyleSheet.create({
     padding: 15,
     width: '95%',
     alignItems: 'center',
-    backgroundColor: '#1B1F22',
+    backgroundColor: colors.primary2,
     justifyContent: 'space-between',
-    // borderColor: colors.darkText,
-    // borderWidth: 1,
     elevation: 3,
     borderRadius: 10,
     marginBottom: 10,
@@ -1374,7 +1385,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Muli-Regular',
   },
   title2: {
-    color: colors.white,
+    color: colors.grey,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
   },
@@ -1399,7 +1410,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     width: '100%',
     padding: 10,
-    backgroundColor: colors.primary,
+    // backgroundColor: colors.primary,
     borderRadius: 5,
   },
   reportText: {

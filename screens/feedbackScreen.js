@@ -19,7 +19,7 @@ import axios from 'axios';
 import Snackbar from 'react-native-snackbar';
 import auth from '@react-native-firebase/auth';
 import link from '../fetchPath';
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 export default class FeedbackScreen extends React.Component {
   constructor() {
@@ -85,13 +85,13 @@ export default class FeedbackScreen extends React.Component {
       <SafeAreaView style={styles.container}>
         <View
           style={{
-            backgroundColor: '#1B1F22',
+            backgroundColor: colors.primary2,
             paddingHorizontal: 20,
             height: 60,
             flexDirection: 'row',
             alignItems: 'center',
             width: '100%',
-            elevation: 5,
+            elevation: 3,
           }}>
           <TouchableOpacity onPress={this.handleBack}>
             <Ionicons name="ios-arrow-back" size={30} color={colors.baseline} />
@@ -103,9 +103,9 @@ export default class FeedbackScreen extends React.Component {
               justifyContent: 'center',
               marginLeft: 10,
             }}>
-            <View style={{width: 30, height: 30}}>
+            <View style={{ width: 30, height: 30 }}>
               <Image
-                style={{width: '100%', height: '100%'}}
+                style={{ width: '100%', height: '100%' }}
                 source={require('../assets/images/icon.png')}
               />
             </View>
@@ -114,11 +114,11 @@ export default class FeedbackScreen extends React.Component {
             </Text>
           </View>
         </View>
-        <ScrollView style={{width: '100%', flex: 1}}>
+        <ScrollView style={{ width: '100%', flex: 1 }}>
           {this.state.success ? (
-            <View style={{width: '100%', flex: 1, alignItems: 'center'}}>
-              <View style={{width: '80%', flex: 1, alignItems: 'center'}}>
-                <View style={{width: 500, height: 500}}>
+            <View style={{ width: '100%', flex: 1, alignItems: 'center' }}>
+              <View style={{ width: '80%', flex: 1, alignItems: 'center' }}>
+                <View style={{ width: 500, height: 500 }}>
                   <LottieView
                     source={require('../assets/40991-man-with-a-pencil.json')}
                     autoPlay={true}
@@ -137,7 +137,7 @@ export default class FeedbackScreen extends React.Component {
                   style={{
                     fontSize: 16,
                     fontFamily: 'Muli-Regular',
-                    color: colors.grey,
+                    color: colors.white,
                     textAlign: 'center',
                   }}>
                   By making your voice heard, you help us improve{' '}
@@ -145,88 +145,91 @@ export default class FeedbackScreen extends React.Component {
                     style={{
                       fontSize: 18,
                       fontFamily: 'Muli-Bold',
-                      color: colors.grey,
+                      color: colors.baseline,
                       textAlign: 'center',
                     }}>
                     ByeBuyy
                   </Text>
+                  .
                 </Text>
               </View>
             </View>
           ) : (
-            <View style={{width: '100%', flex: 1}}>
-              <Text
-                style={{
-                  fontSize: 30,
-                  fontFamily: 'Muli-Bold',
-                  color: colors.baseline,
-                  marginLeft: 20,
-                  marginTop: 20,
-                }}>
-                Give feedback
+              <View style={{ width: '100%', flex: 1 }}>
+                <Text
+                  style={{
+                    fontSize: 30,
+                    fontFamily: 'Muli-Bold',
+                    color: colors.baseline,
+                    marginLeft: 20,
+                    marginTop: 20,
+                  }}>
+                  Give feedback
               </Text>
-              <View
-                style={{
-                  width: '100%',
-                  flex: 1,
-                  alignItems: 'center',
-                  marginTop: 50,
-                }}>
                 <View
                   style={{
-                    width: '90%',
+                    width: '100%',
                     flex: 1,
+                    alignItems: 'center',
+                    marginTop: 50,
                   }}>
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontFamily: 'Muli-Regular',
-                        color: colors.grey,
-                      }}>
-                      Enter your email
+                  <View
+                    style={{
+                      width: '90%',
+                      flex: 1,
+                    }}>
+                    <View style={styles.inputGroup}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontFamily: 'Muli-Regular',
+                          color: colors.grey,
+                        }}>
+                        Enter your email
                     </Text>
-                    <TextInput
-                      style={styles.input}
-                      autoCapitalize="none"
-                      maxLength={100}
-                      onChangeText={(email) => this.setState({email})}
-                      value={this.state.email}></TextInput>
-                  </View>
-                  <View style={styles.inputGroup}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontFamily: 'Muli-Regular',
-                        color: colors.grey,
-                      }}>
-                      Share your feedback ...
+                      <TextInput
+                        placeholder="Enter your email"
+                        style={styles.input}
+                        autoCapitalize="none"
+                        maxLength={100}
+                        onChangeText={(email) => this.setState({ email })}
+                        value={this.state.email}></TextInput>
+                    </View>
+                    <View style={styles.inputGroup}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontFamily: 'Muli-Regular',
+                          color: colors.grey,
+                        }}>
+                        Share your feedback ...
                     </Text>
-                    <TextInput
-                      style={styles.inputArea}
-                      autoCapitalize="none"
-                      multiline={true}
-                      maxLength={400}
-                      onChangeText={(feedback) => this.setState({feedback})}
-                      value={this.state.feedback}></TextInput>
+                      <TextInput
+                        placeholder="Type something..."
+                        style={styles.inputArea}
+                        autoCapitalize="none"
+                        multiline={true}
+                        maxLength={400}
+                        onChangeText={(feedback) => this.setState({ feedback })}
+                        value={this.state.feedback}></TextInput>
+                    </View>
                   </View>
+                  {this.state.loading ? (
+                    <ActivityIndicator
+                      color={colors.baseline}
+                      size="large"
+                      style={{ marginTop: 20 }}
+                    />
+                  ) : (
+                      <TouchableOpacity
+                        onPress={this.handleFeedback}
+                        style={styles.button}>
+                        <Text style={styles.buttonText}>Share Feedback</Text>
+                      </TouchableOpacity>
+                    )}
                 </View>
-                {this.state.loading ? (
-                  <ActivityIndicator
-                    color={colors.baseline}
-                    size="large"
-                    style={{marginTop: 20}}
-                  />
-                ) : (
-                  <TouchableOpacity
-                    onPress={this.handleFeedback}
-                    style={styles.button}>
-                    <Text style={styles.buttonText}>Share Feedback</Text>
-                  </TouchableOpacity>
-                )}
               </View>
-            </View>
-          )}
+            )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -265,10 +268,10 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 5,
     height: 50,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
-    color: '#464646',
+    color: colors.darkText,
     paddingHorizontal: 10,
     justifyContent: 'center',
     borderRadius: 3,
@@ -276,10 +279,10 @@ const styles = StyleSheet.create({
   },
   inputArea: {
     marginTop: 5,
-    backgroundColor: '#e5e5e5',
+    backgroundColor: colors.white,
     fontSize: 16,
     fontFamily: 'Muli-Regular',
-    color: '#464646',
+    color: colors.darkText,
     padding: 10,
     height: 200,
     textAlignVertical: 'top',

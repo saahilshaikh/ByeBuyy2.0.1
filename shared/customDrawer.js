@@ -19,7 +19,7 @@ class CustomDrawerContent extends React.Component {
           paddingVertical: 20,
           paddingHorizontal: 10,
         }}>
-        <View style={{width: '100%'}}>
+        <View style={{ width: '100%' }}>
           <TouchableOpacity
             onPress={() => this.props.handleMenu('Home')}
             style={
@@ -140,12 +140,12 @@ class CustomDrawerContent extends React.Component {
             <Text style={styles.activeButtonText}>Logout</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            onPress={() => this.props.handleMenu('Login')}
-            style={styles.button}>
-            <Text style={styles.activeButtonText}>Login</Text>
-          </TouchableOpacity>
-        )}
+            <TouchableOpacity
+              onPress={() => this.props.handleMenu('Login')}
+              style={styles.button}>
+              <Text style={styles.activeButtonText}>Login</Text>
+            </TouchableOpacity>
+          )}
       </View>
     );
   }

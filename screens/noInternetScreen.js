@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../appTheme';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,7 +30,7 @@ const NoInternetScreen = (props) => {
         </View>
         <Text style={styles.header}>No Internet connection</Text>
         <TouchableOpacity onPress={() => props.handleReCheck()}>
-          <Ionicons name="ios-refresh-circle" size={60} color="#d65a31" />
+          <Ionicons name="ios-refresh-circle" size={60} color={colors.baseline} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -42,11 +43,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#15202B',
+    backgroundColor: colors.secondary,
   },
   header: {
     fontFamily: 'Muli-Bold',
-    color: '#d65a31',
+    color: colors.baseline,
     fontSize: 20,
     marginBottom: 20,
   },

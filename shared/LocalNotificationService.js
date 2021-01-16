@@ -1,6 +1,6 @@
 import PushNotification from 'react-native-push-notification';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 
 class LocalNotificationService {
   configure = (onOpenNotification) => {
@@ -69,8 +69,8 @@ class LocalNotificationService {
     return {
       id: id,
       autoCancel: true,
-      largeIcon: options.largeIcon || 'ic_launcher',
-      smallIcon: options.smallIcon || 'ic_launcher',
+      largeIcon: "ic_launcher",
+      smallIcon: "ic_notification",
       bigText: message || '',
       subText: title || '',
       vibrate: options.vibrate || true,
@@ -106,7 +106,7 @@ class LocalNotificationService {
       '[LocalNotificationService] removeDeliveredNotificationByID:',
       notificationId,
     );
-    PushNotification.cancelLocalNotifications({id: `${notificationId}`});
+    PushNotification.cancelLocalNotifications({ id: `${notificationId}` });
   };
 }
 
