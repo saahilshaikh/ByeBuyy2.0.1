@@ -25,7 +25,7 @@ export default class DealInfoScreen extends React.Component {
         <SafeAreaView style={styles.container}>
           <View
             style={{
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary2,
               paddingHorizontal: 20,
               height: 60,
               flexDirection: 'row',
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   dealPop: {
     width: '100%',
     height: 60,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   dealInfoHeader: {
-    color: colors.darkText,
+    color: colors.white,
     fontSize: 16,
     fontFamily: 'Muli-Bold',
     marginLeft: 10,
@@ -276,18 +276,18 @@ const styles = StyleSheet.create({
     fontFamily: 'Muli-Bold',
   },
   dMessage: {
-    color: colors.darkText,
+    color: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
   },
   dlogHead: {
-    color: colors.darkText,
+    color: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Bold',
     marginRight: 5,
   },
   dlogDate: {
-    color: colors.darkText,
+    color: colors.white,
     fontSize: 14,
     fontFamily: 'Muli-Regular',
     marginLeft: 5,

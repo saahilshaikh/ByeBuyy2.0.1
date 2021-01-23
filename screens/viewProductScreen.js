@@ -789,15 +789,6 @@ export default class ViewProductScreen extends React.Component {
                               fontFamily: 'Muli-Regular',
                               color: colors.grey,
                               fontSize: 16,
-                              marginRight: 5,
-                            }}>
-                            Value :
-                            </Text>
-                          <Text
-                            style={{
-                              fontFamily: 'Muli-Regular',
-                              color: colors.grey,
-                              fontSize: 16,
                             }}>
                             ${this.state.product.value}
                           </Text>

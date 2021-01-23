@@ -364,20 +364,20 @@ export default class EditProductScreen extends React.Component {
     this.setState({
       loading: true,
     });
-    if (this.state.wyh.replace(/ /g, '').length < 10) {
+    if (this.state.wyh.replace(/ /g, '').length < 5) {
       Snackbar.show({
-        text: 'Please describe what do you have in atleast 10 characters ?',
+        text: 'Please describe what do you have in atleast 5 characters ?',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
         loading: false,
       });
     } else if (
-      this.state.wye.replace(/ /g, '').length < 10 &&
+      this.state.wye.replace(/ /g, '').length < 5 &&
       this.state.type === 1
     ) {
       Snackbar.show({
-        text: 'Please describe what exchnage with in atleast 10 characters ?',
+        text: 'Please describe what exchnage with in atleast 5 characters ?',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
@@ -415,9 +415,9 @@ export default class EditProductScreen extends React.Component {
       this.setState({
         loading: false,
       });
-    } else if (this.state.desc.replace(/ /g, '').length < 20) {
+    } else if (this.state.desc.replace(/ /g, '').length < 10) {
       Snackbar.show({
-        text: 'Please add a product description of atleast 20 characters',
+        text: 'Please add a product description of atleast 10 characters',
         duration: Snackbar.LENGTH_SHORT,
       });
       this.setState({
@@ -862,11 +862,12 @@ export default class EditProductScreen extends React.Component {
                                   <Text style={styles.inputGroupText}>
                                     What do you have ?
                             </Text>
-                                  <Text style={this.state.wyh.replace(/ /g, '').length >= 10 ? styles.right : styles.wrong}>{this.state.wyh.replace(/ /g, '').length}/{this.state.wyh.replace(/ /g, '').length >= 10 ? "100" : "10"}</Text>
+                                  <Text style={this.state.wyh.replace(/ /g, '').length >= 5 ? styles.right : styles.wrong}>{this.state.wyh.replace(/ /g, '').length}/{this.state.wyh.replace(/ /g, '').length >= 5 ? "100" : "5"}</Text>
                                   <TextInput
                                     style={styles.input}
                                     autoCapitalize="none"
                                     maxLength={100}
+                                    placeholder={this.state.category==='Books'?"Book Title":""}
                                     onChangeText={(wyh) => this.setState({ wyh })}
                                     value={this.state.wyh}></TextInput>
                                 </View>
@@ -874,12 +875,13 @@ export default class EditProductScreen extends React.Component {
                                   <Text style={styles.inputGroupText}>
                                     Describe what you have
                             </Text>
-                                  <Text style={this.state.desc.replace(/ /g, '').length >= 20 ? styles.right : styles.wrong}>{this.state.desc.replace(/ /g, '').length}/{this.state.desc.replace(/ /g, '').length >= 20 ? "400" : "20"}</Text>
+                                  <Text style={this.state.desc.replace(/ /g, '').length >= 10 ? styles.right : styles.wrong}>{this.state.desc.replace(/ /g, '').length}/{this.state.desc.replace(/ /g, '').length >= 10 ? "400" : "10"}</Text>
                                   <TextInput
                                     style={styles.inputArea}
                                     autoCapitalize="none"
                                     multiline={true}
                                     maxLength={400}
+                                    placeholder={this.state.category==='Books'?"Few words about books/edition/etc..":""}
                                     onChangeText={(desc) => this.setState({ desc })}
                                     value={this.state.desc}></TextInput>
                                 </View>
@@ -889,18 +891,19 @@ export default class EditProductScreen extends React.Component {
                                       <Text style={styles.inputGroupText}>
                                         What do you want to exchange with ?
                                 </Text>
-                                      <Text style={this.state.wye.replace(/ /g, '').length >= 10 ? styles.right : styles.wrong}>{this.state.wye.replace(/ /g, '').length}/{this.state.wye.replace(/ /g, '').length >= 10 ? "100" : "10"}</Text>
+                                      <Text style={this.state.wye.replace(/ /g, '').length >= 5 ? styles.right : styles.wrong}>{this.state.wye.replace(/ /g, '').length}/{this.state.wye.replace(/ /g, '').length >= 5 ? "100" : "5"}</Text>
                                       <TextInput
                                         style={styles.input}
                                         autoCapitalize="none"
                                         maxLength={100}
+                                        placeholder={this.state.category==='Books'?"Book Title":""}
                                         onChangeText={(wye) => this.setState({ wye })}
                                         value={this.state.wye}></TextInput>
                                     </View>
                                     <View style={styles.inputGroup}>
                                       <Text style={styles.inputGroupText}>
                                         Value of your item ?
-                                </Text>
+                                    </Text>
                                       <TextInput
                                         style={styles.input}
                                         autoCapitalize="none"

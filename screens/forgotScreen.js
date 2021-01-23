@@ -91,7 +91,7 @@ export default class ForgotScreen extends React.Component {
             style={{
               fontSize: 28,
               marginBottom: 60,
-              color: colors.darkText,
+              color: colors.white,
               fontFamily: 'Muli-Bold',
             }}>
             Forgot Password
@@ -106,7 +106,7 @@ export default class ForgotScreen extends React.Component {
               />
               <Text
                 style={{
-                  color: colors.darkText,
+                  color: colors.white,
                   textAlign: 'center',
                   fontSize: 16,
                   fontFamily: 'Muli-Regular',
@@ -144,7 +144,7 @@ export default class ForgotScreen extends React.Component {
                       <Text
                         style={{
                           fontSize: 14,
-                          color: colors.secondary,
+                          color: colors.white,
                           fontFamily: 'Muli-Bold',
                         }}>
                         Reset Password
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flex: 1,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary,
   },
   inputContainer: {
     width: '100%',
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey,
     fontSize: 16,
     fontFamily: 'Muli-Regular',
-    color: colors.darkText,
+    color: colors.grey,
     height: 50,
     justifyContent: 'center',
   },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginVertical: 20,
     borderRadius: 25,
-    backgroundColor: colors.secondary,
+    backgroundColor: colors.primary2,
     elevation: 3,
     marginLeft: 5
   },

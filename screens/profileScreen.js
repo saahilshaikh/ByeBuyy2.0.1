@@ -191,7 +191,7 @@ export default class ProfileScreen extends React.Component {
                         </Text>
                         {this.state.currentUser.institution &&
                           this.state.currentUser.prof === 'Student' ? (
-                            <Text style={styles.uname}>
+                            <Text style={styles.bio}>
                               {this.state.currentUser.institution}
                             </Text>
                           ) : null}

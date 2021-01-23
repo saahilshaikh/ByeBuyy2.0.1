@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   },
   itemDate: {
     fontFamily: 'Muli-Bold',
-    color: colors.darkText,
+    color: colors.white,
     fontSize: 14,
   },
 });

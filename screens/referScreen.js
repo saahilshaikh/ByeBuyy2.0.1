@@ -155,6 +155,7 @@ export default class ReferScreen extends React.Component {
                                     {
                                         this.state.uname
                                             ?
+                                            <>
                                             <Text onPress={() => Clipboard.setString('#' + this.state.uname)} style={{
                                                 fontSize: 20,
                                                 fontFamily: 'Muli-Bold',
@@ -168,6 +169,33 @@ export default class ReferScreen extends React.Component {
                                                 borderStyle: 'dashed',
                                                 marginBottom: 20
                                             }}>#{this.state.uname}</Text>
+                                            <Text style={{
+                                                fontSize: 16,
+                                                fontFamily: 'Muli-Bold',
+                                                color: colors.white,
+                                                marginBottom: 20,
+                                                width: '80%',
+                                                textAlign: 'center'
+                                            }}>Share your code with friends and get bonus points</Text>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                <TouchableOpacity
+                                                    onPress={() => this.handleCopy("#" + this.state.uname)} style={{ marginHorizontal: 10 }}>
+                                                    <Ionicons
+                                                        name="ios-copy-outline"
+                                                        size={30}
+                                                        color={colors.baseline}
+                                                    />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity
+                                                    onPress={() => this.handleShare("#" + this.state.uname)} style={{ marginHorizontal: 10 }}>
+                                                    <Ionicons
+                                                        name="share-social-outline"
+                                                        size={30}
+                                                        color={colors.baseline}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                            </>
                                             :
                                             <Text style={{
                                                 fontSize: 16,
@@ -179,33 +207,6 @@ export default class ReferScreen extends React.Component {
                                                 marginBottom: 20
                                             }}>Please update your user name</Text>
                                     }
-                                    <Text style={{
-                                        fontSize: 16,
-                                        fontFamily: 'Muli-Bold',
-                                        color: colors.white,
-                                        marginBottom: 20,
-                                        width: '80%',
-                                        textAlign: 'center'
-                                    }}>Share your code with friends and get bonus points</Text>
-
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity
-                                            onPress={() => this.handleCopy("#" + this.state.uname)} style={{ marginHorizontal: 10 }}>
-                                            <Ionicons
-                                                name="ios-copy-outline"
-                                                size={30}
-                                                color={colors.baseline}
-                                            />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() => this.handleShare("#" + this.state.uname)} style={{ marginHorizontal: 10 }}>
-                                            <Ionicons
-                                                name="share-social-outline"
-                                                size={30}
-                                                color={colors.baseline}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
                                 </>
                                 :
                                 <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={styles.loginButton}>

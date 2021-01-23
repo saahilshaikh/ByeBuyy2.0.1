@@ -70,7 +70,7 @@ export default class ProfileEditScreen extends React.Component {
     });
     if (this.state.name === '') {
       this.setState({
-        loading: false,
+        saving: false,
       });
       Snackbar.show({
         text: 'Please enter your name!',
@@ -78,7 +78,7 @@ export default class ProfileEditScreen extends React.Component {
       });
     } else if (this.state.uname === '') {
       this.setState({
-        loading: false,
+        saving: false,
       });
       Snackbar.show({
         text: 'Please enter a user name!',
@@ -86,7 +86,7 @@ export default class ProfileEditScreen extends React.Component {
       });
     } else if (this.state.uname.includes('@')) {
       this.setState({
-        loading: false,
+        saving: false,
       });
       Snackbar.show({
         text: 'User name cannot include @ symbol!',
@@ -131,7 +131,7 @@ export default class ProfileEditScreen extends React.Component {
               .catch((err) => {
                 console.log('Firebase' + err);
                 this.setState({
-                  loading: false,
+                  saving: false,
                 });
                 Snackbar.show({
                   text: 'Error',
@@ -143,7 +143,7 @@ export default class ProfileEditScreen extends React.Component {
           var data = {
             email: auth().currentUser.email,
             name: this.state.name,
-            uname: this.state.uname,
+            uname: this.state.uname.toLowerCase(),
             prof: this.state.prof,
             profStudent: this.state.profStudent,
           };
@@ -313,6 +313,7 @@ export default class ProfileEditScreen extends React.Component {
                     style={[styles.input, { width: '90%' }]}
                     autoCapitalize="none"
                     maxLength={20}
+                    autoCorrect={false}
                     onChangeText={(uname) =>
                       this.setState({ uname: uname.replace(' ', '') })
                     }

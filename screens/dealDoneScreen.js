@@ -83,7 +83,7 @@ export default class DealDoneScreen extends React.Component {
         <SafeAreaView style={styles.container}>
           <View
             style={{
-              backgroundColor: colors.secondary,
+              backgroundColor: colors.primary2,
               paddingHorizontal: 20,
               height: 60,
               flexDirection: 'row',

@@ -127,7 +127,7 @@ export default class HomeScreen extends React.Component {
         snap.forEach((doc) => {
           console.log('75', Platform.OS);
           if (Platform.OS === 'android') {
-            if (doc.data().android !== '2.2.1') {
+            if (doc.data().android !== '2.2.2') {
               this.setState({
                 update: true,
                 showLocationAccess: true,
@@ -138,7 +138,7 @@ export default class HomeScreen extends React.Component {
               });
             }
           } else {
-            if (doc.data().ios !== '2.2.1') {
+            if (doc.data().ios !== '2.1.3') {
               this.setState({
                 update: true,
               });
@@ -150,14 +150,14 @@ export default class HomeScreen extends React.Component {
           }
         });
       });
-    // if (auth().currentUser) {
-    //   this.handleNotiCount();
-    //   this.handleChatCount();
-    //   this.inter = setInterval(() => {
-    //     this.handleNotiCount();
-    //     this.handleChatCount();
-    //   }, 2000);
-    // }
+    if (auth().currentUser) {
+      this.handleNotiCount();
+      this.handleChatCount();
+      this.inter = setInterval(() => {
+        this.handleNotiCount();
+        this.handleChatCount();
+      }, 2000);
+    }
     fcmService.registerAppWithFCM();
     fcmService.register(
       this.onRegister,

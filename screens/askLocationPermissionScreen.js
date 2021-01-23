@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Image,
+  StatusBar
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -17,6 +18,7 @@ const { width, height } = Dimensions.get('window');
 const AskLocationPermissionScreen = (props) => {
   return (
     <SafeAreaView style={styles.container}>
+     <StatusBar backgroundColor={colors.primary} />
       <View
         style={{
           alignItems: 'center',
